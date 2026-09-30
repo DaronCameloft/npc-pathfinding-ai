@@ -9,7 +9,6 @@ export type Veredicto = 'mejor' | 'peor' | null
 export interface Resaltado {
   expandidos: Veredicto
   costo: Veredicto
-  complejidad: Veredicto
 }
 
 const props = defineProps<{
@@ -22,7 +21,7 @@ const props = defineProps<{
   vista: Vista | null
   costoMinimo: number | null
   zoom: boolean
-  /** Mejor/peor de cada métrica frente a los demás; null desactiva el resaltado. */
+  /** Mejor/peor de expandidos y costo frente a los demás; null desactiva el resaltado. */
   resaltado?: Resaltado | null
 }>()
 const emit = defineEmits<{ 'update:vista': [vista: Vista] }>()
@@ -34,7 +33,7 @@ const terminado = computed(() => idx.value >= props.ejecucion.traza.length)
 const encontrada = computed(() => props.ejecucion.estado === 'encontrada')
 
 /** Solo se colorea cuando este algoritmo terminó: el resultado se «revela» al final. */
-const clase = (metrica: keyof Resaltado) => (terminado.value && props.resaltado ? props.resaltado[metrica] : null)
+const clase = (metrica: 'expandidos' | 'costo') => (terminado.value && props.resaltado ? props.resaltado[metrica] : null)
 
 const veredicto = computed(() => {
   if (!terminado.value) return { texto: 'Explorando…', clase: 'pill-sky' }
@@ -78,7 +77,7 @@ const veredicto = computed(() => {
           <template v-else>—</template>
         </dd>
       </div>
-      <div :class="clase('complejidad')">
+      <div class="complejidad" :class="{ fija: !!resaltado }">
         <dt>Complejidad</dt>
         <dd class="mono">{{ info.complejidad }}</dd>
       </div>
@@ -97,13 +96,17 @@ h3 { font-size: 21px; }
   border-radius: 14px;
   background: var(--field);
 }
-dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+dl { display: grid; grid-template-columns: 1.25fr 1.25fr 0.9fr; gap: 8px; margin: 0; }
 dl div { min-width: 0; padding: 7px 10px; border-radius: 12px; background: var(--field); transition: background 0.6s var(--ease-out), color 0.6s; }
 dl div.mejor { background: #e3f6a8; }
 dl div.mejor dt { color: #4a5b12; }
 dl div.peor { background: #f9d9d4; color: #8c281c; }
 dl div.peor dt { color: #a8483c; }
 dt { color: var(--ink-3); font-size: 10.5px; }
-dd { margin: 1px 0 0; font-size: 14px; font-weight: 500; white-space: nowrap; }
-dd.mono { font-size: 12px; padding-top: 2px; }
+dd { margin: 1px 0 0; font-size: 16px; font-weight: 600; white-space: nowrap; }
+dd.mono { font-size: 12px; font-weight: 500; padding-top: 3px; }
+/* La complejidad es teórica, no un resultado de esta consulta: color fijo y discreto. */
+dl div.fija { background: var(--violet-soft); }
+dl div.fija dt { color: #6f55b3; }
+dl div.fija dd { color: #4a3592; }
 </style>

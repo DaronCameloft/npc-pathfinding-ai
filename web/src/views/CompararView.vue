@@ -46,9 +46,6 @@ const costoMinimo = computed(() => {
   return costos.length ? Math.min(...costos) : null
 })
 
-/** Orden de las complejidades del catálogo (menor es mejor). */
-const ORDEN_COMPLEJIDAD: Record<string, number> = { 'O(V + E)': 0, 'O(E log V)': 1 }
-
 /** Marca el mejor y el peor valor de una métrica (menor es mejor); si todos empatan, ninguno. */
 function clasificar(valores: number[]): Veredicto[] {
   const mejor = Math.min(...valores)
@@ -63,8 +60,7 @@ const resaltados = computed<Record<string, Resaltado> | null>(() => {
   const f = filas.value
   const expandidos = clasificar(f.map((x) => x.ejecucion.metricas.nodos_expandidos))
   const costo = clasificar(f.map((x) => x.ejecucion.costo ?? Number.POSITIVE_INFINITY))
-  const complejidad = clasificar(f.map((x) => ORDEN_COMPLEJIDAD[x.info.complejidad] ?? 1))
-  return Object.fromEntries(f.map((x, i) => [x.info.clave, { expandidos: expandidos[i], costo: costo[i], complejidad: complejidad[i] }]))
+  return Object.fromEntries(f.map((x, i) => [x.info.clave, { expandidos: expandidos[i], costo: costo[i] }]))
 })
 
 async function ejecutar() {
@@ -138,7 +134,7 @@ onBeforeUnmount(() => {
       <div class="selectores">
         <CasoSelector v-model="caso" :total="totalCasos" />
         <Segmented v-model="mapaClave" :opciones="opcionesMapa" etiqueta="Mapa" />
-        <button type="button" class="btn colorear" :class="{ activo: ui.resaltarResultados }" :aria-pressed="ui.resaltarResultados" title="Colorea el mejor (verde) y el peor (rojo) resultado de cada métrica al terminar" @click="alternarResaltado">
+        <button type="button" class="btn colorear" :class="{ activo: ui.resaltarResultados }" :aria-pressed="ui.resaltarResultados" title="Colorea el mejor (verde) y el peor (rojo) de expandidos y costo al terminar" @click="alternarResaltado">
           <span class="muestra" /> Resaltar
         </button>
         <button type="button" class="ic-btn" aria-label="Ver los cuatro algoritmos en pantalla completa" title="Ver los cuatro en pantalla completa (F)" @click="alternarPantallaCompleta">
