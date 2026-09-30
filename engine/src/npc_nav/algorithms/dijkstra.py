@@ -38,13 +38,13 @@ def dijkstra(grafo, inicio, destino, observador=NULO) -> ResultadoBusqueda:
     padre = {}
     cerrados = set()
     frontera = [(0.0, next(orden), inicio)]                    # (g, orden, nodo)
-    observador.frontera(inicio, 0.0, 0.0, None)
+    observador.frontera(inicio, 0.0, 0.0, None, 1)
 
     while frontera:                                            # 2.
         _, _, actual = heappop(frontera)                       # 3. menor g
         if actual in cerrados:
             continue          # copia antigua en la cola
-        observador.expandido(actual, g[actual], 0.0, padre.get(actual))
+        observador.expandido(actual, g[actual], 0.0, padre.get(actual), 3)
 
         if actual == destino:                                  # 4.
             return ResultadoBusqueda(reconstruir_ruta(padre, inicio, destino), g[actual])
@@ -58,6 +58,6 @@ def dijkstra(grafo, inicio, destino, observador=NULO) -> ResultadoBusqueda:
                 g[vecino] = nuevo_g                            # 8.
                 padre[vecino] = actual
                 heappush(frontera, (nuevo_g, next(orden), vecino))   # 9.
-                observador.frontera(vecino, nuevo_g, 0.0, actual)
+                observador.frontera(vecino, nuevo_g, 0.0, actual, 9)
 
     return SIN_RUTA                                            # 10.

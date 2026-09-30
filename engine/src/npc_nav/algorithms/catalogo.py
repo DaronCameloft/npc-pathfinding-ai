@@ -10,6 +10,7 @@ from .astar import astar
 from .bfs import bfs
 from .contrato import Algoritmo
 from .dijkstra import dijkstra
+from .pseudocodigo import LineaPseudocodigo, pseudocodigo_de
 from .voraz import voraz
 
 
@@ -23,6 +24,11 @@ class InfoAlgoritmo:
     """Técnica del curso a la que pertenece (enunciado, sección 6)."""
     complejidad: str
     referencia: str
+
+    @property
+    def pseudocodigo(self) -> tuple[LineaPseudocodigo, ...]:
+        """Líneas numeradas del docstring del algoritmo (las mismas de la traza)."""
+        return pseudocodigo_de(self.funcion)
 
 
 ALGORITMOS: dict[str, InfoAlgoritmo] = {info.clave: info for info in (

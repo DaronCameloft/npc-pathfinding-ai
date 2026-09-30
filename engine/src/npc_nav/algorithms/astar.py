@@ -44,13 +44,13 @@ def astar(grafo, inicio, destino, observador=NULO) -> ResultadoBusqueda:
     padre = {}
     cerrados = set()
     frontera = [(h(inicio), h(inicio), next(orden), inicio)]   # (f, h, orden, nodo)
-    observador.frontera(inicio, 0.0, h(inicio), None)
+    observador.frontera(inicio, 0.0, h(inicio), None, 1)
 
     while frontera:                                            # 2.
         _, h_actual, _, actual = heappop(frontera)             # 3. menor f
         if actual in cerrados:
             continue          # copia antigua en la cola: ya se procesó con mejor g
-        observador.expandido(actual, g[actual], h_actual, padre.get(actual))
+        observador.expandido(actual, g[actual], h_actual, padre.get(actual), 3)
 
         if actual == destino:                                  # 4.
             return ResultadoBusqueda(reconstruir_ruta(padre, inicio, destino), g[actual])
@@ -65,6 +65,6 @@ def astar(grafo, inicio, destino, observador=NULO) -> ResultadoBusqueda:
                 padre[vecino] = actual
                 h_vecino = h(vecino)
                 heappush(frontera, (nuevo_g + h_vecino, h_vecino, next(orden), vecino))  # 9.
-                observador.frontera(vecino, nuevo_g, h_vecino, actual)
+                observador.frontera(vecino, nuevo_g, h_vecino, actual, 9)
 
     return SIN_RUTA                                            # 10.

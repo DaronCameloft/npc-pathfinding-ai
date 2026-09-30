@@ -26,6 +26,8 @@ class EventoBusqueda:
     g: float
     h: float
     padre: Posicion | None = None
+    linea: int = 0
+    """Línea del pseudocódigo del algoritmo que produjo el evento."""
 
 
 @dataclass(frozen=True)
@@ -59,12 +61,12 @@ class _Contador:
         self.pendientes = set()
         self.max_frontera = 0
 
-    def frontera(self, posicion, g, h, padre):
+    def frontera(self, posicion, g, h, padre, linea):
         self.descubiertos.add(posicion)
         self.pendientes.add(posicion)
         self.max_frontera = max(self.max_frontera, len(self.pendientes))
 
-    def expandido(self, posicion, g, h, padre):
+    def expandido(self, posicion, g, h, padre, linea):
         self.expandidos += 1
         self.pendientes.discard(posicion)
 
@@ -73,11 +75,11 @@ class _Grabador:
     def __init__(self):
         self.eventos = []
 
-    def frontera(self, posicion, g, h, padre):
-        self.eventos.append(EventoBusqueda('frontera', posicion, g, h, padre))
+    def frontera(self, posicion, g, h, padre, linea):
+        self.eventos.append(EventoBusqueda('frontera', posicion, g, h, padre, linea))
 
-    def expandido(self, posicion, g, h, padre):
-        self.eventos.append(EventoBusqueda('expandido', posicion, g, h, padre))
+    def expandido(self, posicion, g, h, padre, linea):
+        self.eventos.append(EventoBusqueda('expandido', posicion, g, h, padre, linea))
 
 
 def ejecutar_busqueda(sesion: SesionNavegacion, algoritmo: str, inicio: Posicion,

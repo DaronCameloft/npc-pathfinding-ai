@@ -29,6 +29,12 @@ class ApiTests(unittest.TestCase):
         self.assertEqual({a['clave'] for a in datos if a['garantiza_optimo']},
                          {'dijkstra', 'astar'})
 
+    def test_catalogo_incluye_pseudocodigo_numerado(self):
+        astar = next(a for a in self.cliente.get('/algoritmos').json() if a['clave'] == 'astar')
+        self.assertEqual([l['numero'] for l in astar['pseudocodigo']], list(range(1, 11)))
+        self.assertEqual(astar['pseudocodigo'][2]['nivel'], 1)
+        self.assertIn('menor f', astar['pseudocodigo'][2]['texto'])
+
     def test_lista_de_mapas(self):
         datos = {m['nombre']: m for m in self.cliente.get('/mapas').json()}
         self.assertEqual(set(datos), {'brc100d', 'brc201d', 'den011d'})
@@ -63,6 +69,10 @@ class ApiTests(unittest.TestCase):
         expandidos = [e for e in datos['traza'] if e['tipo'] == 'expandido']
         self.assertEqual(len(expandidos), datos['metricas']['nodos_expandidos'])
         self.assertEqual(datos['traza'][0]['posicion'], [75, 61])
+        lineas = {l['numero'] for l in next(a for a in self.cliente.get('/algoritmos').json()
+                                            if a['clave'] == 'astar')['pseudocodigo']}
+        self.assertTrue({e['linea'] for e in datos['traza']} <= lineas)
+        self.assertEqual({e['linea'] for e in datos['traza']}, {1, 3, 9})
 
     def test_buscar_por_extremos(self):
         datos = self.buscar(inicio=[75, 61], destino=[128, 175]).json()

@@ -36,7 +36,8 @@ def health():
 def algoritmos():
     return [{'clave': info.clave, 'nombre': info.nombre,
              'garantiza_optimo': info.garantiza_optimo, 'tecnica': info.tecnica,
-             'complejidad': info.complejidad, 'referencia': info.referencia}
+             'complejidad': info.complejidad, 'referencia': info.referencia,
+             'pseudocodigo': [asdict(linea) for linea in info.pseudocodigo]}
             for info in ALGORITMOS.values()]
 
 

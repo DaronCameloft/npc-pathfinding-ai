@@ -18,19 +18,20 @@ Esta carpeta contiene **todo lo que el equipo expone en la sustentación**. Cada
 Archivos de soporte:
 
 - [`contrato.py`](contrato.py): firma común `algoritmo(grafo, inicio, destino, observador) -> ResultadoBusqueda`, el `Observador` y `reconstruir_ruta`.
+- [`pseudocodigo.py`](pseudocodigo.py): lee del docstring las líneas numeradas del pseudocódigo (número, texto y nivel de sangría).
 - [`catalogo.py`](catalogo.py): registro de algoritmos que usan el CLI, la API y el dashboard.
 
 ## Cómo leer una búsqueda
 
 Todos los algoritmos de ruta avisan al observador en dos momentos:
 
-- `frontera(posicion, g, h, padre)`: la celda entra a la frontera o mejora su costo conocido.
-- `expandido(posicion, g, h, padre)`: la celda sale de la frontera y se procesan sus vecinos.
+- `frontera(posicion, g, h, padre, linea)`: la celda entra a la frontera o mejora su costo conocido.
+- `expandido(posicion, g, h, padre, linea)`: la celda sale de la frontera y se procesan sus vecinos.
 
-`g` es el costo acumulado desde el inicio y `h` la estimación hasta el destino (distancia octil; vale 0 en BFS y Dijkstra). Con esos dos eventos el dashboard dibuja la exploración y resalta la línea del pseudocódigo en ejecución.
+`g` es el costo acumulado desde el inicio y `h` la estimación hasta el destino (distancia octil; vale 0 en BFS y Dijkstra). `linea` es el número de la línea del pseudocódigo (el docstring del archivo) que se está ejecutando: el inicio es la 1, extraer de la frontera es la 3 y descubrir o mejorar un vecino es la 9 en A* y Dijkstra (la 7 en BFS y voraz). Con esos eventos el dashboard dibuja la exploración y resalta la línea del pseudocódigo en ejecución; [`pseudocodigo.py`](pseudocodigo.py) lee esas líneas del docstring y la API las entrega en `/algoritmos`.
 
 ## Agregar un algoritmo
 
-1. Crear `nuevo.py` en esta carpeta con la firma de `contrato.Algoritmo` y el mismo formato de docstring.
+1. Crear `nuevo.py` en esta carpeta con la firma de `contrato.Algoritmo` y el mismo formato de docstring. Cada aviso al observador lleva el número de la línea del pseudocódigo que ejecuta; las pruebas comprueban que ese número existe y que su texto corresponde al evento.
 2. Registrarlo en `catalogo.py`.
 3. Las pruebas de `tests/unit/test_algoritmos.py` recorren el catálogo: el nuevo algoritmo queda cubierto por el contrato común automáticamente. Si garantiza optimalidad, también se contrasta con el oráculo.

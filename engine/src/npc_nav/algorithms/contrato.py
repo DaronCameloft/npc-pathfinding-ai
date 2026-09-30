@@ -7,6 +7,8 @@ Cada algoritmo es una función con la misma firma:
 - `grafo` solo necesita el método `vecinos(posicion) -> [(vecino, costo), ...]`.
 - `observador` recibe los pasos de la búsqueda (para medir y para dibujar). El
   algoritmo no mide tiempos ni cuenta nodos: eso lo hace la capa de aplicación.
+- Cada aviso indica en `linea` el número de la línea del pseudocódigo (docstring
+  del algoritmo) que se está ejecutando, para que el dashboard la resalte.
 """
 
 from collections.abc import Callable, Iterable
@@ -22,21 +24,21 @@ class Grafo(Protocol):
 
 class Observador(Protocol):
     def frontera(self, posicion: Posicion, g: float, h: float,
-                 padre: Posicion | None) -> None:
+                 padre: Posicion | None, linea: int) -> None:
         """Una celda entra a la frontera o mejora su costo conocido."""
 
     def expandido(self, posicion: Posicion, g: float, h: float,
-                  padre: Posicion | None) -> None:
+                  padre: Posicion | None, linea: int) -> None:
         """Una celda sale de la frontera y se procesan sus vecinos."""
 
 
 class ObservadorNulo:
     """Observador que ignora todos los eventos."""
 
-    def frontera(self, posicion, g, h, padre):
+    def frontera(self, posicion, g, h, padre, linea):
         pass
 
-    def expandido(self, posicion, g, h, padre):
+    def expandido(self, posicion, g, h, padre, linea):
         pass
 
 
