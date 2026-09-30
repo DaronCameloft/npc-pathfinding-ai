@@ -52,6 +52,7 @@ desktop.ini
 _respaldo*.zip
 docs/informe/tb1/link-google-docs.txt
 docs/informe/tb1/*.pdf
+docs/entregables/
 
 # ── Claude Code (config local) ────────────────────
 .claude/
