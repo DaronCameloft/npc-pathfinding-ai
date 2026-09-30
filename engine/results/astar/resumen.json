@@ -3,7 +3,7 @@
   "algoritmo": "A*",
   "clave_algoritmo": "astar",
   "garantiza_optimo": true,
-  "fecha_utc": "2026-09-30T00:30:57.268808+00:00",
+  "fecha_utc": "2026-09-30T05:23:27.595587+00:00",
   "total_casos": 4200,
   "correctos": 4200,
   "fallidos": 0,
@@ -25,8 +25,8 @@
       "optimos": 1360,
       "fallidos": 0,
       "error_maximo": 8.954452823672909e-08,
-      "tiempo_mediana_ms": 103.9634325,
-      "tiempo_p95_ms": 317.174335,
+      "tiempo_mediana_ms": 68.1012,
+      "tiempo_p95_ms": 191.0971,
       "nodos_expandidos_mediana": 7796.0
     },
     {
@@ -43,8 +43,8 @@
       "optimos": 2090,
       "fallidos": 0,
       "error_maximo": 1.0734981970017543e-07,
-      "tiempo_mediana_ms": 118.7820395,
-      "tiempo_p95_ms": 217.201376,
+      "tiempo_mediana_ms": 73.4545,
+      "tiempo_p95_ms": 130.9695,
       "nodos_expandidos_mediana": 9109.5
     },
     {
@@ -61,18 +61,18 @@
       "optimos": 750,
       "fallidos": 0,
       "error_maximo": 3.0863304800732294e-08,
-      "tiempo_mediana_ms": 26.644818,
-      "tiempo_p95_ms": 92.095066,
+      "tiempo_mediana_ms": 16.38395,
+      "tiempo_p95_ms": 57.5998,
       "nodos_expandidos_mediana": 2246.5
     }
   ],
   "entorno": {
-    "python": "3.11.15",
-    "plataforma": "Linux-6.18.44-fc-v50-x86_64-with-glibc2.39",
-    "procesador": "x86_64"
+    "python": "3.13.7",
+    "plataforma": "Windows-11-10.0.26200-SP0",
+    "procesador": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel"
   },
   "sha256_codigo": {
-    "astar.py": "b80537b3c6ae3106a1514d23845f3f39986436c3667c9d8919b321788a696d40",
-    "contrato.py": "4fd746135b209ec47c95d7dbc3de1ded5c6a02bc2a136b52625d71b7f5a27ebf"
+    "astar.py": "85a2eb0172c7f02624d14857efbc6105f99d313c32def704c4aac8e67585508b",
+    "contrato.py": "053080ca047ae166362a16d3111687e5305ade5e7dabff890cf53cbc9e21c836"
   }
 }
