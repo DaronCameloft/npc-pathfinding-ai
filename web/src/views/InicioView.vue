@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { api } from '../core/api'
 import { motor } from '../core/motor'
 import AnimatedNumber from '../shared/AnimatedNumber.vue'
 import HeroArte from '../features/inicio/HeroArte.vue'
@@ -8,6 +9,16 @@ import Icon from '../shared/Icon.vue'
 
 const vertices = computed(() => motor.mapas.reduce((suma, m) => suma + m.vertices, 0))
 const escenarios = computed(() => motor.mapas.reduce((suma, m) => suma + m.escenarios, 0))
+
+const verificados = ref<{ correctos: number; total: number } | null>(null)
+onMounted(async () => {
+  try {
+    const e = await api.evidencia('astar')
+    verificados.value = { correctos: e.correctos, total: e.total_casos }
+  } catch {
+    verificados.value = null
+  }
+})
 
 const pasos = [
   { n: '01', titulo: 'Elige un mapa y un caso', texto: 'Tres mapas reales de Dragon Age: Origins y 4 200 consultas con costo óptimo publicado.', ruta: '/explorar', icono: 'explorar' },
@@ -67,7 +78,8 @@ const pasos = [
       </article>
       <article class="cifra c-lime rise" style="--i: 6">
         <span class="eyebrow">A* verificado</span>
-        <strong class="display num">4 200<small> / 4 200</small></strong>
+        <strong v-if="verificados" class="display num"><AnimatedNumber :value="verificados.correctos" /><small> / {{ verificados.total.toLocaleString('es-PE') }}</small></strong>
+        <strong v-else class="display num">—</strong>
         <p>rutas con el costo óptimo publicado</p>
       </article>
 
