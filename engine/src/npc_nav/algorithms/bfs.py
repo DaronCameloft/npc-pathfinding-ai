@@ -33,11 +33,11 @@ def bfs(grafo, inicio, destino, observador=NULO) -> ResultadoBusqueda:
     g = {inicio: 0.0}                                          # 1.
     padre = {}
     cola = deque([inicio])
-    observador.frontera(inicio, 0.0, 0.0, None)
+    observador.frontera(inicio, 0.0, 0.0, None, 1)
 
     while cola:                                                # 2.
         actual = cola.popleft()                                # 3. FIFO
-        observador.expandido(actual, g[actual], 0.0, padre.get(actual))
+        observador.expandido(actual, g[actual], 0.0, padre.get(actual), 3)
 
         if actual == destino:                                  # 4.
             return ResultadoBusqueda(reconstruir_ruta(padre, inicio, destino), g[actual])
@@ -48,6 +48,6 @@ def bfs(grafo, inicio, destino, observador=NULO) -> ResultadoBusqueda:
             g[vecino] = g[actual] + peso                       # 6.
             padre[vecino] = actual
             cola.append(vecino)                                # 7.
-            observador.frontera(vecino, g[vecino], 0.0, actual)
+            observador.frontera(vecino, g[vecino], 0.0, actual, 7)
 
     return SIN_RUTA                                            # 8.

@@ -38,11 +38,11 @@ def voraz(grafo, inicio, destino, observador=NULO) -> ResultadoBusqueda:
     g = {inicio: 0.0}                                          # 1.
     padre = {}
     frontera = [(h(inicio), next(orden), inicio)]              # (h, orden, nodo)
-    observador.frontera(inicio, 0.0, h(inicio), None)
+    observador.frontera(inicio, 0.0, h(inicio), None, 1)
 
     while frontera:                                            # 2.
         h_actual, _, actual = heappop(frontera)                # 3. menor h
-        observador.expandido(actual, g[actual], h_actual, padre.get(actual))
+        observador.expandido(actual, g[actual], h_actual, padre.get(actual), 3)
 
         if actual == destino:                                  # 4.
             return ResultadoBusqueda(reconstruir_ruta(padre, inicio, destino), g[actual])
@@ -54,6 +54,6 @@ def voraz(grafo, inicio, destino, observador=NULO) -> ResultadoBusqueda:
             padre[vecino] = actual
             h_vecino = h(vecino)
             heappush(frontera, (h_vecino, next(orden), vecino))     # 7.
-            observador.frontera(vecino, g[vecino], h_vecino, actual)
+            observador.frontera(vecino, g[vecino], h_vecino, actual, 7)
 
     return SIN_RUTA                                            # 8.
