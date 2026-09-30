@@ -1,7 +1,5 @@
 """Modelos de entrada de la API. Las posiciones son [fila, columna]."""
 
-from typing import Self
-
 from pydantic import BaseModel, Field, model_validator
 
 Celda = tuple[int, int]
@@ -17,7 +15,7 @@ class ConsultaBase(BaseModel):
                                     description='Celdas bloqueadas para esta petición')
 
     @model_validator(mode='after')
-    def _origen_y_destino(self) -> Self:
+    def _origen_y_destino(self) -> 'ConsultaBase':
         por_caso = self.caso is not None
         por_extremos = self.inicio is not None and self.destino is not None
         if por_caso == por_extremos:
