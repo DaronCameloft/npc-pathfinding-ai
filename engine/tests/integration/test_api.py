@@ -4,8 +4,7 @@ import unittest
 
 try:
     from fastapi.testclient import TestClient
-    from npc_nav.api.main import app
-except ImportError:            # CI o instalación sin el extra [api]
+except ImportError:            # instalación sin el extra [api]
     TestClient = None
 
 
@@ -13,6 +12,8 @@ except ImportError:            # CI o instalación sin el extra [api]
 class ApiTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # Fuera del try: un error al importar la API debe fallar, no saltar las pruebas.
+        from npc_nav.api.main import app
         cls.cliente = TestClient(app)
 
     def buscar(self, **cuerpo):
