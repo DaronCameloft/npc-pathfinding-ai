@@ -162,7 +162,6 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
   <section class="explorar">
     <header class="cabecera rise" style="--i: 0">
       <div>
-        <p class="eyebrow">Laboratorio</p>
         <h1 class="display pagina-titulo titulo">Explorar <em>paso a paso</em></h1>
         <p class="pagina-sub">Un algoritmo, celda por celda, con su pseudocódigo en vivo.</p>
       </div>

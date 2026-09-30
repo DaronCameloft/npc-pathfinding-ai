@@ -12,7 +12,6 @@ const equipo = [
 <template>
   <section class="acerca">
     <header class="rise" style="--i: 0">
-      <p class="eyebrow">Acerca</p>
       <h1 class="display titulo">Un laboratorio para <em>ver pensar</em> a los algoritmos</h1>
       <p class="lead muted">
         Trabajo del curso 1ACC0184 Complejidad Algorítmica (UPC, 2026-20). Caso 10: <em>Juegos y AI (pathfinding)</em>.

@@ -93,7 +93,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', alTeclado))
   <section class="comparar">
     <header class="cabecera rise" style="--i: 0">
       <div>
-        <p class="eyebrow">Laboratorio</p>
         <h1 class="display pagina-titulo titulo">Comparar <em>cuatro caminos</em></h1>
         <p class="pagina-sub">La misma consulta, cuatro algoritmos: costo, celdas y tiempo.</p>
       </div>
