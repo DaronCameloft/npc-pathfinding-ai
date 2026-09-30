@@ -1,5 +1,5 @@
 import type {
-  AlgoritmoInfo, Consulta, Ejecucion, MapaDetalle, MapaResumen, PaginaEscenarios,
+  AlgoritmoInfo, Consulta, Ejecucion, Evidencia, MapaDetalle, MapaResumen, PaginaEscenarios,
 } from './types'
 
 export const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:8000').replace(/\/$/, '')
@@ -51,4 +51,5 @@ export const api = {
     pedir<Ejecucion>('/buscar', enviar(consulta)),
   comparar: (consulta: Consulta & { algoritmos?: string[] }) =>
     pedir<Ejecucion[]>('/comparar', enviar(consulta)),
+  evidencia: (clave: string) => pedir<Evidencia>(`/evidencia/${encodeURIComponent(clave)}`),
 }

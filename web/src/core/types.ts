@@ -83,3 +83,42 @@ export interface Consulta {
   traza?: boolean
   bloqueadas?: Posicion[]
 }
+
+export interface EvidenciaMapa {
+  mapa: string
+  alto: number
+  ancho: number
+  vertices: number
+  aristas: number
+  componentes: number
+  escenarios: number
+  correctos: number
+  optimos: number
+  fallidos: number
+  error_maximo: number | null
+  tiempo_mediana_ms: number
+  tiempo_p95_ms: number
+  nodos_expandidos_mediana: number
+}
+
+/** Resultado de `npc-nav verificar` para un algoritmo. */
+export interface Evidencia {
+  estado: string
+  algoritmo: string
+  clave_algoritmo: string
+  garantiza_optimo: boolean
+  fecha_utc: string
+  total_casos: number
+  correctos: number
+  fallidos: number
+  tolerancia_absoluta: number
+  criterio: string
+  medicion: string
+  entorno: { python: string; plataforma: string; procesador: string }
+  sha256_codigo: Record<string, string>
+  error_maximo: number | null
+  estados: Record<string, number>
+  mapas: EvidenciaMapa[]
+  /** Series paralelas: un punto por escenario. */
+  puntos: { mapas: string[]; mapa: number[]; costo: number[]; expandidos: number[]; tiempo_ms: number[] }
+}
