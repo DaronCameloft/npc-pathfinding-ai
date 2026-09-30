@@ -1,0 +1,78 @@
+{
+  "estado": "aprobado",
+  "algoritmo": "A*",
+  "clave_algoritmo": "astar",
+  "garantiza_optimo": true,
+  "fecha_utc": "2026-09-30T05:23:27.595587+00:00",
+  "total_casos": 4200,
+  "correctos": 4200,
+  "fallidos": 0,
+  "tolerancia_absoluta": 1e-05,
+  "criterio": "Ruta legal, extremos correctos y costo coincidente con la referencia dentro de la tolerancia (para algoritmos no óptimos basta una ruta legal).",
+  "medicion": "Una ejecución por escenario, sin traza, lectura ni verificación de ruta dentro del tiempo medido. Los tiempos son descriptivos: no demuestran rendimiento en tiempo real ni ventaja frente a otro algoritmo.",
+  "mapas": [
+    {
+      "mapa": "brc100d.map",
+      "alto": 492,
+      "ancho": 512,
+      "vertices": 31023,
+      "aristas": 115524,
+      "componentes": 1,
+      "escenarios": 1360,
+      "sha256_mapa": "36bac0dc23b3d25bb1b25e4d1c6aab5b4736e83d72f59e796081f98fd30261aa",
+      "sha256_escenarios": "2ca44d1051cdb5a30b95b7a00195b93066ca149bdf8ada440b6056d70a721ac3",
+      "correctos": 1360,
+      "optimos": 1360,
+      "fallidos": 0,
+      "error_maximo": 8.954452823672909e-08,
+      "tiempo_mediana_ms": 68.1012,
+      "tiempo_p95_ms": 191.0971,
+      "nodos_expandidos_mediana": 7796.0
+    },
+    {
+      "mapa": "brc201d.map",
+      "alto": 388,
+      "ancho": 391,
+      "vertices": 25645,
+      "aristas": 92042,
+      "componentes": 167,
+      "escenarios": 2090,
+      "sha256_mapa": "7a5d352eaf59db18950b6fabe2f0e11e8b11dfdf4dc9e8956c7efdb43012901b",
+      "sha256_escenarios": "e480ad7969ac1f15e585a39c85b530a5392ee9fa4f3fb2156e14bd4872ec5af1",
+      "correctos": 2090,
+      "optimos": 2090,
+      "fallidos": 0,
+      "error_maximo": 1.0734981970017543e-07,
+      "tiempo_mediana_ms": 73.4545,
+      "tiempo_p95_ms": 130.9695,
+      "nodos_expandidos_mediana": 9109.5
+    },
+    {
+      "mapa": "den011d.map",
+      "alto": 167,
+      "ancho": 247,
+      "vertices": 14506,
+      "aristas": 52710,
+      "componentes": 1,
+      "escenarios": 750,
+      "sha256_mapa": "04963d72d7ced037a734ef24609ce669bc5ffcf29cc5b73368d0604b8b8a54b6",
+      "sha256_escenarios": "c79c86270f6aec692ca54786bf1ef37fe3f6a7482b3fb66765c19f18923c70da",
+      "correctos": 750,
+      "optimos": 750,
+      "fallidos": 0,
+      "error_maximo": 3.0863304800732294e-08,
+      "tiempo_mediana_ms": 16.38395,
+      "tiempo_p95_ms": 57.5998,
+      "nodos_expandidos_mediana": 2246.5
+    }
+  ],
+  "entorno": {
+    "python": "3.13.7",
+    "plataforma": "Windows-11-10.0.26200-SP0",
+    "procesador": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel"
+  },
+  "sha256_codigo": {
+    "astar.py": "85a2eb0172c7f02624d14857efbc6105f99d313c32def704c4aac8e67585508b",
+    "contrato.py": "053080ca047ae166362a16d3111687e5305ade5e7dabff890cf53cbc9e21c836"
+  }
+}

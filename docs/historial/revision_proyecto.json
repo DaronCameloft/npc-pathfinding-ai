@@ -1,0 +1,31 @@
+{
+  "estado": "aprobado",
+  "fecha_utc": "2026-09-28T03:35:04.012850+00:00",
+  "casos_astar": 4200,
+  "csv_con_consultas_unicas": true,
+  "hashes_datos_y_codigo_coinciden": true,
+  "pruebas_unitarias": 27,
+  "enlaces_locales_validos": 14,
+  "figuras_png_con_cabecera_valida": 9,
+  "paquete_instalado_probado": "results/tmp/installed/npc_pathfinding/astar.py; caso den011d 375",
+  "ejemplo": {
+    "mapa": "den011d.map",
+    "indice": 375,
+    "costo": 148.254833995939,
+    "eventos": 6090
+  },
+  "inventario_por_extension": {
+    "": 1,
+    ".md": 10,
+    ".toml": 1,
+    ".json": 4,
+    ".py": 14,
+    ".map": 3,
+    ".scen": 3,
+    ".pdf": 2,
+    ".txt": 2,
+    ".png": 9,
+    ".csv": 1
+  },
+  "alcance": "Integridad y consistencia de los archivos del proyecto. Las figuras no se regeneraron; web y Unity siguen pendientes."
+}
