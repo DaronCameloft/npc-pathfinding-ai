@@ -41,14 +41,26 @@ python -m unittest discover -s tests -t .
 npc-nav comparar --mapa den011d --caso 375
 ```
 
+Para ver el dashboard (necesita la API y Node 20 o superior):
+
+```powershell
+cd engine
+python -m pip install -e ".[api]"
+uvicorn npc_nav.api.main:app --reload      # API en http://localhost:8000  (documentación en /docs)
+
+cd ..\web                                   # en otra terminal
+npm install
+npm run dev                                 # dashboard en http://localhost:5173
+```
+
 ## Estado
 
 | Componente | Estado |
 |---|---|
 | Motor, dominio y dataset | Listo: 3 mapas, 71 174 vértices, 4 200 escenarios validados |
 | BFS, Dijkstra, voraz, A*, UFDS | Listos y probados; A* coincide con los 4 200 óptimos publicados |
-| API (FastAPI) | `feature/engine-api` |
-| Dashboard web | `feature/web-dashboard` — entrega del 4 de octubre |
+| API (FastAPI) | Lista: búsqueda, comparación, mapas, escenarios y evidencia de verificación; `render.yaml` para Render |
+| Dashboard web (ArcadiaLabs) | Listo: Inicio, Explorar, Comparar, Resultados y Acerca; pendiente su despliegue en Vercel (entrega del 4 de octubre) |
 | D* Lite y obstáculos dinámicos | Hito 2 |
 | Unity | Hito 2 |
 
