@@ -88,7 +88,7 @@ watch(() => [props.activa, props.lineas], medir)
   inset: 0 0 auto 0;
   border-radius: 11px;
   background: var(--violet-soft);
-  box-shadow: inset 3px 0 0 var(--violet), 0 8px 18px -12px rgba(106, 63, 216, 0.6);
+  box-shadow: inset 3px 0 0 var(--violet);
   opacity: 0;
   transition: transform 0.5s var(--spring-soft), height 0.35s var(--ease-out), opacity 0.3s;
 }

@@ -77,7 +77,7 @@ const equipo = [
 .algo h3 { font-size: 23px; }
 .tecnica { margin: 4px 0 12px; font-size: 12.5px; }
 dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
-dl div { padding: 9px 12px; border-radius: 12px; background: rgba(60, 40, 20, 0.045); }
+dl div { padding: 9px 12px; border-radius: 12px; background: var(--field); }
 dt { color: var(--ink-3); font-size: 10.5px; }
 dd { margin: 1px 0 0; font-size: 13px; font-weight: 500; }
 .doble { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 4px; }
@@ -93,7 +93,7 @@ dd { margin: 1px 0 0; font-size: 13px; font-weight: 500; }
   height: 46px;
   flex: none;
   border-radius: 16px;
-  background: linear-gradient(135deg, #f8cf7c, #e9a93c);
+  background: var(--cream);
   font-size: 19px;
   color: var(--ink);
 }

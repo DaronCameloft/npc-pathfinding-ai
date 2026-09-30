@@ -94,7 +94,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', alTeclado))
     <header class="cabecera rise" style="--i: 0">
       <div>
         <p class="eyebrow">Laboratorio</p>
-        <h1 class="display titulo">Comparar <em>cuatro caminos</em></h1>
+        <h1 class="display pagina-titulo titulo">Comparar <em>cuatro caminos</em></h1>
+        <p class="pagina-sub">La misma consulta, cuatro algoritmos: costo, celdas y tiempo.</p>
       </div>
       <div class="selectores">
         <CasoSelector v-model="caso" :total="totalCasos" />
@@ -166,13 +167,14 @@ onBeforeUnmount(() => window.removeEventListener('keydown', alTeclado))
 
 <style scoped>
 .comparar { position: relative; display: flex; flex-direction: column; gap: 14px; height: 100%; min-height: 680px; }
-.cabecera { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-.titulo { margin-top: 2px; font-size: 36px; }
+.cabecera { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.titulo { margin-top: 2px; }
 .selectores { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 
 .cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 18px; flex: 1; min-height: 0; }
-.izquierda { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
-.rejilla { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px; flex: 1; min-height: 0; }
+.izquierda { display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: auto; }
+.izquierda > :last-child { position: sticky; bottom: 0; flex: none; }
+.rejilla { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(2, minmax(236px, 1fr)); gap: 14px; flex: 1; min-height: 0; }
 .lateral { display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: auto; padding: 0 2px 2px 0; }
 .lateral > * { flex: none; }
 .nota { font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
@@ -188,13 +190,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', alTeclado))
   color: var(--ink-2);
   font-weight: 500;
   border-radius: 24px;
-  background: rgba(251, 246, 236, 0.66);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.78);
 }
 .spinner {
   width: 26px;
   height: 26px;
-  border: 3px solid rgba(60, 40, 20, 0.15);
+  border: 3px solid var(--line-strong);
   border-top-color: var(--violet);
   border-radius: 50%;
   animation: girar 0.8s linear infinite;

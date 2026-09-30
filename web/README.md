@@ -1,4 +1,4 @@
-# web — Arcadia Ariadna Labs (Vue 3 + Vite + TypeScript)
+# web — ArcadiaLabs (Vue 3 + Vite + TypeScript)
 
 Dashboard que muestra la exploración de cada algoritmo paso a paso, la ruta final y las métricas comparadas. No contiene lógica de búsqueda: todo viene de la API del motor.
 
@@ -46,7 +46,7 @@ web/src/
 - El reloj de animación es independiente de `tiempo_ms`, que se muestra tal cual lo mide el motor.
 - Las posiciones llegan como `[fila, columna]`.
 - Mientras la API de Render despierta, la barra lateral muestra «Despertando el motor…».
-- Diseño: tipografía Newsreader (titulares), Poppins (interfaz) y JetBrains Mono (pseudocódigo); tema claro; movimiento con curvas de resorte que respeta `prefers-reduced-motion`.
+- Diseño: tipografía Newsreader (titulares), Poppins (interfaz) y JetBrains Mono (pseudocódigo); superficies blancas con tarjetas, crema plano como color de marca y vidrio esmerilado solo en la barra lateral; sin degradados; movimiento con curvas de resorte que respeta `prefers-reduced-motion`.
 
 ## Despliegue
 

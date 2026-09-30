@@ -1,19 +1,26 @@
 :root {
-  /* Marca: Arcadia Ariadna Labs */
-  --ink: #1d1a16;
-  --ink-2: #4a4238;
-  --ink-3: #7a6f62;
-  --ink-4: #a89c8c;
-  --paper: #fbf6ec;
-  --line: rgba(60, 40, 20, 0.1);
-  --line-strong: rgba(60, 40, 20, 0.18);
+  /* Marca: ArcadiaLabs — blanco, tinta y un crema amarillo plano (sin degradados) */
+  --ink: #1b1915;
+  --ink-2: #47433b;
+  --ink-3: #78736a;
+  --ink-4: #a8a399;
+  --line: rgba(27, 25, 21, 0.08);
+  --line-strong: rgba(27, 25, 21, 0.14);
 
-  --gold: #e9a93c;
+  --cream: #f4e7c3;
+  --cream-soft: #faf3df;
+  --cream-deep: #ecdcae;
+  --page: #f2e8cc; /* fondo exterior, tras la barra de vidrio */
+  --panel: #f7f6f2; /* superficie del contenido */
+  --card: #ffffff;
+  --field: #f1efe9; /* campos, pistas y segmentos */
+
+  --gold: #e3a52d;
   --gold-soft: #f6c46b;
   --violet: #6a3fd8;
   --violet-soft: #ece5fb;
-  --lime: #c6f24e;
-  --lime-ink: #2b3a05;
+  --lime: #d4f56a;
+  --lime-ink: #2e3d05;
   --sky: #9cc3de;
   --danger: #c0392b;
   --ok: #2e8b57;
@@ -24,16 +31,11 @@
   --trace-ruta: #c0392b;
   --trace-inicio: #2e8b57;
 
-  /* Vidrio */
-  --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.5));
-  --glass-bg-strong: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
-  --glass-border: rgba(255, 255, 255, 0.8);
-  --glass-shadow: 0 1px 0 rgba(255, 255, 255, 0.95) inset, 0 24px 48px -24px rgba(94, 60, 20, 0.35),
-    0 2px 8px rgba(94, 60, 20, 0.06);
-  --blur: blur(28px) saturate(1.7);
+  --shadow-card: 0 1px 2px rgba(27, 25, 21, 0.04);
+  --shadow-float: 0 8px 24px -12px rgba(27, 25, 21, 0.18), 0 1px 2px rgba(27, 25, 21, 0.06);
 
-  --r-xl: 32px;
-  --r-lg: 24px;
+  --r-xl: 30px;
+  --r-lg: 22px;
   --r-md: 16px;
   --r-sm: 11px;
 

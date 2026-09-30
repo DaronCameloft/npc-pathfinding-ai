@@ -33,10 +33,8 @@ function ciclarVelocidad() {
       <button type="button" class="ic" aria-label="Reiniciar" @click="emit('reiniciar')"><Icon name="reiniciar" :size="16" /></button>
       <button type="button" class="ic" aria-label="Paso atrás" @click="emit('paso', -1)"><Icon name="anterior" :size="16" /></button>
       <button type="button" class="play" :aria-label="reproduciendo ? 'Pausar' : 'Reproducir'" @click="emit('alternar')">
-        <Transition name="giro" mode="out-in">
-          <Icon v-if="reproduciendo" key="p" name="pausa" :size="20" :stroke="2" />
-          <Icon v-else key="r" name="play" :size="20" :stroke="2" />
-        </Transition>
+        <span class="glifo" :class="{ visible: reproduciendo }"><Icon name="pausa" :size="20" :stroke="2" /></span>
+        <span class="glifo" :class="{ visible: !reproduciendo }"><Icon name="play" :size="20" :stroke="2" /></span>
       </button>
       <button type="button" class="ic" aria-label="Paso adelante" @click="emit('paso', 1)"><Icon name="siguiente" :size="16" /></button>
       <button type="button" class="ic" aria-label="Ir al final" @click="emit('final')"><Icon name="bandera" :size="16" /></button>
@@ -81,7 +79,7 @@ function ciclarVelocidad() {
   color: var(--ink-2);
   transition: background 0.2s, transform 0.35s var(--spring);
 }
-.ic:hover { background: rgba(60, 40, 20, 0.08); }
+.ic:hover { background: rgba(27, 25, 21, 0.06); }
 .ic:active { transform: scale(0.86); }
 .play {
   display: grid;
@@ -92,14 +90,21 @@ function ciclarVelocidad() {
   border-radius: 50%;
   color: #fff;
   background: var(--ink);
-  box-shadow: 0 10px 20px -8px rgba(29, 26, 22, 0.6), 0 1px 0 rgba(255, 255, 255, 0.25) inset;
   transition: transform 0.4s var(--spring), background 0.2s;
 }
 .play:hover { background: #2f2a24; }
 .play:active { transform: scale(0.9); }
-.giro-enter-active, .giro-leave-active { transition: transform 0.22s var(--ease-out), opacity 0.22s; }
-.giro-enter-from { transform: scale(0.4) rotate(-40deg); opacity: 0; }
-.giro-leave-to { transform: scale(0.4) rotate(40deg); opacity: 0; }
+.play { position: relative; }
+.glifo {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.5) rotate(-45deg);
+  transition: opacity 0.2s, transform 0.35s var(--spring);
+}
+.glifo.visible { opacity: 1; transform: none; }
 
 .linea { flex: 1; min-width: 80px; display: block; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -115,7 +120,7 @@ input[type='range'] {
 input[type='range']::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--violet) var(--p), rgba(60, 40, 20, 0.12) var(--p));
+  background: linear-gradient(90deg, var(--violet) var(--p), var(--field) var(--p));
 }
 input[type='range']::-webkit-slider-thumb {
   appearance: none;
@@ -125,11 +130,11 @@ input[type='range']::-webkit-slider-thumb {
   border-radius: 50%;
   background: #fff;
   border: 1px solid var(--line-strong);
-  box-shadow: 0 4px 10px -2px rgba(29, 26, 22, 0.35);
+  box-shadow: 0 2px 6px rgba(27, 25, 21, 0.2);
   transition: transform 0.3s var(--spring);
 }
 input[type='range']:active::-webkit-slider-thumb { transform: scale(1.25); }
-input[type='range']::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(60, 40, 20, 0.12); }
+input[type='range']::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(27, 25, 21, 0.1); }
 input[type='range']::-moz-range-progress { height: 6px; border-radius: 999px; background: var(--violet); }
 input[type='range']::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 1px solid var(--line-strong); }
 
@@ -139,8 +144,7 @@ input[type='range']::-moz-range-thumb { width: 16px; height: 16px; border-radius
   min-width: 52px;
   padding: 7px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid var(--line);
+  background: var(--field);
   font-size: 12.5px;
   font-weight: 600;
   transition: transform 0.35s var(--spring);

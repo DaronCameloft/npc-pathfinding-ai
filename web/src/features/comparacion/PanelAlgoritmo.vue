@@ -80,14 +80,13 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 h3 { font-size: 21px; }
 .lienzo {
   flex: 1;
-  min-height: 150px;
+  min-height: 96px;
   overflow: hidden;
   border-radius: 14px;
-  background: linear-gradient(180deg, #efe4d0, #e6d8be);
-  box-shadow: inset 0 0 0 1px rgba(60, 40, 20, 0.08);
+  background: var(--field);
 }
 dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
-dl div { min-width: 0; padding: 7px 10px; border-radius: 12px; background: rgba(60, 40, 20, 0.045); }
+dl div { min-width: 0; padding: 7px 10px; border-radius: 12px; background: var(--field); }
 dt { color: var(--ink-3); font-size: 10.5px; }
 dd { margin: 1px 0 0; font-size: 14px; font-weight: 500; white-space: nowrap; }
 dd.mono { font-size: 12px; padding-top: 2px; }

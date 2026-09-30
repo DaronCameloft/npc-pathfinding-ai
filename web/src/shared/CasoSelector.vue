@@ -38,7 +38,7 @@ function fijar(n: number) {
   padding: 3px 6px;
   border: 1px solid transparent;
   border-radius: 9px;
-  background: rgba(60, 40, 20, 0.06);
+  background: var(--field);
   font-size: 15px;
   font-weight: 600;
   text-align: center;
@@ -52,9 +52,9 @@ function fijar(n: number) {
   height: 30px;
   border-radius: 50%;
   color: var(--ink-2);
-  background: rgba(60, 40, 20, 0.06);
+  background: var(--field);
   transition: background 0.2s, transform 0.35s var(--spring);
 }
-.mini:hover { background: rgba(60, 40, 20, 0.12); }
+.mini:hover { background: rgba(27, 25, 21, 0.1); }
 .mini:active { transform: scale(0.86); }
 </style>

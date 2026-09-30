@@ -92,7 +92,7 @@ const veredicto = computed(() => {
 ul { display: grid; gap: 5px; margin: 0; padding: 0; list-style: none; }
 li { display: grid; grid-template-columns: 62px 1fr 64px; align-items: center; gap: 10px; font-size: 12px; color: var(--ink-2); }
 .val { text-align: right; font-size: 11.5px; }
-.pista { height: 8px; border-radius: 999px; background: rgba(60, 40, 20, 0.08); overflow: hidden; }
+.pista { height: 8px; border-radius: 999px; background: var(--field); overflow: hidden; }
 .pista i {
   display: block;
   height: 100%;
@@ -101,7 +101,7 @@ li { display: grid; grid-template-columns: 62px 1fr 64px; align-items: center; g
   animation: crecer 1s var(--ease-out) both;
   transform-origin: left;
 }
-li.destacada .pista i { background: linear-gradient(90deg, var(--gold-soft), var(--gold)); }
+li.destacada .pista i { background: var(--gold); }
 li.destacada { color: var(--ink); font-weight: 600; }
 @keyframes crecer { from { transform: scaleX(0); } }
 .veredicto {
@@ -109,8 +109,8 @@ li.destacada { color: var(--ink); font-weight: 600; }
   gap: 10px;
   padding: 12px 14px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #fbeacb, #f6dcae);
-  color: #5c3e0c;
+  background: var(--cream);
+  color: #5b4310;
   font-size: 13px;
   line-height: 1.5;
 }

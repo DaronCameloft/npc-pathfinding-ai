@@ -163,7 +163,8 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
     <header class="cabecera rise" style="--i: 0">
       <div>
         <p class="eyebrow">Laboratorio</p>
-        <h1 class="display titulo">Explorar <em>paso a paso</em></h1>
+        <h1 class="display pagina-titulo titulo">Explorar <em>paso a paso</em></h1>
+        <p class="pagina-sub">Un algoritmo, celda por celda, con su pseudocódigo en vivo.</p>
       </div>
       <div class="selectores">
         <Segmented v-model="mapaClave" :opciones="opcionesMapa" etiqueta="Mapa" />
@@ -284,14 +285,14 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
   height: 100%;
   min-height: 640px;
 }
-.cabecera { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-.titulo { margin-top: 2px; font-size: 36px; }
+.cabecera { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.titulo { margin-top: 2px; }
 .selectores { display: flex; gap: 12px; flex-wrap: wrap; }
 
 .cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 18px; flex: 1; min-height: 0; }
 .mapa-card { display: flex; flex-direction: column; gap: 12px; min-height: 0; padding: 16px 18px 16px; }
 .mapa-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-.leyenda { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: flex; gap: 12px; margin: 0; padding: 7px 12px; list-style: none; font-size: 11.5px; color: var(--ink-2); flex-wrap: wrap; border-radius: 12px; background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.8); }
+.leyenda { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: flex; gap: 12px; margin: 0; padding: 7px 12px; list-style: none; font-size: 11.5px; color: var(--ink-2); flex-wrap: wrap; border-radius: 12px; background: #fff; border: 1px solid var(--line); }
 .leyenda li { display: flex; align-items: center; gap: 6px; }
 .leyenda i { width: 10px; height: 10px; border-radius: 50%; }
 .leyenda i.hueco { background: #fffaf0; border: 2px solid var(--ink); }
@@ -299,7 +300,7 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
 .acciones { display: flex; gap: 8px; }
 .btn { padding: 7px 14px; font-size: 13px; }
 .btn.ligero { color: var(--ink-3); }
-.btn.activo { background: var(--violet); color: #fff; border-color: transparent; box-shadow: 0 8px 18px -8px rgba(106, 63, 216, 0.7); }
+.btn.activo { background: var(--violet); color: #fff; border-color: transparent; }
 
 .lienzo {
   position: relative;
@@ -307,10 +308,7 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
   min-height: 260px;
   overflow: hidden;
   border-radius: var(--r-md);
-  background:
-    radial-gradient(600px 300px at 20% 0%, rgba(255, 230, 180, 0.55), transparent 70%),
-    linear-gradient(180deg, #efe4d0, #e6d8be);
-  box-shadow: inset 0 0 0 1px rgba(60, 40, 20, 0.08), inset 0 2px 12px rgba(94, 60, 20, 0.1);
+  background: var(--field);
 }
 .velo {
   position: absolute;
@@ -321,13 +319,12 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
   gap: 12px;
   color: var(--ink-2);
   font-weight: 500;
-  background: rgba(244, 236, 220, 0.72);
-  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.78);
 }
 .spinner {
   width: 26px;
   height: 26px;
-  border: 3px solid rgba(60, 40, 20, 0.15);
+  border: 3px solid var(--line-strong);
   border-top-color: var(--violet);
   border-radius: 50%;
   animation: girar 0.8s linear infinite;
@@ -363,7 +360,7 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
 .costo-valor { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .costo-valor strong { font-size: 40px; font-weight: 400; line-height: 1; letter-spacing: -0.03em; }
 .datos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0; }
-.datos div { padding: 8px 10px; border-radius: 12px; background: rgba(60, 40, 20, 0.045); min-width: 0; }
+.datos div { padding: 8px 10px; border-radius: 12px; background: var(--field); min-width: 0; }
 .datos dt { color: var(--ink-3); font-size: 10.5px; white-space: nowrap; }
 .datos dd { margin: 2px 0 0; font-size: 15px; font-weight: 500; white-space: nowrap; }
 .datos small { font-size: 10.5px; font-weight: 400; color: var(--ink-4); }

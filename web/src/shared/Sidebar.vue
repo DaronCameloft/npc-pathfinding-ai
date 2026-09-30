@@ -51,13 +51,10 @@ const texto = computed(() => {
 </script>
 
 <template>
-  <aside class="sidebar">
-    <RouterLink to="/" class="marca" aria-label="Arcadia Ariadna Labs">
+  <aside class="sidebar frost">
+    <RouterLink to="/" class="marca" aria-label="ArcadiaLabs">
       <BrandMark />
-      <span class="marca-texto">
-        <strong class="display">Ariadna</strong>
-        <small class="eyebrow">Arcadia Labs</small>
-      </span>
+      <strong class="display marca-texto">Arcadia<em>Labs</em></strong>
     </RouterLink>
 
     <nav ref="navegacion" class="nav" aria-label="Principal">
@@ -73,7 +70,7 @@ const texto = computed(() => {
       </RouterLink>
     </nav>
 
-    <button class="estado glass" :class="motor.estado" type="button" @click="motor.estado === 'sin_conexion' && reintentarConexion()">
+    <button class="estado" :class="motor.estado" type="button" @click="motor.estado === 'sin_conexion' && reintentarConexion()">
       <span class="punto" />
       <span class="estado-texto">
         <strong>{{ texto.titulo }}</strong>
@@ -88,29 +85,17 @@ const texto = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 26px;
-  width: 248px;
+  width: 244px;
   flex: none;
-  padding: 24px 16px 18px;
-  border-right: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.08));
+  padding: 22px 14px 14px;
+  border-radius: var(--r-xl);
 }
-.marca {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 8px;
-}
-.marca-texto { display: grid; line-height: 1.05; }
-.marca-texto strong { font-size: 25px; font-weight: 500; }
-.marca-texto small { font-size: 9.5px; letter-spacing: 0.2em; }
+.marca { display: flex; align-items: center; gap: 11px; padding: 0 8px; }
+.marca-texto { font-size: 25px; font-weight: 500; letter-spacing: -0.03em; }
+.marca-texto em { font-weight: 400; color: var(--ink-2); }
 
-.nav {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.grupo { margin: 14px 12px 6px; }
+.nav { position: relative; display: flex; flex-direction: column; gap: 2px; }
+.grupo { margin: 16px 12px 6px; font-size: 10.5px; }
 .grupo:first-of-type { margin-top: 0; }
 .enlace {
   position: relative;
@@ -134,8 +119,7 @@ const texto = computed(() => {
   z-index: 0;
   inset: 0 0 auto 0;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 1px 0 #fff inset, 0 8px 18px -10px rgba(94, 60, 20, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.9);
+  background: #fff;
   opacity: 0;
   transition: transform 0.6s var(--spring), height 0.4s var(--ease-out), opacity 0.3s;
 }
@@ -148,6 +132,8 @@ const texto = computed(() => {
   margin-top: auto;
   padding: 12px 14px;
   border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   text-align: left;
   transition: transform 0.4s var(--spring);
 }
@@ -155,23 +141,17 @@ const texto = computed(() => {
 .estado-texto { display: grid; line-height: 1.25; }
 .estado-texto strong { font-size: 12.5px; font-weight: 600; }
 .estado-texto small { color: var(--ink-3); font-size: 11px; }
-.punto {
-  width: 9px;
-  height: 9px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--ink-4);
-}
-.listo .punto { background: #37b866; box-shadow: 0 0 0 4px rgba(55, 184, 102, 0.2); }
+.punto { width: 9px; height: 9px; flex: none; border-radius: 50%; background: var(--ink-4); }
+.listo .punto { background: #37b866; }
 .despertando .punto, .conectando .punto { background: var(--gold); animation: latido 1.3s ease-in-out infinite; }
 .sin_conexion .punto { background: var(--danger); }
 @keyframes latido {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(233, 169, 60, 0.5); }
-  50% { box-shadow: 0 0 0 7px rgba(233, 169, 60, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(227, 165, 45, 0.5); }
+  50% { box-shadow: 0 0 0 7px rgba(227, 165, 45, 0); }
 }
 
 @media (max-width: 900px) {
-  .sidebar { width: 76px; padding-inline: 10px; }
+  .sidebar { width: 72px; padding-inline: 10px; }
   .marca-texto, .enlace span, .enlace em, .grupo, .estado-texto { display: none; }
   .enlace { justify-content: center; padding-inline: 0; }
   .estado { justify-content: center; }

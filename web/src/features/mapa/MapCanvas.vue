@@ -46,7 +46,7 @@ const emit = defineEmits<{
 }>()
 
 const COLOR_TERRENO: Record<string, string> = {
-  '.': '#fbf6ea', G: '#fbf6ea', '@': '#a3927b', O: '#a3927b', T: '#a9b98f', S: '#c2bd8c', W: '#a9c6d8',
+  '.': '#ffffff', G: '#ffffff', '@': '#bdb4a3', O: '#bdb4a3', T: '#bccbaa', S: '#cfcb9f', W: '#b5cfe0',
 }
 const COLOR_EXPANDIDO = '#9cc3de'
 const COLOR_FRONTERA = '#f6c46b'
@@ -185,21 +185,12 @@ function dibujar() {
   ctx.scale(v.k, v.k)
   ctx.imageSmoothingEnabled = v.k < 1
 
-  // sombra suave bajo el mapa
-  ctx.save()
-  ctx.shadowColor = 'rgba(94, 60, 20, 0.28)'
-  ctx.shadowBlur = 26
-  ctx.shadowOffsetY = 8
-  ctx.fillStyle = '#a3927b'
-  ctx.fillRect(0, 0, props.mapa.ancho, props.mapa.alto)
-  ctx.restore()
-
   ctx.drawImage(terreno, 0, 0)
   ctx.drawImage(exploracion, 0, 0)
 
   if (v.k >= 9) {
     ctx.lineWidth = 1 / v.k
-    ctx.strokeStyle = 'rgba(60, 40, 20, 0.07)'
+    ctx.strokeStyle = 'rgba(27, 25, 21, 0.07)'
     ctx.beginPath()
     const c0 = Math.max(0, Math.floor(-v.x / v.k))
     const c1 = Math.min(props.mapa.ancho, Math.ceil((ancho.value - v.x) / v.k))
@@ -457,6 +448,6 @@ canvas:active { cursor: grabbing; }
   color: var(--ink-2);
   transition: background 0.2s, transform 0.3s var(--spring);
 }
-.zoom button:hover { background: rgba(60, 40, 20, 0.08); }
+.zoom button:hover { background: rgba(27, 25, 21, 0.06); }
 .zoom button:active { transform: scale(0.88); }
 </style>

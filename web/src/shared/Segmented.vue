@@ -53,8 +53,7 @@ watch(() => [props.modelValue, props.opciones.length], medir)
   display: inline-flex;
   padding: 4px;
   border-radius: 999px;
-  background: rgba(60, 40, 20, 0.07);
-  box-shadow: inset 0 1px 2px rgba(60, 40, 20, 0.08);
+  background: var(--field);
 }
 .pulgar {
   position: absolute;
@@ -63,7 +62,7 @@ watch(() => [props.modelValue, props.opciones.length], medir)
   left: 0;
   border-radius: 999px;
   background: #fff;
-  box-shadow: 0 1px 0 #fff inset, 0 6px 14px -6px rgba(94, 60, 20, 0.5), 0 0 0 1px rgba(60, 40, 20, 0.05);
+  box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(27, 25, 21, 0.06);
   opacity: 0;
   transition: transform 0.55s var(--spring), width 0.4s var(--ease-out), opacity 0.2s;
 }

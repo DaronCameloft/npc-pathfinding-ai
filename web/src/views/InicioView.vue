@@ -18,7 +18,7 @@ const pasos = [
   <section class="inicio">
     <article class="hero rise" style="--i: 0">
       <div class="hero-texto">
-        <p class="eyebrow">Arcadia Labs · Complejidad Algorítmica</p>
+        <p class="eyebrow">ArcadiaLabs · Complejidad Algorítmica</p>
         <h1 class="display">Encuentra el camino,<br /><em>entiende el algoritmo.</em></h1>
         <p class="lead">
           Un laboratorio visual para NPCs que navegan mapas reales: compara búsquedas, sigue cada decisión
@@ -33,7 +33,7 @@ const pasos = [
       <svg class="hilo" viewBox="0 0 420 300" fill="none" aria-hidden="true">
         <defs>
           <pattern id="malla" width="20" height="20" patternUnits="userSpaceOnUse">
-            <circle cx="1.5" cy="1.5" r="1.1" fill="rgba(29,26,22,.16)" />
+            <circle cx="1.5" cy="1.5" r="1.1" fill="rgba(27,25,21,.18)" />
           </pattern>
         </defs>
         <rect width="420" height="300" fill="url(#malla)" />
@@ -91,16 +91,13 @@ const pasos = [
   padding: 44px 48px;
   overflow: hidden;
   border-radius: var(--r-xl);
-  background:
-    radial-gradient(520px 320px at 88% 10%, rgba(255, 255, 255, 0.75), transparent 70%),
-    linear-gradient(120deg, #fde7b3 0%, #f8cf7c 45%, #f0a94e 100%);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 30px 60px -34px rgba(160, 90, 20, 0.6);
+  background: var(--cream);
 }
 .hero h1 { margin-top: 12px; font-size: clamp(38px, 5vw, 62px); }
-.lead { max-width: 46ch; margin-top: 18px; color: #5a4520; font-size: 15px; line-height: 1.65; }
+.lead { max-width: 46ch; margin-top: 18px; color: #5b4c26; font-size: 15px; line-height: 1.65; }
 .cta { display: flex; gap: 10px; margin-top: 26px; flex-wrap: wrap; }
 .hilo { width: 100%; height: auto; max-height: 290px; }
-.muro { stroke: rgba(29, 26, 22, 0.28); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.muro { stroke: rgba(27, 25, 21, 0.22); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 .camino {
   stroke-linejoin: round;
   stroke: #c0392b;
@@ -108,8 +105,7 @@ const pasos = [
   stroke-linecap: round;
   stroke-dasharray: 700;
   stroke-dashoffset: 700;
-  filter: drop-shadow(0 4px 8px rgba(192, 57, 43, 0.35));
-  animation: trazar 2.6s 0.5s var(--ease-in-out) forwards;
+    animation: trazar 2.6s 0.5s var(--ease-in-out) forwards;
 }
 .meta { transform-origin: 380px 40px; animation: latir 2.4s 3s var(--ease-in-out) infinite; }
 @keyframes trazar { to { stroke-dashoffset: 0; } }
@@ -120,7 +116,7 @@ const pasos = [
 .cifra strong { font-size: 46px; font-weight: 400; line-height: 1.1; letter-spacing: -0.03em; }
 .cifra strong small { font-size: 20px; color: var(--ink-3); letter-spacing: 0; }
 .cifra p { font-size: 12.5px; }
-.cifra.destacada { background: linear-gradient(135deg, #f0fbd0, #dff59a); }
+.cifra.destacada { background: #ebf9b8; border-color: transparent; }
 .cifra.destacada .muted { color: #4a5b12; }
 
 .seccion { margin: 10px 4px 0; font-size: 28px; }
@@ -130,10 +126,10 @@ const pasos = [
   display: grid;
   gap: 8px;
   align-content: start;
-  transition: transform 0.5s var(--spring), box-shadow 0.3s;
+  transition: transform 0.5s var(--spring), border-color 0.3s;
 }
-.paso:hover { transform: translateY(-4px); box-shadow: 0 1px 0 #fff inset, 0 28px 44px -26px rgba(94, 60, 20, 0.5); }
-.paso-n { position: absolute; top: 14px; right: 20px; font-size: 40px; font-style: italic; font-weight: 300; color: rgba(60, 40, 20, 0.14); }
+.paso:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+.paso-n { position: absolute; top: 14px; right: 20px; font-size: 40px; font-style: italic; font-weight: 300; color: rgba(27, 25, 21, 0.12); }
 .paso h3 { font-size: 21px; }
 .paso p { font-size: 13px; line-height: 1.55; }
 

@@ -3,7 +3,7 @@ import Sidebar from './shared/Sidebar.vue'
 </script>
 
 <template>
-  <div class="marco glass">
+  <div class="marco">
     <Sidebar />
     <main class="contenido">
       <RouterView v-slot="{ Component, route }">
@@ -17,12 +17,10 @@ import Sidebar from './shared/Sidebar.vue'
 
 <style scoped>
 .marco {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.28));
   position: fixed;
-  inset: 16px;
+  inset: 12px;
   display: flex;
-  overflow: hidden;
-  border-radius: var(--r-xl);
+  gap: 12px;
 }
 .contenido {
   position: relative;
@@ -30,9 +28,12 @@ import Sidebar from './shared/Sidebar.vue'
   min-width: 0;
   overflow: hidden auto;
   padding: 28px 32px 32px;
+  border-radius: var(--r-xl);
+  background: var(--panel);
+  border: 1px solid var(--line);
 }
 @media (max-width: 900px) {
-  .marco { inset: 8px; border-radius: 24px; }
-  .contenido { padding: 20px 16px 24px; }
+  .marco { inset: 8px; gap: 8px; }
+  .contenido { padding: 20px 16px 24px; border-radius: 24px; }
 }
 </style>
