@@ -9,6 +9,7 @@ import type { Vista } from '../features/mapa/MapCanvas.vue'
 import PlaybackDock from '../features/reproduccion/PlaybackDock.vue'
 import { usePlayback, velocidadSugerida } from '../features/reproduccion/usePlayback'
 import CasoSelector from '../shared/CasoSelector.vue'
+import Icon from '../shared/Icon.vue'
 import Segmented from '../shared/Segmented.vue'
 
 const mapaClave = ref('den011d')
@@ -18,6 +19,8 @@ const detalle = shallowRef<MapaDetalle | null>(null)
 const ejecuciones = shallowRef<Ejecucion[]>([])
 const vista = ref<Vista | null>(null)
 const cargando = ref(true)
+const zonaCompleta = ref<HTMLElement | null>(null)
+const pantallaCompleta = ref(false)
 const error = ref('')
 
 const cacheMapas = new Map<string, MapaDetalle>()
@@ -74,8 +77,17 @@ watch([mapaClave, caso], ([nuevoMapa], [viejoMapa]) => {
   void ejecutar()
 })
 
+function alternarPantallaCompleta() {
+  if (document.fullscreenElement) void document.exitFullscreen()
+  else void zonaCompleta.value?.requestFullscreen?.()
+}
+const alCambiarPantalla = () => {
+  pantallaCompleta.value = document.fullscreenElement === zonaCompleta.value
+}
+
 function alTeclado(e: KeyboardEvent) {
   if ((e.target as HTMLElement).closest('input, select, textarea')) return
+  if (!e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'f' || e.key === 'F')) { alternarPantallaCompleta(); return }
   if (e.code === 'Space') { e.preventDefault(); pb.alternar() }
   else if (e.key === 'ArrowRight') pb.paso(e.shiftKey ? 50 : 1)
   else if (e.key === 'ArrowLeft') pb.paso(e.shiftKey ? -50 : -1)
@@ -84,9 +96,14 @@ function alTeclado(e: KeyboardEvent) {
 }
 onMounted(() => {
   window.addEventListener('keydown', alTeclado)
+  document.addEventListener('fullscreenchange', alCambiarPantalla)
   void ejecutar()
 })
-onBeforeUnmount(() => window.removeEventListener('keydown', alTeclado))
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', alTeclado)
+  document.removeEventListener('fullscreenchange', alCambiarPantalla)
+  if (document.fullscreenElement) void document.exitFullscreen()
+})
 </script>
 
 <template>
@@ -99,11 +116,22 @@ onBeforeUnmount(() => window.removeEventListener('keydown', alTeclado))
       <div class="selectores">
         <CasoSelector v-model="caso" :total="totalCasos" />
         <Segmented v-model="mapaClave" :opciones="opcionesMapa" etiqueta="Mapa" />
+        <button type="button" class="ic-btn" aria-label="Ver los cuatro algoritmos en pantalla completa" title="Ver los cuatro en pantalla completa (F)" @click="alternarPantallaCompleta">
+          <Icon name="pantalla" :size="17" />
+        </button>
       </div>
     </header>
 
     <div class="cuerpo">
-      <div class="izquierda">
+      <div ref="zonaCompleta" class="izquierda" :class="{ completa: pantallaCompleta }">
+        <div v-if="pantallaCompleta" class="barra-completa">
+          <CasoSelector v-model="caso" :total="totalCasos" />
+          <Segmented v-model="mapaClave" :opciones="opcionesMapa" etiqueta="Mapa" />
+          <span v-if="escenario" class="pill">Óptimo publicado {{ escenario.optimo.toFixed(2) }}</span>
+          <button type="button" class="ic-btn salir" aria-label="Salir de pantalla completa" title="Salir de pantalla completa (F)" @click="alternarPantallaCompleta">
+            <Icon name="pantalla_salir" :size="17" />
+          </button>
+        </div>
         <div class="rejilla">
           <PanelAlgoritmo
             v-for="(f, i) in filas"
@@ -169,6 +197,25 @@ onBeforeUnmount(() => window.removeEventListener('keydown', alTeclado))
 .cabecera { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
 .titulo { margin-top: 2px; }
 .selectores { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.ic-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-2);
+  transition: background 0.2s, color 0.2s, transform 0.35s var(--spring);
+}
+.ic-btn:hover { background: #faf9f6; color: var(--ink); }
+.ic-btn:active { transform: scale(0.9); }
+.barra-completa { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.barra-completa .salir { margin-left: auto; }
+.izquierda.completa { padding: 20px 28px 22px; background: #fff; overflow: hidden; }
+.izquierda.completa .rejilla { grid-template-rows: repeat(2, minmax(0, 1fr)); }
+.izquierda.completa :deep(.lienzo) { min-height: 0; }
 
 .cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 18px; flex: 1; min-height: 0; }
 .izquierda { display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: auto; }
