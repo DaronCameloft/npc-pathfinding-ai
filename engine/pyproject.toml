@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "npc-nav"
+version = "0.2.0"
+description = "Motor de navegación de NPCs: BFS, Dijkstra, voraz y A* sobre mapas Moving AI"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []  # el motor solo usa la biblioteca estándar
+
+[project.optional-dependencies]
+api = ["fastapi", "uvicorn[standard]"]
+figures = ["matplotlib"]
+
+[project.scripts]
+npc-nav = "npc_nav.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

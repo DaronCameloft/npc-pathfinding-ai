@@ -1,0 +1,19 @@
+# Normaliza finales de línea para que Windows y Linux (CI, Render) vean los mismos bytes.
+* text=auto eol=lf
+
+# El dataset se versiona con LF: sus hashes SHA-256 aparecen en results/ y en el informe.
+*.map  text eol=lf
+*.scen text eol=lf
+
+# Scripts de Windows
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# Binarios
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary
+*.fbx binary
+*.unity text merge=unityyamlmerge eol=lf
+*.prefab text merge=unityyamlmerge eol=lf

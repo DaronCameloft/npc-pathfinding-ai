@@ -1,0 +1,40 @@
+{
+  "estado": "valido",
+  "alcance": "Formato, dimensiones, terreno, costos finitos, conectividad y cota octil. No calcula rutas; la optimalidad se comprueba con la verificación.",
+  "total_escenarios": 4200,
+  "mapas": [
+    {
+      "mapa": "brc100d.map",
+      "alto": 492,
+      "ancho": 512,
+      "vertices": 31023,
+      "aristas": 115524,
+      "componentes": 1,
+      "escenarios": 1360,
+      "sha256_mapa": "36bac0dc23b3d25bb1b25e4d1c6aab5b4736e83d72f59e796081f98fd30261aa",
+      "sha256_escenarios": "2ca44d1051cdb5a30b95b7a00195b93066ca149bdf8ada440b6056d70a721ac3"
+    },
+    {
+      "mapa": "brc201d.map",
+      "alto": 388,
+      "ancho": 391,
+      "vertices": 25645,
+      "aristas": 92042,
+      "componentes": 167,
+      "escenarios": 2090,
+      "sha256_mapa": "7a5d352eaf59db18950b6fabe2f0e11e8b11dfdf4dc9e8956c7efdb43012901b",
+      "sha256_escenarios": "e480ad7969ac1f15e585a39c85b530a5392ee9fa4f3fb2156e14bd4872ec5af1"
+    },
+    {
+      "mapa": "den011d.map",
+      "alto": 167,
+      "ancho": 247,
+      "vertices": 14506,
+      "aristas": 52710,
+      "componentes": 1,
+      "escenarios": 750,
+      "sha256_mapa": "04963d72d7ced037a734ef24609ce669bc5ffcf29cc5b73368d0604b8b8a54b6",
+      "sha256_escenarios": "c79c86270f6aec692ca54786bf1ef37fe3f6a7482b3fb66765c19f18923c70da"
+    }
+  ]
+}

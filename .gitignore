@@ -1,0 +1,61 @@
+# ── Python (engine) ───────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+engine/results/tmp/
+
+# ── Node / Vite (web) ─────────────────────────────
+node_modules/
+web/dist/
+web/.vite/
+*.local
+npm-debug.log*
+
+# ── Unity ─────────────────────────────────────────
+unity/**/[Ll]ibrary/
+unity/**/[Tt]emp/
+unity/**/[Oo]bj/
+unity/**/[Bb]uild/
+unity/**/[Bb]uilds/
+unity/**/[Ll]ogs/
+unity/**/[Uu]ser[Ss]ettings/
+unity/**/*.csproj
+unity/**/*.sln
+unity/**/*.pidb.meta
+unity/**/*.pdb.meta
+unity/**/*.mdb.meta
+
+# ── IDEs y sistema ────────────────────────────────
+.idea/
+.vscode/
+.vs/
+*.iml
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Variables de entorno ──────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Archivos personales del equipo ────────────────
+_respaldo*.zip
+docs/informe/tb1/link-google-docs.txt
+docs/informe/tb1/*.pdf
+
+# ── Claude Code (config local) ────────────────────
+.claude/settings.local.json
+
+# ── Instrucciones locales de Claude Code ──────────
+CLAUDE.md
+CLAUDE.local.md
