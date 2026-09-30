@@ -3,11 +3,12 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch 
 import { api, ErrorApi } from '../core/api'
 import { motor } from '../core/motor'
 import type { Ejecucion, Escenario, MapaDetalle } from '../core/types'
-import PanelAlgoritmo from '../features/comparacion/PanelAlgoritmo.vue'
+import PanelAlgoritmo, { type Resaltado, type Veredicto } from '../features/comparacion/PanelAlgoritmo.vue'
 import ResumenComparacion from '../features/comparacion/ResumenComparacion.vue'
 import type { Vista } from '../features/mapa/MapCanvas.vue'
 import PlaybackDock from '../features/reproduccion/PlaybackDock.vue'
 import { usePlayback, velocidadSugerida } from '../features/reproduccion/usePlayback'
+import { alternarResaltado, ui } from '../core/ui'
 import CasoSelector from '../shared/CasoSelector.vue'
 import Icon from '../shared/Icon.vue'
 import Segmented from '../shared/Segmented.vue'
@@ -43,6 +44,27 @@ const filas = computed(() =>
 const costoMinimo = computed(() => {
   const costos = ejecuciones.value.map((e) => e.costo).filter((c): c is number => c !== null)
   return costos.length ? Math.min(...costos) : null
+})
+
+/** Orden de las complejidades del catálogo (menor es mejor). */
+const ORDEN_COMPLEJIDAD: Record<string, number> = { 'O(V + E)': 0, 'O(E log V)': 1 }
+
+/** Marca el mejor y el peor valor de una métrica (menor es mejor); si todos empatan, ninguno. */
+function clasificar(valores: number[]): Veredicto[] {
+  const mejor = Math.min(...valores)
+  const peor = Math.max(...valores)
+  const tol = 1e-5 * Math.max(1, Math.abs(mejor))
+  if (peor - mejor <= tol) return valores.map(() => null)
+  return valores.map((v) => (v - mejor <= tol ? 'mejor' : peor - v <= tol ? 'peor' : null))
+}
+
+const resaltados = computed<Record<string, Resaltado> | null>(() => {
+  if (!ui.resaltarResultados || !filas.value.length) return null
+  const f = filas.value
+  const expandidos = clasificar(f.map((x) => x.ejecucion.metricas.nodos_expandidos))
+  const costo = clasificar(f.map((x) => x.ejecucion.costo ?? Number.POSITIVE_INFINITY))
+  const complejidad = clasificar(f.map((x) => ORDEN_COMPLEJIDAD[x.info.complejidad] ?? 1))
+  return Object.fromEntries(f.map((x, i) => [x.info.clave, { expandidos: expandidos[i], costo: costo[i], complejidad: complejidad[i] }]))
 })
 
 async function ejecutar() {
@@ -116,6 +138,9 @@ onBeforeUnmount(() => {
       <div class="selectores">
         <CasoSelector v-model="caso" :total="totalCasos" />
         <Segmented v-model="mapaClave" :opciones="opcionesMapa" etiqueta="Mapa" />
+        <button type="button" class="btn colorear" :class="{ activo: ui.resaltarResultados }" :aria-pressed="ui.resaltarResultados" title="Colorea el mejor (verde) y el peor (rojo) resultado de cada métrica al terminar" @click="alternarResaltado">
+          <span class="muestra" /> Resaltar
+        </button>
         <button type="button" class="ic-btn" aria-label="Ver los cuatro algoritmos en pantalla completa" title="Ver los cuatro en pantalla completa (F)" @click="alternarPantallaCompleta">
           <Icon name="pantalla" :size="17" />
         </button>
@@ -128,6 +153,9 @@ onBeforeUnmount(() => {
           <CasoSelector v-model="caso" :total="totalCasos" />
           <Segmented v-model="mapaClave" :opciones="opcionesMapa" etiqueta="Mapa" />
           <span v-if="escenario" class="pill">Óptimo publicado {{ escenario.optimo.toFixed(2) }}</span>
+          <button type="button" class="btn colorear" :class="{ activo: ui.resaltarResultados }" :aria-pressed="ui.resaltarResultados" @click="alternarResaltado">
+            <span class="muestra" /> Resaltar
+          </button>
           <button type="button" class="ic-btn salir" aria-label="Salir de pantalla completa" title="Salir de pantalla completa (F)" @click="alternarPantallaCompleta">
             <Icon name="pantalla_salir" :size="17" />
           </button>
@@ -146,6 +174,7 @@ onBeforeUnmount(() => {
             :destino="escenario!.destino"
             :vista="vista"
             :costo-minimo="costoMinimo"
+            :resaltado="resaltados?.[f.info.clave] ?? null"
             :zoom="i === 0"
             @update:vista="vista = $event"
           />
@@ -211,6 +240,9 @@ onBeforeUnmount(() => {
 }
 .ic-btn:hover { background: #faf9f6; color: var(--ink); }
 .ic-btn:active { transform: scale(0.9); }
+.colorear { padding: 7px 14px; font-size: 13px; }
+.colorear .muestra { width: 10px; height: 10px; border-radius: 50%; background: var(--ink-4); transition: background 0.3s; }
+.colorear.activo .muestra { background: #6cbf3a; box-shadow: 9px 0 0 -1px #d9584a; margin-right: 9px; }
 .barra-completa { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .barra-completa .salir { margin-left: auto; }
 .izquierda.completa { padding: 20px 28px 22px; background: #fff; overflow: hidden; }
