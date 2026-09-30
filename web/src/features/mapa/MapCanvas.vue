@@ -78,12 +78,17 @@ function ajustada(): Vista {
 }
 const kMinimo = computed(() => ajustada().k * 0.7)
 
-function fijarVista(v: Vista) {
+/** Mientras el usuario no haya movido la vista, el mapa se reajusta solo al cambiar el tamaño del marco. */
+let manual = false
+
+function fijarVista(v: Vista, usuario = false) {
+  if (usuario) manual = true
   local.value = v
   emit('update:vista', v)
   pedirDibujo()
 }
 function ajustar() {
+  manual = false
   fijarVista(ajustada())
 }
 defineExpose({ ajustar })
@@ -286,7 +291,7 @@ function alRueda(e: WheelEvent) {
   const py = e.clientY - caja.top
   const k = Math.min(48, Math.max(kMinimo.value, v.k * Math.exp(-e.deltaY * 0.0016)))
   const s = k / v.k
-  fijarVista({ k, x: px - (px - v.x) * s, y: py - (py - v.y) * s })
+  fijarVista({ k, x: px - (px - v.x) * s, y: py - (py - v.y) * s }, true)
 }
 
 let arrastre: { x: number; y: number; vx: number; vy: number; movido: boolean } | null = null
@@ -305,7 +310,7 @@ function alMover(e: PointerEvent) {
     const dx = e.clientX - arrastre.x
     const dy = e.clientY - arrastre.y
     if (Math.abs(dx) + Math.abs(dy) > 4) arrastre.movido = true
-    if (arrastre.movido && local.value) fijarVista({ ...local.value, x: arrastre.vx + dx, y: arrastre.vy + dy })
+    if (arrastre.movido && local.value) fijarVista({ ...local.value, x: arrastre.vx + dx, y: arrastre.vy + dy }, true)
     return
   }
   const celda = celdaEn(px, py)
@@ -340,6 +345,7 @@ function dimensionar() {
   cv.width = Math.round(ancho.value * d)
   cv.height = Math.round(alto.value * d)
   if (primera || !local.value) fijarVista(props.vista ?? ajustada())
+  else if (!manual) fijarVista(ajustada())
   else pedirDibujo()
 }
 
@@ -360,6 +366,7 @@ onBeforeUnmount(() => {
 watch(() => props.mapa, () => {
   construirTerreno()
   local.value = null
+  manual = false
   dimensionar()
 })
 watch(() => props.traza, () => {
@@ -391,7 +398,7 @@ function zoom(factor: number) {
   const cy = alto.value / 2
   const k = Math.min(48, Math.max(kMinimo.value, v.k * factor))
   const s = k / v.k
-  fijarVista({ k, x: cx - (cx - v.x) * s, y: cy - (cy - v.y) * s })
+  fijarVista({ k, x: cx - (cx - v.x) * s, y: cy - (cy - v.y) * s }, true)
 }
 </script>
 

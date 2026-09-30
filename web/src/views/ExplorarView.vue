@@ -13,6 +13,7 @@ import AnimatedNumber from '../shared/AnimatedNumber.vue'
 import Icon from '../shared/Icon.vue'
 import CasoSelector from '../shared/CasoSelector.vue'
 import Segmented from '../shared/Segmented.vue'
+import { alternarPanel, ui } from '../core/ui'
 
 const mapaClave = ref('den011d')
 const caso = ref(375)
@@ -22,6 +23,8 @@ const detalle = shallowRef<MapaDetalle | null>(null)
 const ejecucion = shallowRef<Ejecucion | null>(null)
 const bloqueadas = ref<Posicion[]>([])
 const modoBloqueo = ref(false)
+const tarjeta = ref<HTMLElement | null>(null)
+const pantallaCompleta = ref(false)
 const cargando = ref(true)
 const error = ref('')
 const hover = ref<{ info: InfoCelda; x: number; y: number } | null>(null)
@@ -138,8 +141,19 @@ function alHover(info: InfoCelda | null, x: number, y: number) {
   hover.value = info ? { info, x, y } : null
 }
 
+function alternarPantallaCompleta() {
+  if (document.fullscreenElement) void document.exitFullscreen()
+  else void tarjeta.value?.requestFullscreen?.()
+}
+const alCambiarPantalla = () => {
+  pantallaCompleta.value = document.fullscreenElement === tarjeta.value
+}
+
 function alTeclado(e: KeyboardEvent) {
   if ((e.target as HTMLElement).closest('input, select, textarea')) return
+  if (e.ctrlKey || e.metaKey || e.altKey) return
+  if (e.key === 'f' || e.key === 'F') { alternarPantallaCompleta(); return }
+  if (e.key === 'p' || e.key === 'P') { alternarPanel(); return }
   if (e.code === 'Space') { e.preventDefault(); pb.alternar() }
   else if (e.key === 'ArrowRight') pb.paso(e.shiftKey ? 50 : 1)
   else if (e.key === 'ArrowLeft') pb.paso(e.shiftKey ? -50 : -1)
@@ -149,9 +163,14 @@ function alTeclado(e: KeyboardEvent) {
 
 onMounted(() => {
   window.addEventListener('keydown', alTeclado)
+  document.addEventListener('fullscreenchange', alCambiarPantalla)
   void ejecutar('reproducir')
 })
-onBeforeUnmount(() => window.removeEventListener('keydown', alTeclado))
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', alTeclado)
+  document.removeEventListener('fullscreenchange', alCambiarPantalla)
+  if (document.fullscreenElement) void document.exitFullscreen()
+})
 
 const costoTexto = computed(() => ejecucion.value?.costo ?? 0)
 const fmt = (n: number) => n.toLocaleString('es-PE')
@@ -171,12 +190,39 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
       </div>
     </header>
 
-    <div class="cuerpo">
-      <article class="card mapa-card rise" style="--i: 1">
+    <div class="cuerpo" :class="{ 'sin-panel': !ui.panelLateral }">
+      <article ref="tarjeta" class="card mapa-card rise" :class="{ completa: pantallaCompleta }" style="--i: 1">
         <div class="mapa-top">
           <CasoSelector v-model="caso" :total="totalCasos" />
+          <Segmented v-if="pantallaCompleta" v-model="algoritmo" :opciones="opcionesAlgoritmo" etiqueta="Algoritmo" />
+
+          <ul v-if="!ui.panelLateral || pantallaCompleta" class="resumen-corto num" aria-label="Resumen de la búsqueda">
+            <li><span>Costo</span>{{ (ejecucion?.costo ?? 0).toFixed(2) }}</li>
+            <li><span>Expandidos</span>{{ fmt(conteos.expandidos) }}</li>
+            <li v-if="lineaActiva"><span>Línea</span>{{ lineaActiva }}</li>
+          </ul>
 
           <div class="acciones">
+            <button
+              type="button"
+              class="ic-btn"
+              :class="{ activo: ui.panelLateral }"
+              :aria-pressed="ui.panelLateral"
+              :aria-label="ui.panelLateral ? 'Ocultar pseudocódigo y métricas' : 'Mostrar pseudocódigo y métricas'"
+              :title="(ui.panelLateral ? 'Ocultar' : 'Mostrar') + ' pseudocódigo y métricas (P)'"
+              @click="alternarPanel"
+            >
+              <Icon name="panel_der" :size="17" />
+            </button>
+            <button
+              type="button"
+              class="ic-btn"
+              :aria-label="pantallaCompleta ? 'Salir de pantalla completa' : 'Mapa en pantalla completa'"
+              :title="(pantallaCompleta ? 'Salir de pantalla completa' : 'Mapa en pantalla completa') + ' (F)'"
+              @click="alternarPantallaCompleta"
+            >
+              <Icon :name="pantallaCompleta ? 'pantalla_salir' : 'pantalla'" :size="17" />
+            </button>
             <button v-if="bloqueadas.length" type="button" class="btn ligero" @click="limpiarBloqueos">Quitar {{ bloqueadas.length }}</button>
             <button type="button" class="btn" :class="{ activo: modoBloqueo }" :aria-pressed="modoBloqueo" @click="modoBloqueo = !modoBloqueo">
               <Icon name="bloquear" :size="15" /> Bloquear celdas
@@ -239,7 +285,7 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
         />
       </article>
 
-      <aside class="lateral">
+      <aside class="lateral" :aria-hidden="!ui.panelLateral" :inert="!ui.panelLateral">
         <PseudocodePanel
           v-if="infoAlgoritmo"
           class="rise"
@@ -288,7 +334,16 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
 .titulo { margin-top: 2px; }
 .selectores { display: flex; gap: 12px; flex-wrap: wrap; }
 
-.cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 18px; flex: 1; min-height: 0; }
+.cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  column-gap: 18px;
+  flex: 1;
+  min-height: 0;
+  transition: grid-template-columns 0.6s var(--ease-out), column-gap 0.6s var(--ease-out);
+}
+.cuerpo.sin-panel { grid-template-columns: minmax(0, 1fr) 0px; column-gap: 0; }
+.sin-panel .lateral { opacity: 0; transform: translateX(28px); pointer-events: none; overflow: hidden; }
 .mapa-card { display: flex; flex-direction: column; gap: 12px; min-height: 0; padding: 16px 18px 16px; }
 .mapa-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
 .leyenda { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: flex; gap: 12px; margin: 0; padding: 7px 12px; list-style: none; font-size: 11.5px; color: var(--ink-2); flex-wrap: wrap; border-radius: 12px; background: #fff; border: 1px solid var(--line); }
@@ -296,7 +351,26 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
 .leyenda i { width: 10px; height: 10px; border-radius: 50%; }
 .leyenda i.hueco { background: #fffaf0; border: 2px solid var(--ink); }
 
-.acciones { display: flex; gap: 8px; }
+.acciones { display: flex; align-items: center; gap: 8px; }
+.ic-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-2);
+  transition: background 0.2s, color 0.2s, transform 0.35s var(--spring);
+}
+.ic-btn:hover { background: #faf9f6; color: var(--ink); }
+.ic-btn:active { transform: scale(0.9); }
+.ic-btn.activo { background: var(--ink); color: #fff; border-color: transparent; }
+.resumen-corto { display: flex; gap: 8px; margin: 0 auto 0 0; padding: 0; list-style: none; }
+.resumen-corto li { display: flex; align-items: baseline; gap: 6px; padding: 5px 12px; border-radius: 999px; background: var(--field); font-size: 13px; font-weight: 600; }
+.resumen-corto span { color: var(--ink-3); font-size: 11px; font-weight: 400; }
+.mapa-card.completa { padding: 20px 28px 22px; border-radius: 0; border: 0; background: #fff; }
+.mapa-card.completa .lienzo { min-height: 0; }
 .btn { padding: 7px 14px; font-size: 13px; }
 .btn.ligero { color: var(--ink-3); }
 .btn.activo { background: var(--violet); color: #fff; border-color: transparent; }
@@ -353,7 +427,7 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
 .fundido-enter-active, .fundido-leave-active { transition: opacity 0.35s var(--ease-out); }
 .fundido-enter-from, .fundido-leave-to { opacity: 0; }
 
-.lateral { display: flex; flex-direction: column; gap: 18px; min-height: 0; overflow: auto; padding: 0 2px 2px 0; }
+.lateral { display: flex; flex-direction: column; gap: 18px; min-height: 0; overflow: auto; padding: 0 2px 2px 0; transition: opacity 0.35s var(--ease-out), transform 0.6s var(--ease-out); }
 .lateral > * { flex: none; }
 .metricas { display: flex; flex-direction: column; gap: 14px; }
 .costo-valor { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -366,7 +440,8 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
 .nota { font-size: 11.5px; line-height: 1.45; }
 
 @media (max-width: 1180px) {
-  .cuerpo { grid-template-columns: 1fr; }
+  .cuerpo, .cuerpo.sin-panel { grid-template-columns: 1fr; row-gap: 18px; }
+  .sin-panel .lateral { display: none; }
   .explorar { height: auto; }
   .lienzo { min-height: 420px; }
   .lateral { overflow: visible; }
