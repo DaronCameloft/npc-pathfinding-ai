@@ -1,0 +1,151 @@
+@import './tokens.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #app { height: 100%; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background:
+    radial-gradient(1200px 700px at 8% -10%, rgba(255, 214, 140, 0.85), transparent 60%),
+    radial-gradient(900px 600px at 100% 10%, rgba(180, 208, 232, 0.65), transparent 60%),
+    radial-gradient(1000px 700px at 60% 110%, rgba(240, 170, 110, 0.7), transparent 60%),
+    linear-gradient(160deg, #f8eedc 0%, #f1dcb8 50%, #e8c592 100%);
+  background-attachment: fixed;
+  overflow: hidden;
+}
+
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, p { margin: 0; }
+
+::selection { background: rgba(233, 169, 60, 0.35); }
+
+:focus-visible {
+  outline: 2px solid var(--violet);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Tipografía editorial */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+.display em { font-style: italic; font-weight: 300; }
+.eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.num { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
+.mono { font-family: var(--font-mono); }
+.muted { color: var(--ink-3); }
+
+/* Vidrio */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+.card {
+  border-radius: var(--r-lg);
+  padding: 20px 22px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 1) inset, 0 18px 40px -26px rgba(94, 60, 20, 0.4),
+    0 1px 4px rgba(94, 60, 20, 0.05);
+}
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+.card-title .badge-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: rgba(60, 40, 20, 0.06);
+  color: var(--ink-2);
+}
+
+/* Botones */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 0 #fff inset, 0 6px 14px -8px rgba(94, 60, 20, 0.35);
+  font-weight: 500;
+  transition: transform 0.35s var(--spring), background 0.2s, box-shadow 0.2s;
+}
+.btn:hover { background: #fff; }
+.btn:active { transform: scale(0.96); }
+.btn-dark { background: var(--ink); color: #fff; border-color: transparent; }
+.btn-dark:hover { background: #2c2721; }
+
+/* Píldoras y etiquetas */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(60, 40, 20, 0.07);
+  color: var(--ink-2);
+}
+.pill-lime { background: var(--lime); color: var(--lime-ink); }
+.pill-violet { background: var(--violet-soft); color: var(--violet); }
+.pill-sky { background: #dcecf7; color: #2a5b7c; }
+.pill-gold { background: #fbeacb; color: #7a5210; }
+.pill-danger { background: #f8dcd8; color: #8c281c; }
+
+/* Entrada escalonada */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); filter: blur(8px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+.rise {
+  animation: rise 0.8s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* Transición de páginas */
+.page-enter-active { transition: opacity 0.5s var(--ease-out), transform 0.7s var(--ease-out), filter 0.5s var(--ease-out); }
+.page-leave-active { transition: opacity 0.18s ease, transform 0.18s ease, filter 0.18s ease; }
+.page-enter-from { opacity: 0; transform: translateY(16px) scale(0.99); filter: blur(10px); }
+.page-leave-to { opacity: 0; transform: translateY(-6px); filter: blur(6px); }
+
+/* Scrollbars discretas */
+* { scrollbar-width: thin; scrollbar-color: rgba(60, 40, 20, 0.22) transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

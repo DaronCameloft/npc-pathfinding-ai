@@ -1,0 +1,56 @@
+:root {
+  /* Marca: Arcadia Ariadna Labs */
+  --ink: #1d1a16;
+  --ink-2: #4a4238;
+  --ink-3: #7a6f62;
+  --ink-4: #a89c8c;
+  --paper: #fbf6ec;
+  --line: rgba(60, 40, 20, 0.1);
+  --line-strong: rgba(60, 40, 20, 0.18);
+
+  --gold: #e9a93c;
+  --gold-soft: #f6c46b;
+  --violet: #6a3fd8;
+  --violet-soft: #ece5fb;
+  --lime: #c6f24e;
+  --lime-ink: #2b3a05;
+  --sky: #9cc3de;
+  --danger: #c0392b;
+  --ok: #2e8b57;
+
+  /* Colores de la traza (CLAUDE.md) */
+  --trace-expandido: #9cc3de;
+  --trace-frontera: #f6c46b;
+  --trace-ruta: #c0392b;
+  --trace-inicio: #2e8b57;
+
+  /* Vidrio */
+  --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.5));
+  --glass-bg-strong: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 1px 0 rgba(255, 255, 255, 0.95) inset, 0 24px 48px -24px rgba(94, 60, 20, 0.35),
+    0 2px 8px rgba(94, 60, 20, 0.06);
+  --blur: blur(28px) saturate(1.7);
+
+  --r-xl: 32px;
+  --r-lg: 24px;
+  --r-md: 16px;
+  --r-sm: 11px;
+
+  --font-display: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+  --font-ui: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --spring: linear(
+    0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%,
+    1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%,
+    0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1.004 83.8%, 1
+  );
+  --spring-soft: linear(
+    0, 0.006, 0.024 2.2%, 0.099, 0.213 8.3%, 0.545 17.3%, 0.762 23.6%, 0.914 30.4%, 1.001 38.3%,
+    1.04 44.6%, 1.048 50.1%, 1.038 56.5%, 1.008 68.4%, 0.998 79.2%, 1
+  );
+}
