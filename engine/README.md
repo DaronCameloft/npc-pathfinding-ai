@@ -114,6 +114,8 @@ Variable de entorno `CORS_ORIGINS`: orígenes adicionales separados por coma (po
 | GET | `/mapas/{nombre}/escenarios?desde=0&limite=100` | Página de escenarios: `indice`, `bucket`, `inicio`, `destino`, `optimo`; `limite` máximo 1000. |
 | POST | `/buscar` | Una `Ejecucion` (ver arriba). |
 | POST | `/comparar` | Lista de `Ejecucion`, una por algoritmo, sobre la misma consulta y el mismo estado del mapa. |
+| GET | `/evidencia` | Algoritmos con evidencia de verificación publicada (`engine/results/<algoritmo>/`). |
+| GET | `/evidencia/{algoritmo}` | Resultado de `npc-nav verificar`: cifras globales, detalle por mapa, entorno, huellas del código y una nube de puntos (costo, nodos expandidos, tiempo) por escenario. 404 si no hay evidencia. |
 
 Cuerpo de `POST /buscar`: `mapa`, `algoritmo` (por defecto `astar`), la consulta como `caso` (índice del `.scen`) **o** como `inicio` + `destino`, `traza` (bool) y `bloqueadas` (lista de celdas). `POST /comparar` recibe `algoritmos` en lugar de `algoritmo` (vacío = todos). Las posiciones son siempre `[fila, columna]`.
 
