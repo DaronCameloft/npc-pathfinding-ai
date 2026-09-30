@@ -10,8 +10,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from .. import __version__
 from ..algorithms.catalogo import ALGORITMOS
-from ..application import comparar_algoritmos, ejecutar_busqueda
+from ..application import comparar_algoritmos, consultar_evidencia, ejecutar_busqueda
 from ..domain.sesion import SesionNavegacion
+from ..infrastructure.evidencia import RepositorioEvidencia
 from ..infrastructure.repositorio import RepositorioDataset
 from .esquemas import ConsultaBase, PeticionBuscar, PeticionComparar
 
@@ -24,7 +25,13 @@ def obtener_repositorio() -> RepositorioDataset:
     return RepositorioDataset()
 
 
+@lru_cache(maxsize=1)
+def obtener_repositorio_evidencia() -> RepositorioEvidencia:
+    return RepositorioEvidencia()
+
+
 Repositorio = Depends(obtener_repositorio)
+Evidencia = Depends(obtener_repositorio_evidencia)
 
 
 @router.get('/health')
@@ -118,3 +125,19 @@ def comparar(peticion: PeticionComparar, repo: RepositorioDataset = Repositorio)
     sesion, inicio, destino = _preparar(peticion, repo)
     return [asdict(e) for e in comparar_algoritmos(sesion, claves, inicio, destino,
                                                    con_traza=peticion.traza)]
+
+
+@router.get('/evidencia')
+def evidencias(evidencia: RepositorioEvidencia = Evidencia):
+    """Algoritmos con evidencia de verificación publicada."""
+    return {'algoritmos': [{'clave': clave, 'nombre': ALGORITMOS[clave].nombre if clave in ALGORITMOS else clave}
+                           for clave in evidencia.algoritmos()]}
+
+
+@router.get('/evidencia/{clave}')
+def evidencia_de(clave: str, evidencia: RepositorioEvidencia = Evidencia):
+    """Resultado de `npc-nav verificar` para un algoritmo: cifras, tabla por mapa y nube de puntos."""
+    if clave not in evidencia.algoritmos():
+        raise HTTPException(404, f'No hay evidencia de verificación para {clave!r}. '
+                                 f'Disponibles: {", ".join(evidencia.algoritmos()) or "ninguna"}')
+    return consultar_evidencia(evidencia, clave)
