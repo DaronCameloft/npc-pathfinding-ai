@@ -2,6 +2,8 @@
 import { computed } from 'vue'
 import { motor } from '../core/motor'
 import AnimatedNumber from '../shared/AnimatedNumber.vue'
+import HeroArte from '../features/inicio/HeroArte.vue'
+import NpcDemo from '../features/inicio/NpcDemo.vue'
 import Icon from '../shared/Icon.vue'
 
 const vertices = computed(() => motor.mapas.reduce((suma, m) => suma + m.vertices, 0))
@@ -17,40 +19,35 @@ const pasos = [
 <template>
   <section class="inicio">
     <header class="rise" style="--i: 0">
-      <p class="eyebrow">Inicio</p>
       <h1 class="display pagina-titulo">Bienvenido a <em>ArcadiaLabs</em></h1>
       <p class="pagina-sub">Un laboratorio visual de búsqueda de rutas para NPCs, sobre mapas reales de Dragon Age: Origins.</p>
     </header>
 
     <div class="bento">
-      <article class="hero c-cream rise" style="--i: 1">
-        <p class="eyebrow">Complejidad Algorítmica</p>
-        <h2 class="display">Encuentra el camino, <em>entiende el algoritmo.</em></h2>
-        <p class="lead">Compara búsquedas, sigue cada decisión y comprueba por qué A* equilibra costo y esfuerzo.</p>
-        <div class="cta">
-          <RouterLink to="/explorar" class="btn btn-dark">Explorar el caso 375 <Icon name="flecha" :size="16" /></RouterLink>
-          <RouterLink to="/comparar" class="btn">Comparar</RouterLink>
+      <article class="hero rise" style="--i: 1">
+        <HeroArte />
+        <div class="hero-top">
+          <span class="chip-icono"><Icon name="explorar" :size="15" /></span>
+          <span class="chip-icono"><Icon name="metricas" :size="15" /></span>
+          <span class="hero-etiqueta">Búsqueda · en vivo</span>
+        </div>
+        <div class="hero-cuerpo">
+          <h2 class="display">Encuentra el camino, <em>entiende el algoritmo.</em></h2>
+          <p class="lead">Compara búsquedas, sigue cada decisión y comprueba por qué A* equilibra costo y esfuerzo.</p>
+          <div class="cta">
+            <RouterLink to="/explorar" class="btn btn-dark">Explorar el caso 375 <Icon name="flecha" :size="16" /></RouterLink>
+            <RouterLink to="/comparar" class="btn">Comparar</RouterLink>
+          </div>
         </div>
       </article>
 
       <article class="card ilustracion rise" style="--i: 2">
         <header class="card-title">
-          <span class="badge-icon"><Icon name="explorar" :size="16" /></span>
-          Una ruta óptima
+          <span class="badge-icon"><Icon name="chip" :size="16" /></span>
+          El NPC que recalcula
           <span class="pill pill-lime">A*</span>
         </header>
-        <svg viewBox="0 0 420 220" fill="none" role="img" aria-label="Ruta que rodea muros desde el inicio hasta el destino">
-          <defs>
-            <pattern id="malla" width="20" height="20" patternUnits="userSpaceOnUse">
-              <circle cx="1.5" cy="1.5" r="1.1" fill="rgba(27,25,21,.16)" />
-            </pattern>
-          </defs>
-          <rect width="420" height="220" fill="url(#malla)" />
-          <path class="muro" d="M70 195h100M205 195h125v-60M100 72h85M40 40h34M232 118v36M330 100h50V70M120 168h40" />
-          <path class="camino" d="M40 200V165L85 125H150L200 85H270V55L320 28H380" />
-          <circle cx="40" cy="200" r="9" fill="#2e8b57" stroke="#fff" stroke-width="3" />
-          <circle class="meta" cx="380" cy="28" r="9" fill="#fff" stroke="#1b1915" stroke-width="3" />
-        </svg>
+        <NpcDemo />
       </article>
 
       <article class="cifra c-sky rise" style="--i: 3">
@@ -94,35 +91,36 @@ const pasos = [
 .c-lime { background: #e7f7ae; }
 
 .hero {
+  position: relative;
   grid-column: span 5;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: 12px;
-  min-height: 300px;
-  padding: 28px 30px;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 360px;
+  padding: 22px 26px 26px;
+  overflow: hidden;
   border-radius: var(--r-lg);
+  isolation: isolate;
 }
-.hero h2 { font-size: clamp(30px, 3.2vw, 42px); }
-.lead { max-width: 40ch; color: #5b4c26; font-size: 13.5px; line-height: 1.6; }
-.cta { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.hero > :not(:first-child) { position: relative; z-index: 1; }
+.hero-top { display: flex; align-items: center; gap: 8px; }
+.chip-icono {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+}
+.hero-etiqueta { margin-left: 4px; font-size: 12.5px; font-weight: 500; color: var(--ink-2); }
+.hero h2 { font-size: clamp(32px, 3.4vw, 46px); }
+.lead { max-width: 40ch; margin-top: 10px; color: #5b4c26; font-size: 13.5px; line-height: 1.6; }
+.cta { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
 
-.ilustracion { grid-column: span 7; display: flex; flex-direction: column; gap: 10px; }
+.ilustracion { grid-column: span 7; display: flex; flex-direction: column; gap: 12px; }
 .ilustracion .pill { margin-left: auto; }
-.ilustracion svg { width: 100%; flex: 1; min-height: 0; max-height: 236px; }
-.muro { stroke: rgba(27, 25, 21, 0.2); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
-.camino {
-  stroke: #c0392b;
-  stroke-width: 5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 700;
-  stroke-dashoffset: 700;
-  animation: trazar 2.6s 0.5s var(--ease-in-out) forwards;
-}
-.meta { transform-origin: 380px 28px; animation: latir 2.4s 3s var(--ease-in-out) infinite; }
-@keyframes trazar { to { stroke-dashoffset: 0; } }
-@keyframes latir { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
 
 .cifra {
   grid-column: span 3;
