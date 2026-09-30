@@ -132,8 +132,8 @@ const texto = computed(() => {
   margin-top: auto;
   padding: 12px 14px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.95);
   text-align: left;
   transition: transform 0.4s var(--spring);
 }

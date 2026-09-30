@@ -16,60 +16,65 @@ const pasos = [
 
 <template>
   <section class="inicio">
-    <article class="hero rise" style="--i: 0">
-      <div class="hero-texto">
-        <p class="eyebrow">ArcadiaLabs · Complejidad Algorítmica</p>
-        <h1 class="display">Encuentra el camino,<br /><em>entiende el algoritmo.</em></h1>
-        <p class="lead">
-          Un laboratorio visual para NPCs que navegan mapas reales: compara búsquedas, sigue cada decisión
-          y comprueba por qué A* es el equilibrio entre costo y esfuerzo.
-        </p>
+    <header class="rise" style="--i: 0">
+      <p class="eyebrow">Inicio</p>
+      <h1 class="display pagina-titulo">Bienvenido a <em>ArcadiaLabs</em></h1>
+      <p class="pagina-sub">Un laboratorio visual de búsqueda de rutas para NPCs, sobre mapas reales de Dragon Age: Origins.</p>
+    </header>
+
+    <div class="bento">
+      <article class="hero c-cream rise" style="--i: 1">
+        <p class="eyebrow">Complejidad Algorítmica</p>
+        <h2 class="display">Encuentra el camino, <em>entiende el algoritmo.</em></h2>
+        <p class="lead">Compara búsquedas, sigue cada decisión y comprueba por qué A* equilibra costo y esfuerzo.</p>
         <div class="cta">
           <RouterLink to="/explorar" class="btn btn-dark">Explorar el caso 375 <Icon name="flecha" :size="16" /></RouterLink>
-          <RouterLink to="/comparar" class="btn">Comparar algoritmos</RouterLink>
+          <RouterLink to="/comparar" class="btn">Comparar</RouterLink>
         </div>
-      </div>
+      </article>
 
-      <svg class="hilo" viewBox="0 0 420 300" fill="none" aria-hidden="true">
-        <defs>
-          <pattern id="malla" width="20" height="20" patternUnits="userSpaceOnUse">
-            <circle cx="1.5" cy="1.5" r="1.1" fill="rgba(27,25,21,.18)" />
-          </pattern>
-        </defs>
-        <rect width="420" height="300" fill="url(#malla)" />
-        <path class="muro" d="M70 245h100M205 245h125v-75M100 92h85M40 58h34M232 150v40M330 128h50V92M120 215h40" />
-        <path class="camino" d="M40 250V205L85 160H150L200 110H270V70L320 40H380" />
-        <circle cx="40" cy="250" r="9" fill="#2e8b57" stroke="#fffaf0" stroke-width="3" />
-        <circle class="meta" cx="380" cy="40" r="9" fill="#fffaf0" stroke="#1d1a16" stroke-width="3" />
-      </svg>
-    </article>
+      <article class="card ilustracion rise" style="--i: 2">
+        <header class="card-title">
+          <span class="badge-icon"><Icon name="explorar" :size="16" /></span>
+          Una ruta óptima
+          <span class="pill pill-lime">A*</span>
+        </header>
+        <svg viewBox="0 0 420 220" fill="none" role="img" aria-label="Ruta que rodea muros desde el inicio hasta el destino">
+          <defs>
+            <pattern id="malla" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="1.5" cy="1.5" r="1.1" fill="rgba(27,25,21,.16)" />
+            </pattern>
+          </defs>
+          <rect width="420" height="220" fill="url(#malla)" />
+          <path class="muro" d="M70 195h100M205 195h125v-60M100 72h85M40 40h34M232 118v36M330 100h50V70M120 168h40" />
+          <path class="camino" d="M40 200V165L85 125H150L200 85H270V55L320 28H380" />
+          <circle cx="40" cy="200" r="9" fill="#2e8b57" stroke="#fff" stroke-width="3" />
+          <circle class="meta" cx="380" cy="28" r="9" fill="#fff" stroke="#1b1915" stroke-width="3" />
+        </svg>
+      </article>
 
-    <div class="cifras">
-      <article class="card cifra rise" style="--i: 1">
+      <article class="cifra c-sky rise" style="--i: 3">
         <span class="eyebrow">Mapas</span>
         <strong class="display num"><AnimatedNumber :value="motor.mapas.length" /></strong>
-        <p class="muted"><AnimatedNumber :value="vertices" /> vértices en total</p>
+        <p><AnimatedNumber :value="vertices" /> vértices en total</p>
       </article>
-      <article class="card cifra rise" style="--i: 2">
+      <article class="cifra c-lilac rise" style="--i: 4">
         <span class="eyebrow">Escenarios</span>
         <strong class="display num"><AnimatedNumber :value="escenarios" /></strong>
-        <p class="muted">con costo óptimo publicado</p>
+        <p>con costo óptimo publicado</p>
       </article>
-      <article class="card cifra rise" style="--i: 3">
+      <article class="cifra c-cream rise" style="--i: 5">
         <span class="eyebrow">Algoritmos</span>
         <strong class="display num"><AnimatedNumber :value="motor.algoritmos.length" /></strong>
-        <p class="muted">BFS · Dijkstra · Voraz · A*</p>
+        <p>BFS · Dijkstra · Voraz · A*</p>
       </article>
-      <article class="card cifra destacada rise" style="--i: 4">
+      <article class="cifra c-lime rise" style="--i: 6">
         <span class="eyebrow">A* verificado</span>
         <strong class="display num">4 200<small> / 4 200</small></strong>
-        <p class="muted">rutas con el costo óptimo publicado</p>
+        <p>rutas con el costo óptimo publicado</p>
       </article>
-    </div>
 
-    <h2 class="display seccion rise" style="--i: 5">Cómo se usa</h2>
-    <div class="pasos">
-      <RouterLink v-for="(p, i) in pasos" :key="p.n" :to="p.ruta" class="card paso rise" :style="{ '--i': 6 + i }">
+      <RouterLink v-for="(p, i) in pasos" :key="p.n" :to="p.ruta" class="card paso rise" :style="{ '--i': 7 + i }">
         <span class="paso-n display">{{ p.n }}</span>
         <span class="badge-icon"><Icon :name="p.icono" :size="17" /></span>
         <h3 class="display">{{ p.titulo }}</h3>
@@ -80,48 +85,59 @@ const pasos = [
 </template>
 
 <style scoped>
-.inicio { display: flex; flex-direction: column; gap: 18px; padding-bottom: 8px; }
+.inicio { display: flex; flex-direction: column; gap: 22px; padding-bottom: 8px; }
+.bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+
+.c-cream { background: var(--cream); }
+.c-sky { background: #dcebf7; }
+.c-lilac { background: #e9e2fa; }
+.c-lime { background: #e7f7ae; }
+
 .hero {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 24px;
-  min-height: 340px;
-  padding: 44px 48px;
-  overflow: hidden;
-  border-radius: var(--r-xl);
-  background: var(--cream);
+  grid-column: span 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 12px;
+  min-height: 300px;
+  padding: 28px 30px;
+  border-radius: var(--r-lg);
 }
-.hero h1 { margin-top: 12px; font-size: clamp(38px, 5vw, 62px); }
-.lead { max-width: 46ch; margin-top: 18px; color: #5b4c26; font-size: 15px; line-height: 1.65; }
-.cta { display: flex; gap: 10px; margin-top: 26px; flex-wrap: wrap; }
-.hilo { width: 100%; height: auto; max-height: 290px; }
-.muro { stroke: rgba(27, 25, 21, 0.22); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.hero h2 { font-size: clamp(30px, 3.2vw, 42px); }
+.lead { max-width: 40ch; color: #5b4c26; font-size: 13.5px; line-height: 1.6; }
+.cta { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+
+.ilustracion { grid-column: span 7; display: flex; flex-direction: column; gap: 10px; }
+.ilustracion .pill { margin-left: auto; }
+.ilustracion svg { width: 100%; flex: 1; min-height: 0; max-height: 236px; }
+.muro { stroke: rgba(27, 25, 21, 0.2); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
 .camino {
-  stroke-linejoin: round;
   stroke: #c0392b;
   stroke-width: 5;
   stroke-linecap: round;
+  stroke-linejoin: round;
   stroke-dasharray: 700;
   stroke-dashoffset: 700;
-    animation: trazar 2.6s 0.5s var(--ease-in-out) forwards;
+  animation: trazar 2.6s 0.5s var(--ease-in-out) forwards;
 }
-.meta { transform-origin: 380px 40px; animation: latir 2.4s 3s var(--ease-in-out) infinite; }
+.meta { transform-origin: 380px 28px; animation: latir 2.4s 3s var(--ease-in-out) infinite; }
 @keyframes trazar { to { stroke-dashoffset: 0; } }
 @keyframes latir { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
 
-.cifras { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-.cifra { display: grid; gap: 2px; }
-.cifra strong { font-size: 46px; font-weight: 400; line-height: 1.1; letter-spacing: -0.03em; }
-.cifra strong small { font-size: 20px; color: var(--ink-3); letter-spacing: 0; }
-.cifra p { font-size: 12.5px; }
-.cifra.destacada { background: #ebf9b8; border-color: transparent; }
-.cifra.destacada .muted { color: #4a5b12; }
+.cifra {
+  grid-column: span 3;
+  display: grid;
+  gap: 2px;
+  padding: 18px 22px;
+  border-radius: var(--r-lg);
+}
+.cifra .eyebrow { color: rgba(27, 25, 21, 0.55); }
+.cifra strong { font-size: 44px; font-weight: 400; line-height: 1.1; letter-spacing: -0.03em; }
+.cifra strong small { font-size: 19px; color: rgba(27, 25, 21, 0.5); letter-spacing: 0; }
+.cifra p { font-size: 12.5px; color: rgba(27, 25, 21, 0.68); }
 
-.seccion { margin: 10px 4px 0; font-size: 28px; }
-.pasos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .paso {
+  grid-column: span 4;
   position: relative;
   display: grid;
   gap: 8px;
@@ -133,10 +149,9 @@ const pasos = [
 .paso h3 { font-size: 21px; }
 .paso p { font-size: 13px; line-height: 1.55; }
 
-@media (max-width: 1100px) {
-  .hero { grid-template-columns: 1fr; padding: 32px; }
-  .hilo { display: none; }
-  .cifras { grid-template-columns: 1fr 1fr; }
-  .pasos { grid-template-columns: 1fr; }
+@media (max-width: 1180px) {
+  .hero, .ilustracion { grid-column: span 12; }
+  .cifra { grid-column: span 6; }
+  .paso { grid-column: span 12; }
 }
 </style>

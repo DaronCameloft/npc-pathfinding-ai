@@ -10,10 +10,10 @@
   --cream: #f4e7c3;
   --cream-soft: #faf3df;
   --cream-deep: #ecdcae;
-  --page: #f2e8cc; /* fondo exterior, tras la barra de vidrio */
-  --panel: #f7f6f2; /* superficie del contenido */
+  --page: #ffffff; /* fondo exterior */
+  --panel: #f6f6f3; /* superficie del contenido */
   --card: #ffffff;
-  --field: #f1efe9; /* campos, pistas y segmentos */
+  --field: #efefeb; /* campos, pistas y segmentos */
 
   --gold: #e3a52d;
   --gold-soft: #f6c46b;

@@ -42,12 +42,12 @@ function ciclarVelocidad() {
 
     <label class="linea">
       <span class="sr">Posición en la traza</span>
+      <span class="riel"><i :style="{ width: `${porcentaje}%` }" /></span>
       <input
         type="range"
         min="0"
         :max="total"
         :value="indice"
-        :style="{ '--p': `${porcentaje}%` }"
         @input="emit('buscar', Number(($event.target as HTMLInputElement).value))"
       />
     </label>
@@ -106,10 +106,12 @@ function ciclarVelocidad() {
 }
 .glifo.visible { opacity: 1; transform: none; }
 
-.linea { flex: 1; min-width: 80px; display: block; }
+.linea { position: relative; flex: 1; min-width: 80px; display: block; }
+.riel { position: absolute; left: 0; right: 0; top: 50%; height: 6px; margin-top: -3px; border-radius: 999px; background: var(--field); overflow: hidden; }
+.riel i { display: block; height: 100%; border-radius: 999px; background: var(--violet); }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 input[type='range'] {
-  --p: 0%;
+  position: relative;
   width: 100%;
   height: 22px;
   margin: 0;
@@ -120,7 +122,7 @@ input[type='range'] {
 input[type='range']::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--violet) var(--p), var(--field) var(--p));
+  background: transparent;
 }
 input[type='range']::-webkit-slider-thumb {
   appearance: none;
@@ -134,8 +136,7 @@ input[type='range']::-webkit-slider-thumb {
   transition: transform 0.3s var(--spring);
 }
 input[type='range']:active::-webkit-slider-thumb { transform: scale(1.25); }
-input[type='range']::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(27, 25, 21, 0.1); }
-input[type='range']::-moz-range-progress { height: 6px; border-radius: 999px; background: var(--violet); }
+input[type='range']::-moz-range-track { height: 6px; border-radius: 999px; background: transparent; }
 input[type='range']::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 1px solid var(--line-strong); }
 
 .contador { min-width: 112px; text-align: right; font-size: 12px; color: var(--ink-2); }
