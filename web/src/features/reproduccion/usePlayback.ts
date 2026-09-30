@@ -36,12 +36,12 @@ export function usePlayback(total: Ref<number>) {
   let cuadro = 0
   let ultimo = 0
 
-  const indice = computed(() => Math.min(total.value, Math.floor(posicion.value)))
+  const indice = computed(() => Math.max(0, Math.min(total.value, Math.floor(posicion.value))))
   const terminada = computed(() => total.value > 0 && indice.value >= total.value)
   const progreso = computed(() => (total.value ? posicion.value / total.value : 0))
 
   function tick(ahora: number) {
-    const dt = Math.min(0.1, (ahora - ultimo) / 1000)
+    const dt = Math.max(0, Math.min(0.1, (ahora - ultimo) / 1000))
     ultimo = ahora
     posicion.value = Math.min(total.value, posicion.value + dt * VELOCIDADES[velocidad.value].eventosPorSegundo)
     if (posicion.value >= total.value) {
