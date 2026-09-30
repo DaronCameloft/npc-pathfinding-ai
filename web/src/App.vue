@@ -17,6 +17,7 @@ import Sidebar from './shared/Sidebar.vue'
 
 <style scoped>
 .marco {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.28));
   position: fixed;
   inset: 16px;
   display: flex;

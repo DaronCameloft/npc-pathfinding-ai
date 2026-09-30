@@ -92,7 +92,7 @@ const texto = computed(() => {
   flex: none;
   padding: 24px 16px 18px;
   border-right: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.08));
 }
 .marca {
   display: flex;
