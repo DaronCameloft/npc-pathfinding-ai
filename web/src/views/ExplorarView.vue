@@ -11,6 +11,7 @@ import PlaybackDock from '../features/reproduccion/PlaybackDock.vue'
 import { usePlayback, velocidadSugerida } from '../features/reproduccion/usePlayback'
 import AnimatedNumber from '../shared/AnimatedNumber.vue'
 import Icon from '../shared/Icon.vue'
+import CasoSelector from '../shared/CasoSelector.vue'
 import Segmented from '../shared/Segmented.vue'
 
 const mapaClave = ref('den011d')
@@ -109,14 +110,6 @@ async function ejecutar(modo: 'reproducir' | 'final') {
   }
 }
 
-function fijarCaso(n: number) {
-  const tope = Math.max(0, totalCasos.value - 1)
-  const nuevo = Math.min(tope, Math.max(0, Math.round(n) || 0))
-  if (nuevo === caso.value) return
-  caso.value = nuevo
-}
-const aleatorio = () => fijarCaso(Math.floor(Math.random() * totalCasos.value))
-
 watch([mapaClave, caso, algoritmo], ([nuevoMapa], [viejoMapa, viejoCaso]) => {
   if (nuevoMapa !== viejoMapa) {
     caso.value = Math.floor((motor.mapas.find((m) => m.nombre === nuevoMapa)?.escenarios ?? 2) / 2)
@@ -181,16 +174,7 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
     <div class="cuerpo">
       <article class="card mapa-card rise" style="--i: 1">
         <div class="mapa-top">
-          <div class="caso">
-            <button type="button" class="mini" aria-label="Caso anterior" @click="fijarCaso(caso - 1)"><Icon name="anterior" :size="13" /></button>
-            <label class="caso-campo">
-              <span class="eyebrow">Caso</span>
-              <input class="num" type="number" :value="caso" :min="0" :max="totalCasos - 1" @change="fijarCaso(Number(($event.target as HTMLInputElement).value))" />
-              <span class="muted num">/ {{ fmt(Math.max(0, totalCasos - 1)) }}</span>
-            </label>
-            <button type="button" class="mini" aria-label="Caso siguiente" @click="fijarCaso(caso + 1)"><Icon name="siguiente" :size="13" /></button>
-            <button type="button" class="mini" aria-label="Caso aleatorio" @click="aleatorio"><Icon name="dado" :size="15" /></button>
-          </div>
+          <CasoSelector v-model="caso" :total="totalCasos" />
 
           <div class="acciones">
             <button v-if="bloqueadas.length" type="button" class="btn ligero" @click="limpiarBloqueos">Quitar {{ bloqueadas.length }}</button>
@@ -307,33 +291,6 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
 .cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 18px; flex: 1; min-height: 0; }
 .mapa-card { display: flex; flex-direction: column; gap: 12px; min-height: 0; padding: 16px 18px 16px; }
 .mapa-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-.caso { display: flex; align-items: center; gap: 6px; }
-.caso-campo { display: flex; align-items: baseline; gap: 8px; padding: 0 8px; }
-.caso-campo input {
-  width: 62px;
-  padding: 3px 6px;
-  border: 1px solid transparent;
-  border-radius: 9px;
-  background: rgba(60, 40, 20, 0.06);
-  font-size: 15px;
-  font-weight: 600;
-  text-align: center;
-  transition: border-color 0.2s, background 0.2s;
-}
-.caso-campo input:focus { outline: none; border-color: var(--violet); background: #fff; }
-.mini {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  color: var(--ink-2);
-  background: rgba(60, 40, 20, 0.06);
-  transition: background 0.2s, transform 0.35s var(--spring);
-}
-.mini:hover { background: rgba(60, 40, 20, 0.12); }
-.mini:active { transform: scale(0.86); }
-
 .leyenda { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: flex; gap: 12px; margin: 0; padding: 7px 12px; list-style: none; font-size: 11.5px; color: var(--ink-2); flex-wrap: wrap; border-radius: 12px; background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.8); }
 .leyenda li { display: flex; align-items: center; gap: 6px; }
 .leyenda i { width: 10px; height: 10px; border-radius: 50%; }
