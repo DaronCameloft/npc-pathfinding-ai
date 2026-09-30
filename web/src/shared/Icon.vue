@@ -29,6 +29,7 @@ const trazos: Record<string, string[]> = {
   flecha: ['M5 12h14', 'm13 6 6 6-6 6'],
   candado: ['M6 11h12v9H6z', 'M8.5 11V8a3.5 3.5 0 0 1 7 0v3'],
   check: ['m5 12.5 4.5 4.5L19 7.5'],
+  panel: ['M4 5h16v14H4z', 'M9.5 5v14'],
   zoom_mas: ['M12 5v14', 'M5 12h14'],
   zoom_menos: ['M5 12h14'],
   ajustar: ['M4 9V4h5', 'M20 9V4h-5', 'M4 15v5h5', 'M20 15v5h-5'],
