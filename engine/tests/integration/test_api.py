@@ -36,6 +36,17 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(astar['pseudocodigo'][2]['nivel'], 1)
         self.assertIn('menor f', astar['pseudocodigo'][2]['texto'])
 
+    def test_evidencia_de_verificacion_de_astar(self):
+        self.assertIn('astar', [a['clave'] for a in self.cliente.get('/evidencia').json()['algoritmos']])
+        datos = self.cliente.get('/evidencia/astar').json()
+        self.assertEqual((datos['total_casos'], datos['correctos'], datos['fallidos']), (4200, 4200, 0))
+        self.assertLess(datos['error_maximo'], 1e-5)
+        self.assertEqual(sum(m['escenarios'] for m in datos['mapas']), 4200)
+        self.assertEqual(len(datos['puntos']['costo']), 4200)
+
+    def test_evidencia_inexistente_es_404(self):
+        self.assertEqual(self.cliente.get('/evidencia/no_existe').status_code, 404)
+
     def test_lista_de_mapas(self):
         datos = {m['nombre']: m for m in self.cliente.get('/mapas').json()}
         self.assertEqual(set(datos), {'brc100d', 'brc201d', 'den011d'})
