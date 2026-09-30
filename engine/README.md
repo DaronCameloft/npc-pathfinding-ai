@@ -90,7 +90,7 @@ replanificada = ejecutar_busqueda(sesion, 'astar', ejecucion.ruta[39], caso.dest
 | `costo` | Suma de pesos; `None` sin ruta. No es el número de pasos. |
 | `version_mapa` | Versión de los obstáculos usada en el cálculo. |
 | `metricas` | `nodos_expandidos`, `nodos_descubiertos`, `max_frontera`, `tiempo_ms`. |
-| `traza` | Eventos `frontera` / `expandido` con `posicion`, `g`, `h`, `padre`; vacía si no se pidió. |
+| `traza` | Eventos `frontera` / `expandido` con `posicion`, `g`, `h`, `padre` y `linea` (línea del pseudocódigo que los produjo); vacía si no se pidió. |
 
 **Medición:** `tiempo_ms` se toma en una ejecución que solo cuenta nodos. Si se pide traza, el algoritmo se ejecuta otra vez para grabar los eventos; como es determinista, la traza corresponde exactamente a la ejecución medida y el tiempo nunca incluye la grabación, la red ni la animación.
 
@@ -108,7 +108,7 @@ Variable de entorno `CORS_ORIGINS`: orígenes adicionales separados por coma (po
 | Método | Ruta | Respuesta |
 |---|---|---|
 | GET | `/health` | `{"estado": "ok", "version": "0.2.0"}` |
-| GET | `/algoritmos` | Catálogo: `clave`, `nombre`, `garantiza_optimo`, `tecnica`, `complejidad`, `referencia`. |
+| GET | `/algoritmos` | Catálogo: `clave`, `nombre`, `garantiza_optimo`, `tecnica`, `complejidad`, `referencia` y `pseudocodigo` (`[{numero, texto, nivel}]`, el mismo del docstring). |
 | GET | `/mapas` | Lista con `nombre`, `alto`, `ancho`, `vertices`, `escenarios`. |
 | GET | `/mapas/{nombre}` | `alto`, `ancho` y `filas` de terreno (para dibujar en Canvas). |
 | GET | `/mapas/{nombre}/escenarios?desde=0&limite=100` | Página de escenarios: `indice`, `bucket`, `inicio`, `destino`, `optimo`; `limite` máximo 1000. |
@@ -138,6 +138,6 @@ curl -X POST http://localhost:8000/buscar -H "Content-Type: application/json" `
 }
 ```
 
-(Sin `bloqueadas` el caso 375 cuesta 148.2548 con 2 080 expandidos; al bloquear la celda `[81, 63]`, que estaba en la ruta, A* rodea el obstáculo y el costo sube a 148.8406.) Con `"traza": true` el campo `traza` trae los eventos `{"tipo": "frontera" | "expandido", "posicion", "g", "h", "padre"}`; el caso 375 genera unos 6 000.
+(Sin `bloqueadas` el caso 375 cuesta 148.2548 con 2 080 expandidos; al bloquear la celda `[81, 63]`, que estaba en la ruta, A* rodea el obstáculo y el costo sube a 148.8406.) Con `"traza": true` el campo `traza` trae los eventos `{"tipo": "frontera" | "expandido", "posicion", "g", "h", "padre", "linea"}`; el caso 375 genera unos 6 000. `linea` es el número de `pseudocodigo` que se ejecuta en ese evento; el dashboard resalta esa línea mientras reproduce la traza.
 
 Despliegue en Render: el `render.yaml` de la raíz define el servicio (root `engine`, build `pip install -e ".[api]"`, health check en `/health`); en el panel hay que asignar `CORS_ORIGINS`.

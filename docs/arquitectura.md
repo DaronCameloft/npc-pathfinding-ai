@@ -57,9 +57,11 @@ Una búsqueda se serializa como:
   "costo": 148.2548,
   "version_mapa": 0,
   "metricas": { "nodos_expandidos": 2080, "nodos_descubiertos": 2226, "max_frontera": 247, "tiempo_ms": 40.3 },
-  "traza": [ { "tipo": "frontera", "posicion": [75, 61], "g": 0.0, "h": 135.95, "padre": null }, ... ]
+  "traza": [ { "tipo": "frontera", "posicion": [75, 61], "g": 0.0, "h": 135.95, "padre": null, "linea": 1 }, ... ]
 }
 ```
+
+`linea` es el número de la línea del pseudocódigo del algoritmo que produjo el evento. `GET /algoritmos` entrega ese pseudocódigo (`[{numero, texto, nivel}]`, leído del docstring del algoritmo), de modo que el dashboard puede mostrarlo junto al mapa y resaltar la línea en ejecución mientras reproduce la traza.
 
 Posiciones siempre `(fila, columna)`. Web y Unity reproducen la traza con su propio reloj de animación, independiente de `tiempo_ms`.
 
