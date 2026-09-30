@@ -54,7 +54,7 @@ docs/informe/tb1/link-google-docs.txt
 docs/informe/tb1/*.pdf
 
 # ── Claude Code (config local) ────────────────────
-.claude/settings.local.json
+.claude/
 
 # ── Instrucciones locales de Claude Code ──────────
 CLAUDE.md

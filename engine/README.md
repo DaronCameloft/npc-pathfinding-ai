@@ -12,10 +12,10 @@ engine/
 │   ├── application/     casos de uso: ejecutar, comparar, analizar, validar, verificar
 │   ├── infrastructure/  lectores .map/.scen, repositorio del dataset, exportadores
 │   ├── cli/             comando npc-nav
-│   └── api/             FastAPI para la web y Unity (feature/engine-api)
+│   └── api/             FastAPI para la web y Unity (main, rutas, esquemas)
 ├── tests/
 │   ├── unit/            dominio, algoritmos, casos de uso y lectores
-│   └── integration/     dataset real, validación, verificación y CLI
+│   └── integration/     dataset real, validación, verificación, CLI y API
 ├── tools/tb1/           generación de figuras del informe TB1 (matplotlib)
 ├── data/                mapas y escenarios de Dragon Age: Origins
 └── results/             evidencia reproducible (JSON/CSV)
@@ -93,3 +93,51 @@ replanificada = ejecutar_busqueda(sesion, 'astar', ejecucion.ruta[39], caso.dest
 | `traza` | Eventos `frontera` / `expandido` con `posicion`, `g`, `h`, `padre`; vacía si no se pidió. |
 
 **Medición:** `tiempo_ms` se toma en una ejecución que solo cuenta nodos. Si se pide traza, el algoritmo se ejecuta otra vez para grabar los eventos; como es determinista, la traza corresponde exactamente a la ejecución medida y el tiempo nunca incluye la grabación, la red ni la animación.
+
+## API HTTP
+
+Servidor FastAPI que consumen el dashboard web y, más adelante, Unity. Solo traduce peticiones a `application/`; no contiene lógica de búsqueda.
+
+```powershell
+python -m pip install -e ".[api]"
+uvicorn npc_nav.api.main:app --reload        # http://localhost:8000  (documentación interactiva en /docs)
+```
+
+Variable de entorno `CORS_ORIGINS`: orígenes adicionales separados por coma (por ejemplo, el dominio de Vercel). `http://localhost:5173` siempre está permitido. Las respuestas se comprimen con gzip.
+
+| Método | Ruta | Respuesta |
+|---|---|---|
+| GET | `/health` | `{"estado": "ok", "version": "0.2.0"}` |
+| GET | `/algoritmos` | Catálogo: `clave`, `nombre`, `garantiza_optimo`, `tecnica`, `complejidad`, `referencia`. |
+| GET | `/mapas` | Lista con `nombre`, `alto`, `ancho`, `vertices`, `escenarios`. |
+| GET | `/mapas/{nombre}` | `alto`, `ancho` y `filas` de terreno (para dibujar en Canvas). |
+| GET | `/mapas/{nombre}/escenarios?desde=0&limite=100` | Página de escenarios: `indice`, `bucket`, `inicio`, `destino`, `optimo`; `limite` máximo 1000. |
+| POST | `/buscar` | Una `Ejecucion` (ver arriba). |
+| POST | `/comparar` | Lista de `Ejecucion`, una por algoritmo, sobre la misma consulta y el mismo estado del mapa. |
+
+Cuerpo de `POST /buscar`: `mapa`, `algoritmo` (por defecto `astar`), la consulta como `caso` (índice del `.scen`) **o** como `inicio` + `destino`, `traza` (bool) y `bloqueadas` (lista de celdas). `POST /comparar` recibe `algoritmos` en lugar de `algoritmo` (vacío = todos). Las posiciones son siempre `[fila, columna]`.
+
+La API no guarda estado: cada petición crea su propia `SesionNavegacion` y aplica `bloqueadas` antes de buscar. Para replanificar tras un obstáculo, el cliente vuelve a enviar el conjunto completo de celdas bloqueadas.
+
+Errores: mapa o algoritmo inexistente → `404`; caso fuera de rango, extremos no transitables, bloqueos inválidos o una consulta que mezcla `caso` con `inicio`/`destino` → `422` con el mensaje en español en `detail`.
+
+```powershell
+curl -X POST http://localhost:8000/buscar -H "Content-Type: application/json" `
+  -d '{"mapa": "den011d", "caso": 375, "algoritmo": "astar", "bloqueadas": [[81, 63]]}'
+```
+
+```json
+{
+  "algoritmo": "astar",
+  "estado": "encontrada",
+  "ruta": [[75, 61], [76, 62], [77, 63], [78, 63], "..."],
+  "costo": 148.8406,
+  "version_mapa": 1,
+  "metricas": {"nodos_expandidos": 2094, "nodos_descubiertos": "...", "max_frontera": "...", "tiempo_ms": "..."},
+  "traza": []
+}
+```
+
+(Sin `bloqueadas` el caso 375 cuesta 148.2548 con 2 080 expandidos; al bloquear la celda `[81, 63]`, que estaba en la ruta, A* rodea el obstáculo y el costo sube a 148.8406.) Con `"traza": true` el campo `traza` trae los eventos `{"tipo": "frontera" | "expandido", "posicion", "g", "h", "padre"}`; el caso 375 genera unos 6 000.
+
+Despliegue en Render: el `render.yaml` de la raíz define el servicio (root `engine`, build `pip install -e ".[api]"`, health check en `/health`); en el panel hay que asignar `CORS_ORIGINS`.
