@@ -10,9 +10,9 @@ Dashboard que muestra la exploración de cada algoritmo paso a paso, la ruta fin
 | `/explorar` | Un algoritmo sobre un caso: mapa en Canvas (zoom, arrastre, hover), pseudocódigo con la línea en ejecución y conteos, narración, métricas y bloqueo de celdas con recálculo. |
 | `/comparar` | BFS, Dijkstra, voraz y A* sobre la misma consulta con una sola línea de tiempo, y resumen con barras. |
 | `/resultados` | Evidencia de la verificación (pendiente). |
-| `/acerca` | Algoritmos, datos, equipo y declaración de uso de IA. |
+| `/acerca` | Algoritmos, datos, reglas del modelo y equipo. |
 
-Atajos en Explorar y Comparar: `Espacio` reproduce o pausa, `←` `→` avanzan un evento (con `Shift`, 50), `Inicio` y `Fin` saltan a los extremos.
+Atajos en Explorar y Comparar: `Espacio` reproduce o pausa, `←` `→` avanzan un evento (con `Shift`, 50), `Inicio` y `Fin` saltan a los extremos. En Explorar, `F` pone el mapa en pantalla completa y `P` oculta o muestra el pseudocódigo y las métricas; `Ctrl+B` compacta la barra lateral.
 
 ## Desarrollo
 

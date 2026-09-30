@@ -45,10 +45,11 @@ const equipo = [
       </article>
 
       <article class="card rise" style="--i: 7">
-        <header class="card-title"><span class="badge-icon"><Icon name="chip" :size="16" /></span>Declaración de uso de IA</header>
+        <header class="card-title"><span class="badge-icon"><Icon name="chip" :size="16" /></span>Reglas del modelo</header>
         <p class="texto">
-          El equipo usó Claude (Anthropic) como asistente de programación para el motor, la API y este dashboard.
-          El código fue revisado por los integrantes, que deben poder explicarlo. <span class="muted">(Texto base: el equipo debe ajustarlo antes de la exposición.)</span>
+          Cada celda transitable es un vértice. Hay cuatro movimientos cardinales de costo 1 y cuatro diagonales de costo √2,
+          y una diagonal exige libres las dos celdas laterales: el NPC no atraviesa esquinas. La heurística es la distancia
+          octil, admisible y consistente, por lo que A* devuelve siempre una ruta óptima.
         </p>
       </article>
     </div>
