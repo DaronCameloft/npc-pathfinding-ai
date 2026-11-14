@@ -42,7 +42,8 @@ def health():
 @router.get('/algoritmos')
 def algoritmos():
     return [{'clave': info.clave, 'nombre': info.nombre,
-             'garantiza_optimo': info.garantiza_optimo, 'tecnica': info.tecnica,
+             'garantiza_optimo': info.garantiza_optimo, 'incremental': info.incremental,
+             'tecnica': info.tecnica,
              'complejidad': info.complejidad, 'referencia': info.referencia,
              'pseudocodigo': [asdict(linea) for linea in info.pseudocodigo]}
             for info in ALGORITMOS.values()]

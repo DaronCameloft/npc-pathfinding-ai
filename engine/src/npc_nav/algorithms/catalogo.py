@@ -10,6 +10,7 @@ from .astar import astar
 from .bfs import bfs
 from .contrato import Algoritmo
 from .dijkstra import dijkstra
+from .dstar_lite import dstar_lite
 from .pseudocodigo import LineaPseudocodigo, pseudocodigo_de
 from .voraz import voraz
 
@@ -24,6 +25,8 @@ class InfoAlgoritmo:
     """Técnica del curso a la que pertenece (enunciado, sección 6)."""
     complejidad: str
     referencia: str
+    incremental: bool = False
+    """Conserva su estado entre cambios del mapa y busca desde la meta hacia el NPC."""
 
     @property
     def pseudocodigo(self) -> tuple[LineaPseudocodigo, ...]:
@@ -44,6 +47,9 @@ ALGORITMOS: dict[str, InfoAlgoritmo] = {info.clave: info for info in (
     InfoAlgoritmo('astar', 'A*', astar, True,
                   'Algoritmos voraces (heurístico) + búsqueda en grafos', 'O(E log V)',
                   'Hart, Nilsson y Raphael (1968)'),
+    InfoAlgoritmo('dstar_lite', 'D* Lite', dstar_lite, True,
+                  'Búsqueda incremental en grafos (programación dinámica)', 'O(E log V)',
+                  'Koenig y Likhachev (2002)', incremental=True),
 )}
 
 
