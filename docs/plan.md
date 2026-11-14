@@ -1,6 +1,6 @@
 # Plan de acción — navegación de NPCs
 
-Actualizado: 29 de septiembre de 2026, tras la reestructuración a monorepo. Cambios frente a la versión del 27 de septiembre: el dashboard web desplegado se adelanta a la entrega del **domingo 4 de octubre**, se agregan BFS, Dijkstra y voraz como algoritmos de comparación, y Unity pasa al segundo hito.
+Actualizado: 22 de octubre de 2026. La integración Unity se adelantó para probar el motor actual antes de implementar D* Lite. Las fechas de la tabla conservan los objetivos originales; la columna de evidencia indica los avances comprobados.
 
 ## Resultado esperado
 
@@ -15,7 +15,8 @@ Un motor de navegación en Python que compare A* con recálculo completo y D* Li
 - Algoritmos listos en `engine/src/npc_nav/algorithms/`: BFS, Dijkstra, voraz, A* y UFDS, con contrato común y observador de métricas.
 - A* verificado con el código nuevo: 4 200/4 200 rutas legales con costo coincidente con los `.scen` (tolerancia `1e-5`). Evidencia en `engine/results/astar/`.
 - Las pruebas automatizadas cubren dominio, lectores, contrato común de todos los algoritmos, optimalidad frente a un oráculo, suboptimalidad esperada de BFS y voraz, casos de uso y CLI.
-- Pendiente: API, dashboard, simulación continua y D* Lite, experimentos dinámicos comparativos, Unity e informe de resultados. A* ya puede recalcular después de un cambio de obstáculos.
+- API y dashboard construidos. Arcadia en Unity ya consume el motor, dibuja `den011d`, mueve a Auri y recalcula después de cambiar obstáculos. Validación: 56 aserciones del cliente y 13 pruebas reales en Play Mode; [evidencia](../unity/docs/play-checks.json).
+- Pendiente: D* Lite con sesiones persistentes, experimentos dinámicos comparativos, vista A*/D* Lite e informe de resultados. El recálculo actual ejecuta una búsqueda completa; no es incremental.
 
 ## Decisiones de alcance
 
@@ -50,7 +51,7 @@ Para la primera versión, un servicio FastAPI puede exponer peticiones de mapa y
 | 2b. Dashboard web, 2–4 oct (`feature/web-dashboard`) | Vue + Vite + Canvas: mapa, inicio, destino, exploración y ruta; selección de mapa/escenario/algoritmo, reproducción (play, pausa, paso, velocidad), zoom, comparación lado a lado, métricas y bloqueo de celdas con replanificación A*. Despliegue en Vercel. | **Entrega del 4 de octubre:** web pública donde se ejecutan y comparan los cuatro algoritmos en los tres mapas. Código completado el 30 sep (Inicio, Explorar, Comparar, Resultados y Acerca); pendiente el despliegue en Vercel. |
 | 3. Cambios y D* Lite, 5–31 oct | Bloquear/liberar celdas, actualizar movimientos afectados, replanificar desde la posición actual e implementar D* Lite. | Tras cada cambio, ambas rutas son transitables y tienen el mismo costo mínimo para el estado conocido; las sesiones aisladas no contaminan otras pruebas. |
 | 4. Comparación, 1–8 nov | Ejecutar casos repetibles con igual mapa, origen, destino, posición y secuencia de obstáculos; exportar resultados. | CSV/JSON reproducible con costo de ruta, tiempo de planificación, nodos procesados y número de replanificaciones; tablas y gráficos sin tiempo de animación. |
-| 5. Dashboard comparativo y Unity, 9–18 nov | Vista A*/D* Lite lado a lado; eventos sincronizados, obstáculos interactivos y visualización del agente. Integración Unity con el mismo servicio Python. | La web muestra una comparación comprensible. En Unity, un personaje sigue una ruta y cambia de ruta tras un bloqueo comunicado al motor. |
+| 5. Dashboard comparativo y Unity, 9–18 nov | Vista A*/D* Lite lado a lado; eventos sincronizados, obstáculos interactivos y visualización del agente. Integración Unity con el mismo servicio Python. | **Unity adelantado al 22 oct:** Arcadia sigue rutas HTTP, cambia de ruta al bloquear, representa ausencia de ruta y permite explorar con teclado. Falta la comparación A*/D* Lite. |
 | 6. Informe del segundo hito, hasta 22 nov | Documentar propuesta definitiva y diseño del aplicativo; incluir arquitectura, algoritmos, casos de prueba previstos e interfaz. | Entregable del hito 2 listo según el enunciado. |
 | 7. Trabajo final, hasta 29 nov | Revisar pruebas, interpretar resultados, redactar conclusión, preparar video y ZIP. | Código fuente, dataset, informe `.docx` y archivo con enlace al video dentro del ZIP exigido; ejecución verificada desde instrucciones de instalación. |
 
@@ -94,4 +95,6 @@ Hacer una integración corta al final de cada etapa. Cada integrante debe poder 
 
 ## Siguiente incremento
 
-El motor ya calcula el caso 375 de `den011d.map.scen` con costo `148.254833995939` y exporta ruta y traza en `engine/results/astar/ejemplo_den011d.json`. La API que lo expone por HTTP y el dashboard que lo dibuja en el navegador ya están construidos. Lo siguiente es desplegarlos (Render y Vercel) y, para el hito 2, agregar D* Lite y el cliente Unity, que reutilizarán el mismo contrato.
+Probar la demostración Arcadia con el equipo y retomar **D* Lite**: definir sesiones aisladas que conserven su estado, aplicar cambios de celdas y diagonales afectadas, y comparar cada resultado con Dijkstra/A* sobre el mismo estado. Luego ejecutar los experimentos reproducibles y trasladar la comparación al dashboard y a Unity. Prim o Kruskal, si se incorporan, necesitan un caso de uso de árbol de expansión distinto de buscar la ruta del NPC; quedan para después de esta integración.
+
+Arcadia utiliza el escenario 124 de `den011d`: inicio `(106,123)`, destino `(107,92)`. El mapa completo se conserva; el santuario destaca una zona para facilitar la demostración. A* produce costo `51.355339` al inicio y `57.941125` con la compuerta cerrada. El cliente conserva posición y obstáculos y envía una instantánea completa en cada `POST /buscar`. Estos resultados prueban la integración actual, no sustituyen la futura comparación incremental. Instrucciones en [Unity](../unity/README.md). La entrega TB1 permanece sin modificaciones.
