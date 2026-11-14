@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "startedUtc": "2026-10-25T07:05:01.8764368Z",
+  "finishedUtc": "2026-10-25T07:05:03.3909532Z",
+  "unityVersion": "6000.6.7f1",
+  "error": null,
+  "passed": 8,
+  "failed": 0,
+  "restored": true,
+  "checks": [
+    {
+      "name": "independent_choices_with_hidden_player",
+      "status": "passed",
+      "error": null,
+      "elapsedMs": 116.336
+    },
+    {
+      "name": "paused_route_and_obstacles_survive_model_changes",
+      "status": "passed",
+      "error": null,
+      "elapsedMs": 240.9987
+    },
+    {
+      "name": "moving_npc_continues_same_route_without_replanning",
+      "status": "passed",
+      "error": null,
+      "elapsedMs": 366.4775
+    },
+    {
+      "name": "player_following_and_camera_survive_both_choices",
+      "status": "passed",
+      "error": null,
+      "elapsedMs": 118.6593
+    },
+    {
+      "name": "both_seals_have_valid_art_and_distinct_role_indicators",
+      "status": "passed",
+      "error": null,
+      "elapsedMs": 167.48080000000002
+    },
+    {
+      "name": "selector_buttons_release_focus_and_preserve_navigation",
+      "status": "passed",
+      "error": null,
+      "elapsedMs": 114.1397
+    },
+    {
+      "name": "reset_keeps_choices_and_removes_experiment_state",
+      "status": "passed",
+      "error": null,
+      "elapsedMs": 116.1603
+    },
+    {
+      "name": "repeated_changes_leave_one_active_model_per_role",
+      "status": "passed",
+      "error": null,
+      "elapsedMs": 170.6745
+    }
+  ]
+}

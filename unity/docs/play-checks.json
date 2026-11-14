@@ -1,0 +1,400 @@
+{
+  "status": "passed",
+  "startedUtc": "2026-10-25T07:05:13.8042983Z",
+  "finishedUtc": "2026-10-25T07:05:19.1358744Z",
+  "unityVersion": "6000.6.7f1",
+  "transport": "http://127.0.0.1:8000",
+  "map": "den011d",
+  "error": null,
+  "stack": null,
+  "passed": 13,
+  "failed": 0,
+  "elapsedMs": 5331.2892,
+  "restored": true,
+  "checks": [
+    {
+      "name": "initial_astar_from_start",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "Paused",
+      "detail": "Initial request completed while movement stayed paused; reference from demo-smoke-http.json.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 36.5856,
+      "cost": 51.355339059327363,
+      "expectedCost": 51.355339059327363,
+      "algorithmMs": 4.5046,
+      "hasCost": true,
+      "hasExpectedCost": true,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 42,
+      "expanded": 538,
+      "replans": 0
+    },
+    {
+      "name": "closed_gate_from_start",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "Paused",
+      "detail": null,
+      "error": null,
+      "stack": null,
+      "elapsedMs": 60.1602,
+      "cost": 57.941125496954271,
+      "expectedCost": 57.941125496954271,
+      "algorithmMs": 8.1773,
+      "hasCost": true,
+      "hasExpectedCost": true,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 49,
+      "expanded": 714,
+      "replans": 1
+    },
+    {
+      "name": "gate_and_seal_no_route",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "NoRoute",
+      "detail": null,
+      "error": null,
+      "stack": null,
+      "elapsedMs": 331.87600000000003,
+      "cost": 0.0,
+      "expectedCost": 0.0,
+      "algorithmMs": 156.3911,
+      "hasCost": false,
+      "hasExpectedCost": false,
+      "routeStart": null,
+      "routeGoal": null,
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 0,
+      "expanded": 12112,
+      "replans": 0
+    },
+    {
+      "name": "unblock_recovery",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "Paused",
+      "detail": "Opening the sealed passage restores the detour; opening the gate restores the original cost.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 233.7624,
+      "cost": 51.355339059327363,
+      "expectedCost": 51.355339059327363,
+      "algorithmMs": 5.3571,
+      "hasCost": true,
+      "hasExpectedCost": true,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 42,
+      "expanded": 538,
+      "replans": 2
+    },
+    {
+      "name": "algorithm_astar",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "Paused",
+      "detail": "Algorithm switched through the live client; every returned step and route cost were checked.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 66.8278,
+      "cost": 51.355339059327363,
+      "expectedCost": 51.355339059327363,
+      "algorithmMs": 4.997,
+      "hasCost": true,
+      "hasExpectedCost": true,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 42,
+      "expanded": 538,
+      "replans": 1
+    },
+    {
+      "name": "algorithm_dijkstra",
+      "status": "passed",
+      "algorithm": "dijkstra",
+      "state": "Paused",
+      "detail": "Algorithm switched through the live client; every returned step and route cost were checked.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 66.1526,
+      "cost": 51.355339059327363,
+      "expectedCost": 51.355339059327363,
+      "algorithmMs": 18.9518,
+      "hasCost": true,
+      "hasExpectedCost": true,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 42,
+      "expanded": 1843,
+      "replans": 1
+    },
+    {
+      "name": "algorithm_bfs",
+      "status": "passed",
+      "algorithm": "bfs",
+      "state": "Paused",
+      "detail": "Algorithm switched through the live client; every returned step and route cost were checked.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 67.607700000000008,
+      "cost": 51.355339059327363,
+      "expectedCost": 0.0,
+      "algorithmMs": 12.0721,
+      "hasCost": true,
+      "hasExpectedCost": false,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 42,
+      "expanded": 1634,
+      "replans": 1
+    },
+    {
+      "name": "algorithm_voraz",
+      "status": "passed",
+      "algorithm": "voraz",
+      "state": "Paused",
+      "detail": "Algorithm switched through the live client; every returned step and route cost were checked.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 66.0746,
+      "cost": 66.6274169979695,
+      "expectedCost": 0.0,
+      "algorithmMs": 4.3335,
+      "hasCost": true,
+      "hasExpectedCost": false,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 61,
+      "expanded": 186,
+      "replans": 1
+    },
+    {
+      "name": "real_movement_pause_resume",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "Paused",
+      "detail": "Observed physical movement, 300 ms of stable pause, then additional movement after resuming.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 732.5153,
+      "cost": 51.355339059327363,
+      "expectedCost": 51.355339059327363,
+      "algorithmMs": 4.4351,
+      "hasCost": true,
+      "hasExpectedCost": true,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        122
+      ],
+      "routeCells": 42,
+      "expanded": 538,
+      "replans": 0
+    },
+    {
+      "name": "current_cell_replan_against_dijkstra",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "Paused",
+      "detail": "Moved to route[12], closed the gate, replanned from (96,111), and independently matched the Dijkstra result.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 1466.8821,
+      "cost": 41.798989873223334,
+      "expectedCost": 41.798989873223334,
+      "algorithmMs": 3.7939,
+      "hasCost": true,
+      "hasExpectedCost": true,
+      "routeStart": [
+        96,
+        111
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        96,
+        111
+      ],
+      "routeCells": 37,
+      "expanded": 391,
+      "replans": 1
+    },
+    {
+      "name": "mid_edge_change_returns_to_safe_cell",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "Paused",
+      "detail": "Closed a gate while the actor was between cells; observed ReturningToCell, then a fresh HTTP route from the last completed cell.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 1267.631,
+      "cost": 55.941125496954271,
+      "expectedCost": 0.0,
+      "algorithmMs": 9.4736,
+      "hasCost": true,
+      "hasExpectedCost": false,
+      "routeStart": [
+        106,
+        121
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        121
+      ],
+      "routeCells": 47,
+      "expanded": 641,
+      "replans": 1
+    },
+    {
+      "name": "component_disable_reenable_during_planning",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "Paused",
+      "detail": "Real Play lifecycle cancelled an in-flight query, suppressed its result, and automatically issued a fresh query on enable.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 471.00730000000004,
+      "cost": 51.355339059327363,
+      "expectedCost": 51.355339059327363,
+      "algorithmMs": 5.552,
+      "hasCost": true,
+      "hasExpectedCost": true,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 42,
+      "expanded": 538,
+      "replans": 1
+    },
+    {
+      "name": "gameobject_disable_reenable_during_planning",
+      "status": "passed",
+      "algorithm": "astar",
+      "state": "Paused",
+      "detail": "Real Play lifecycle cancelled an in-flight query, suppressed its result, and automatically issued a fresh query on enable.",
+      "error": null,
+      "stack": null,
+      "elapsedMs": 461.40900000000005,
+      "cost": 51.355339059327363,
+      "expectedCost": 51.355339059327363,
+      "algorithmMs": 5.7226,
+      "hasCost": true,
+      "hasExpectedCost": true,
+      "routeStart": [
+        106,
+        123
+      ],
+      "routeGoal": [
+        107,
+        92
+      ],
+      "currentCell": [
+        106,
+        123
+      ],
+      "routeCells": 42,
+      "expanded": 538,
+      "replans": 1
+    }
+  ]
+}

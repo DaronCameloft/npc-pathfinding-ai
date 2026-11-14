@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "title": "Arcadia — El jardín de los guardianes",
+  "map": "den011d",
+  "scenario_index": 124,
+  "algorithm": "astar",
+  "api_url": "http://127.0.0.1:8000",
+  "start": [
+    106,
+    123
+  ],
+  "goal": [
+    107,
+    92
+  ],
+  "gate_cells": [
+    [
+      87,
+      99
+    ],
+    [
+      88,
+      99
+    ],
+    [
+      89,
+      99
+    ],
+    [
+      90,
+      99
+    ],
+    [
+      91,
+      99
+    ],
+    [
+      92,
+      99
+    ],
+    [
+      93,
+      99
+    ],
+    [
+      94,
+      99
+    ]
+  ],
+  "sealed_passage_cells": [
+    [
+      88,
+      102
+    ],
+    [
+      89,
+      102
+    ]
+  ],
+  "camera_focus": {
+    "x": 107.5,
+    "y": 0.0,
+    "z": 98.0
+  },
+  "showcase_bounds": {
+    "min_row": 80,
+    "max_row": 115,
+    "min_column": 84,
+    "max_column": 132
+  },
+  "cell_size": 1.0,
+  "coordinate_convention": "[row,column] -> Unity (x=column,y=0,z=row)",
+  "terrain_source": "engine/data/maps/den011d.map",
+  "terrain_sha256": "04963d72d7ced037a734ef24609ce669bc5ffcf29cc5b73368d0604b8b8a54b6",
+  "terrain_usage": "Visual fallback only. Routes always come from the running engine."
+}

@@ -33,6 +33,10 @@ unity/**/*.sln
 unity/**/*.pidb.meta
 unity/**/*.pdb.meta
 unity/**/*.mdb.meta
+unity/art-source/*.log
+unity/art-source/*.blend1
+unity/**/Assets/_Recovery/
+unity/**/Assets/_Recovery.meta
 
 # ── IDEs y sistema ────────────────────────────────
 .idea/

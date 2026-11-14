@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "transport": "http://127.0.0.1:8000",
+  "map": "den011d",
+  "scenario_index": 124,
+  "initial": {
+    "moves": 41,
+    "cost": 51.35533905932736
+  },
+  "gate_closed": {
+    "moves": 48,
+    "cost": 57.94112549695427
+  },
+  "moving_replan": {
+    "from": [
+      96,
+      111
+    ],
+    "moves": 36,
+    "cost": 41.798989873223334,
+    "matches_dijkstra": true
+  },
+  "sealed_passage": "sin_ruta",
+  "reopened": "original route restored",
+  "checks": [
+    "route endpoints",
+    "all steps legal",
+    "octile cost",
+    "blocked cells avoided",
+    "replan from current position",
+    "Dijkstra cost reference",
+    "no-route response",
+    "unblock recovery"
+  ]
+}

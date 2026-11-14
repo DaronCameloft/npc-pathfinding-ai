@@ -11,7 +11,7 @@ Un motor en Python calcula las rutas y mide cada algoritmo. Un dashboard web mue
 ├── engine/     Motor Python: dominio, algoritmos, casos de uso, CLI y API
 │   └── src/npc_nav/algorithms/   ← BFS, Dijkstra, voraz, A*, UFDS
 ├── web/        Dashboard (Vue 3 + Vite + TypeScript)        → Vercel
-├── unity/      Cliente 3D (Unity, C#)                       → siguiente hito
+├── unity/      Arcadia: demostración 3D jugable (Unity, C#)
 └── docs/       Arquitectura, ADR, plan, informe y figuras
 ```
 
@@ -61,8 +61,10 @@ npm run dev                                 # dashboard en http://localhost:5173
 | BFS, Dijkstra, voraz, A*, UFDS | Listos y probados; A* coincide con los 4 200 óptimos publicados |
 | API (FastAPI) | Lista: búsqueda, comparación, mapas, escenarios y evidencia de verificación; `render.yaml` para Render |
 | Dashboard web (ArcadiaLabs) | Listo: Inicio, Explorar, Comparar, Resultados y Acerca; pendiente su despliegue en Vercel (entrega del 4 de octubre) |
-| D* Lite y obstáculos dinámicos | Hito 2 |
-| Unity | Hito 2 |
+| D* Lite | Pendiente: sesiones y replanificación incremental |
+| Unity / Arcadia | Demo conectada al motor: Auri, explorador controlable, obstáculos, recálculo desde la posición actual y métricas |
+
+Para jugar en Windows, abre **[`unity/Start-Arcadia.cmd`](unity/Start-Arcadia.cmd)**. El lanzador inicia o reutiliza el motor Python local. Proyecto, controles, compilación y evidencia en [`unity/README.md`](unity/README.md).
 
 ## Equipo
 
