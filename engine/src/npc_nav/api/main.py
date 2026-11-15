@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 
 from .. import __version__
 from .rutas import router
+from .rutas_navegacion import router as router_navegacion
 
 ORIGENES_LOCALES = ['http://localhost:5173']
 
@@ -26,11 +27,13 @@ def origenes_permitidos() -> list[str]:
 
 
 app = FastAPI(title='npc-nav', version=__version__,
-              description='Motor de navegación de NPCs: BFS, Dijkstra, voraz y A*.')
+              description='Motor de navegación de NPCs: BFS, Dijkstra, voraz, A* y D* Lite, '
+                          'con obstáculos dinámicos.')
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(CORSMiddleware, allow_origins=origenes_permitidos(),
-                   allow_methods=['GET', 'POST'], allow_headers=['*'])
+                   allow_methods=['GET', 'POST', 'DELETE'], allow_headers=['*'])
 app.include_router(router)
+app.include_router(router_navegacion)
 
 
 @app.exception_handler(ValueError)

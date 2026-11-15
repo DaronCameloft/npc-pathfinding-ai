@@ -26,9 +26,10 @@ class ApiTests(unittest.TestCase):
 
     def test_catalogo_de_algoritmos(self):
         datos = self.cliente.get('/algoritmos').json()
-        self.assertEqual([a['clave'] for a in datos], ['bfs', 'dijkstra', 'voraz', 'astar'])
+        self.assertEqual([a['clave'] for a in datos], ['bfs', 'dijkstra', 'voraz', 'astar', 'dstar_lite'])
         self.assertEqual({a['clave'] for a in datos if a['garantiza_optimo']},
-                         {'dijkstra', 'astar'})
+                         {'dijkstra', 'astar', 'dstar_lite'})
+        self.assertEqual({a['clave'] for a in datos if a['incremental']}, {'dstar_lite'})
 
     def test_catalogo_incluye_pseudocodigo_numerado(self):
         astar = next(a for a in self.cliente.get('/algoritmos').json() if a['clave'] == 'astar')
@@ -90,10 +91,11 @@ class ApiTests(unittest.TestCase):
         datos = self.buscar(inicio=[75, 61], destino=[128, 175]).json()
         self.assertAlmostEqual(datos['costo'], 148.2548, places=4)
 
-    def test_comparar_los_cuatro_algoritmos(self):
+    def test_comparar_todos_los_algoritmos(self):
         datos = self.cliente.post('/comparar', json={'mapa': 'den011d', 'caso': 375}).json()
         costos = {e['algoritmo']: e['costo'] for e in datos}
-        self.assertEqual(list(costos), ['bfs', 'dijkstra', 'voraz', 'astar'])
+        self.assertEqual(list(costos), ['bfs', 'dijkstra', 'voraz', 'astar', 'dstar_lite'])
+        self.assertAlmostEqual(costos['dstar_lite'], costos['astar'])
         self.assertAlmostEqual(costos['astar'], costos['dijkstra'])
         self.assertGreater(costos['voraz'], costos['astar'] + 1)
         expandidos = {e['algoritmo']: e['metricas']['nodos_expandidos'] for e in datos}

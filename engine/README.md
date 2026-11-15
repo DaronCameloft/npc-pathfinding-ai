@@ -42,10 +42,12 @@ En PyCharm: *Settings → Python Interpreter → Add Interpreter → Existing* y
 ```powershell
 npc-nav algoritmos                                   # catálogo
 npc-nav analizar  --mapa brc201d                     # estadísticas del grafo (TB1)
-npc-nav comparar  --mapa den011d --caso 375          # los 4 algoritmos sobre la misma consulta
+npc-nav comparar  --mapa den011d --caso 375          # los 5 algoritmos sobre la misma consulta
 npc-nav buscar    --mapa den011d --caso 375 --algoritmo astar --traza --output results/astar/ejemplo_den011d.json
 npc-nav validar   --output results/validacion_dataset.json
 npc-nav verificar --algoritmo astar                  # 4 200 escenarios → results/astar/
+npc-nav verificar --algoritmo dstar_lite             # 4 200 escenarios → results/dstar_lite/
+npc-nav experimentar                                 # obstáculos dinámicos A* vs D* Lite → results/dinamico/
 ```
 
 Pruebas:
@@ -84,7 +86,7 @@ replanificada = ejecutar_busqueda(sesion, 'astar', ejecucion.ruta[39], caso.dest
 
 | Campo | Significado |
 |---|---|
-| `algoritmo` | Clave del catálogo (`bfs`, `dijkstra`, `voraz`, `astar`). |
+| `algoritmo` | Clave del catálogo (`bfs`, `dijkstra`, `voraz`, `astar`, `dstar_lite`). |
 | `estado` | `encontrada` o `sin_ruta`. Un extremo no transitable lanza `ValueError`. |
 | `ruta` | Posiciones del inicio al destino, ambos incluidos; vacía si no hay ruta. |
 | `costo` | Suma de pesos; `None` sin ruta. No es el número de pasos. |
@@ -96,7 +98,7 @@ replanificada = ejecutar_busqueda(sesion, 'astar', ejecucion.ruta[39], caso.dest
 
 ## API HTTP
 
-Servidor FastAPI que consumen el dashboard web y, más adelante, Unity. Solo traduce peticiones a `application/`; no contiene lógica de búsqueda.
+Servidor FastAPI que consumen el dashboard web y Unity. Solo traduce peticiones a `application/`; no contiene lógica de búsqueda.
 
 ```powershell
 python -m pip install -e ".[api]"
@@ -108,18 +110,33 @@ Variable de entorno `CORS_ORIGINS`: orígenes adicionales separados por coma (po
 | Método | Ruta | Respuesta |
 |---|---|---|
 | GET | `/health` | `{"estado": "ok", "version": "1.1.0"}` |
-| GET | `/algoritmos` | Catálogo: `clave`, `nombre`, `garantiza_optimo`, `tecnica`, `complejidad`, `referencia` y `pseudocodigo` (`[{numero, texto, nivel}]`, el mismo del docstring). |
+| GET | `/algoritmos` | Catálogo: `clave`, `nombre`, `garantiza_optimo`, `incremental`, `tecnica`, `complejidad`, `referencia` y `pseudocodigo` (`[{numero, texto, nivel}]`, el mismo del docstring). |
 | GET | `/mapas` | Lista con `nombre`, `alto`, `ancho`, `vertices`, `escenarios`. |
 | GET | `/mapas/{nombre}` | `alto`, `ancho` y `filas` de terreno (para dibujar en Canvas). |
 | GET | `/mapas/{nombre}/escenarios?desde=0&limite=100` | Página de escenarios: `indice`, `bucket`, `inicio`, `destino`, `optimo`; `limite` máximo 1000. |
 | POST | `/buscar` | Una `Ejecucion` (ver arriba). |
 | POST | `/comparar` | Lista de `Ejecucion`, una por algoritmo, sobre la misma consulta y el mismo estado del mapa. |
+| POST | `/simular` | Navegación dinámica completa y sin estado: el NPC recorre la ruta y los `cambios` ocurren a su paso (ver abajo). |
+| POST | `/sesiones` | Abre una navegación con estado (201). |
+| GET | `/sesiones/{id}` | Estado de la sesión. |
+| POST | `/sesiones/{id}/avanzar` | `{"pasos": n}`: el NPC avanza por la ruta del guía. |
+| POST | `/sesiones/{id}/obstaculos` | `{"bloquear": [...], "liberar": [...], "traza": false}`: replanifica todos los algoritmos desde la posición actual. |
+| DELETE | `/sesiones/{id}` | Cierra la sesión (204). |
 | GET | `/evidencia` | Algoritmos con evidencia de verificación publicada (`engine/results/<algoritmo>/`). |
 | GET | `/evidencia/{algoritmo}` | Resultado de `npc-nav verificar`: cifras globales, detalle por mapa, entorno, huellas del código y una nube de puntos (costo, nodos expandidos, tiempo) por escenario. 404 si no hay evidencia. |
 
 Cuerpo de `POST /buscar`: `mapa`, `algoritmo` (por defecto `astar`), la consulta como `caso` (índice del `.scen`) **o** como `inicio` + `destino`, `traza` (bool) y `bloqueadas` (lista de celdas). `POST /comparar` recibe `algoritmos` en lugar de `algoritmo` (vacío = todos). Las posiciones son siempre `[fila, columna]`.
 
-La API no guarda estado: cada petición crea su propia `SesionNavegacion` y aplica `bloqueadas` antes de buscar. Para replanificar tras un obstáculo, el cliente vuelve a enviar el conjunto completo de celdas bloqueadas.
+`/buscar` y `/comparar` no guardan estado: cada petición crea su propia `SesionNavegacion` y aplica `bloqueadas` antes de buscar.
+
+### Obstáculos dinámicos: `/simular` y `/sesiones`
+
+Ambos usan `application/navegacion.py`: **un NPC, un estado de obstáculos y varios planificadores** que reciben los mismos cambios desde la misma posición. `algoritmos` (por defecto `["astar", "dstar_lite"]`) define cuáles; el primero es el **guía** y el NPC sigue su ruta. A* (y cualquier algoritmo no incremental) vuelve a buscar desde cero; D* Lite conserva su estado y solo repara lo afectado.
+
+- `POST /simular`: `mapa`, `caso` o `inicio`/`destino`, `algoritmos`, `bloqueadas`, `traza` y `cambios: [{"paso": n, "bloquear": [...], "liberar": [...]}]`. Devuelve `recorrido`, `distancia_recorrida`, `llegado`, `costos_coinciden`, un `resumen` por algoritmo (replanificaciones, celdas y tiempo de la búsqueda inicial y de las replanificaciones) y el `historial` de planificaciones. No depende de que el servidor recuerde nada: es lo que usa el dashboard.
+- `/sesiones`: para clientes en tiempo real (Unity). Cada respuesta trae `posicion`, `ruta_restante`, `bloqueadas`, `vigentes` (la última planificación de cada algoritmo) y `nuevas` (las producidas por esa llamada). Cada planificación tiene `motivo`, `estado`, `posicion`, `ruta`, `costo`, `celdas_cambiadas`, `ruta_afectada` y `metricas`. Las sesiones viven en memoria: expiran tras 30 min sin uso o si el servidor se reinicia (Render se duerme), y entonces responden 404 y el cliente abre otra.
+
+No se puede bloquear la celda del NPC ni el destino (422).
 
 Errores: mapa o algoritmo inexistente → `404`; caso fuera de rango, extremos no transitables, bloqueos inválidos o una consulta que mezcla `caso` con `inicio`/`destino` → `422` con el mensaje en español en `detail`.
 
@@ -141,5 +158,14 @@ curl -X POST http://localhost:8000/buscar -H "Content-Type: application/json" `
 ```
 
 (Sin `bloqueadas` el caso 375 cuesta 148.2548 con 2 080 expandidos; al bloquear la celda `[81, 63]`, que estaba en la ruta, A* rodea el obstáculo y el costo sube a 148.8406.) Con `"traza": true` el campo `traza` trae los eventos `{"tipo": "frontera" | "expandido", "posicion", "g", "h", "padre", "linea"}`; el caso 375 genera unos 6 000. `linea` es el número de `pseudocodigo` que se ejecuta en ese evento; el dashboard resalta esa línea mientras reproduce la traza.
+
+## Experimento dinámico
+
+```powershell
+npc-nav experimentar                     # 30 escenarios × 5 eventos por mapa, semilla 2026
+npc-nav experimentar --mapa den011d --casos 10 --eventos 3 --output-dir ruta/
+```
+
+Para cada escenario (elegido con la semilla entre la mitad con rutas más largas) el NPC avanza y ocurren eventos `bloqueo_ruta`, `pasillo` (bloque de 3×3 en la ruta), `lejano` (no toca la ruta) y `desbloqueo`. A* y D* Lite reciben los mismos cambios y se comprueba que cada par de planificaciones tenga el mismo costo. Salida en `results/dinamico/`: `resumen.json` (medianas y totales por mapa y por tipo de evento, entorno y huellas del código) y `planificaciones.csv` (una fila por algoritmo y planificación).
 
 Despliegue en Render: el `render.yaml` de la raíz define el servicio (root `engine`, build `pip install -e ".[api]"`, health check en `/health`); en el panel hay que asignar `CORS_ORIGINS`.

@@ -5,9 +5,10 @@ from .bfs import bfs
 from .catalogo import ALGORITMOS, InfoAlgoritmo, obtener
 from .contrato import NULO, SIN_RUTA, Observador, ResultadoBusqueda
 from .dijkstra import dijkstra
+from .dstar_lite import DStarLite, dstar_lite
 from .ufds import UFDS, regiones_conectadas
 from .voraz import voraz
 
-__all__ = ['astar', 'bfs', 'dijkstra', 'voraz', 'UFDS', 'regiones_conectadas',
+__all__ = ['astar', 'bfs', 'dijkstra', 'dstar_lite', 'DStarLite', 'voraz', 'UFDS', 'regiones_conectadas',
            'ALGORITMOS', 'InfoAlgoritmo', 'obtener',
            'NULO', 'SIN_RUTA', 'Observador', 'ResultadoBusqueda']
