@@ -13,7 +13,7 @@ Esta carpeta contiene **todo lo que el equipo expone en la sustentación**. Cada
 | [`voraz.py`](voraz.py) | Voraz primero el mejor | Algoritmos voraces | No | O(E log V) | Rápido pero engañable |
 | [`astar.py`](astar.py) | A* | Voraces (heurístico) + búsqueda en grafos | Sí | O(E log V) | Algoritmo principal |
 | [`ufds.py`](ufds.py) | Union-Find | UFDS | — | O(E · α(V)) | Regiones conectadas / descarte de consultas imposibles |
-| `dstar_lite.py` | D* Lite | Búsqueda incremental | Sí | — | Siguiente hito: replanificación ante obstáculos |
+| [`dstar_lite.py`](dstar_lite.py) | D* Lite | Búsqueda incremental en grafos (programación dinámica) | Sí | O(E log V) la primera vez; luego solo lo afectado | Replanificación ante obstáculos dinámicos |
 
 Archivos de soporte:
 
@@ -29,6 +29,20 @@ Todos los algoritmos de ruta avisan al observador en dos momentos:
 - `expandido(posicion, g, h, padre, linea)`: la celda sale de la frontera y se procesan sus vecinos.
 
 `g` es el costo acumulado desde el inicio y `h` la estimación hasta el destino (distancia octil; vale 0 en BFS y Dijkstra). `linea` es el número de la línea del pseudocódigo (el docstring del archivo) que se está ejecutando: el inicio es la 1, extraer de la frontera es la 3 y descubrir o mejorar un vecino es la 9 en A* y Dijkstra (la 7 en BFS y voraz). Con esos eventos el dashboard dibuja la exploración y resalta la línea del pseudocódigo en ejecución; [`pseudocodigo.py`](pseudocodigo.py) lee esas líneas del docstring y la API las entrega en `/algoritmos`.
+
+## D* Lite: búsqueda con memoria
+
+`dstar_lite.py` tiene dos formas de uso:
+
+- `dstar_lite(grafo, inicio, destino, observador)`: la firma común, para `/buscar`, `/comparar` y `npc-nav verificar`. Es una búsqueda sin cambios.
+- `DStarLite(grafo, inicio, meta)`: el planificador con estado. `planificar()` hace la primera búsqueda y `replanificar(posicion, cambiadas)` repara tras cada cambio de obstáculos. Lo usa `application/navegacion.py`.
+
+Diferencias con los demás algoritmos al leer la traza:
+
+- Busca **desde la meta hacia el NPC**: el primer evento es la meta y el último expandido es la posición del NPC.
+- `g` es el costo **hasta la meta**, y `h` la distancia octil desde el NPC. `g` puede ser `None` (infinito) cuando una celda pierde su camino.
+- `frontera` = la celda queda inconsistente y entra a la cola (línea 5, o 9 si se reinserta). `expandido` = se extrae de la cola y se corrige (línea 8).
+- Usa aritmética exacta `a + b·√2`, así los empates de clave son exactos (ver el docstring).
 
 ## Agregar un algoritmo
 
