@@ -3,6 +3,7 @@
 import unittest
 
 from npc_nav.algorithms import DStarLite, astar
+from npc_nav.application import experimento_dinamico
 from npc_nav.domain import SesionNavegacion
 from npc_nav.infrastructure import RepositorioDataset
 
@@ -34,6 +35,16 @@ class DStarLiteRealTests(unittest.TestCase):
         referencia = astar(sesion, posicion, caso.destino, completo)
         self.assertAlmostEqual(replan.costo, referencia.costo)
         self.assertLess(incremental.expandidos * 10, completo.expandidos)
+
+    def test_experimento_dinamico_reproducible(self):
+        repo = RepositorioDataset()
+        a, filas = experimento_dinamico(repo, 'den011d', casos=3, eventos=3, semilla=7)
+        b, _ = experimento_dinamico(repo, 'den011d', casos=3, eventos=3, semilla=7)
+        self.assertTrue(a['costos_coinciden'])
+        self.assertEqual(a['escenarios'], b['escenarios'])
+        self.assertEqual(a['planificaciones_comparadas'], b['planificaciones_comparadas'])
+        self.assertEqual({f['algoritmo'] for f in filas}, {'astar', 'dstar_lite'})
+        self.assertLess(a['proporcion_expandidos_replanificacion'], 1)
 
 
 if __name__ == '__main__':

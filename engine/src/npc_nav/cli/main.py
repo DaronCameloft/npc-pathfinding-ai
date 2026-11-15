@@ -6,6 +6,7 @@
     npc-nav comparar --mapa den011d --caso 375 [--algoritmos bfs,dijkstra,voraz,astar]
     npc-nav validar  [--output results/validacion_dataset.json]
     npc-nav verificar --algoritmo astar [--output-dir results/astar]
+    npc-nav experimentar [--mapa den011d] [--casos 30] [--eventos 5] [--semilla 2026]
 
 También se puede invocar como `python -m npc_nav ...`.
 """
@@ -19,7 +20,7 @@ from pathlib import Path
 from .. import algorithms
 from ..algorithms.catalogo import ALGORITMOS, obtener
 from ..application import (comparar_algoritmos, ejecutar_busqueda, estadisticas_grafo,
-                           validar_dataset, verificar_benchmark)
+                           experimento_dinamico, validar_dataset, verificar_benchmark)
 from ..domain.sesion import SesionNavegacion
 from ..infrastructure.exportadores import guardar_csv, guardar_json, sha256
 from ..infrastructure.repositorio import RepositorioDataset
@@ -102,6 +103,32 @@ def _cmd_verificar(args, repo):
     return 1 if reporte['fallidos'] else 0
 
 
+def _cmd_experimentar(args, repo):
+    mapas = repo.listar_mapas() if args.mapa == 'todos' else [args.mapa]
+    salida = Path(args.output_dir or CARPETA_RESULTADOS / 'dinamico')
+    resumenes, filas = [], []
+    for mapa in mapas:
+        resumen, propias = experimento_dinamico(
+            repo, mapa, casos=args.casos, eventos=args.eventos, semilla=args.semilla,
+            progreso=lambda texto: print(texto, flush=True))
+        resumenes.append(resumen)
+        filas += propias
+        replan = resumen['replanificacion']
+        print(f"{mapa}: {resumen['planificaciones_comparadas']} planificaciones; costos "
+              f"{'coinciden' if resumen['costos_coinciden'] else 'NO coinciden'}; "
+              + '; '.join(f"{clave} mediana {datos['mediana_expandidos']} celdas, "
+                          f"{datos['mediana_tiempo_ms']} ms" for clave, datos in replan.items()))
+    reporte = {'entorno': {'python': platform.python_version(), 'plataforma': platform.platform(),
+                           'procesador': platform.processor()},
+               'sha256_codigo': {archivo: sha256(Path(algorithms.__file__).parent / archivo)
+                                 for archivo in ('astar.py', 'dstar_lite.py')},
+               'mapas': resumenes}
+    guardar_json(salida / 'resumen.json', reporte)
+    guardar_csv(salida / 'planificaciones.csv', filas)
+    print(f'Evidencia en {salida}')
+    return 0 if all(r['costos_coinciden'] for r in resumenes) else 1
+
+
 def construir_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog='npc-nav', description='Motor de navegación de NPCs')
     parser.add_argument('--data-dir', type=Path,
@@ -138,6 +165,15 @@ def construir_parser() -> argparse.ArgumentParser:
     p.add_argument('--output-dir', type=Path)
     p.add_argument('--tolerancia', type=float, default=1e-5)
     p.set_defaults(funcion=_cmd_verificar)
+
+    p = sub.add_parser('experimentar',
+                       help='Obstáculos dinámicos: A* (recálculo completo) frente a D* Lite')
+    p.add_argument('--mapa', default='todos', help='Nombre del mapa o "todos"')
+    p.add_argument('--casos', type=int, default=30, help='Escenarios por mapa')
+    p.add_argument('--eventos', type=int, default=5, help='Cambios de obstáculos por escenario')
+    p.add_argument('--semilla', type=int, default=2026)
+    p.add_argument('--output-dir', type=Path)
+    p.set_defaults(funcion=_cmd_experimentar)
     return parser
 
 
