@@ -22,7 +22,7 @@ namespace Arcadia.Navigation
         internal void Detach(UnityWebRequest value) { if (ReferenceEquals(request, value)) request = null; }
     }
 
-    public sealed class EngineClient : MonoBehaviour
+    public sealed partial class EngineClient : MonoBehaviour
     {
         public string BaseUrl = "http://127.0.0.1:8000";
         [Range(1, 120)] public int RequestTimeoutSeconds = 30;

@@ -45,6 +45,7 @@ namespace Arcadia
         bool connecting;
         int reconnectGeneration;
         ArcadiaHud hud;
+        public GardenModes Modes { get; private set; }
         Material routeMat,markerMat;
         Material explorerAmber,npcRole;
         const string NpcPreference="Arcadia.Character.Npc",PlayerPreference="Arcadia.Character.Player";
@@ -61,6 +62,7 @@ namespace Arcadia
                 Rig.World=World;
                 Rig.Follow=Navigator.transform;Rig.CloseView=true;Rig.Focus=StartCell.ToWorld(.5f);Rig.Distance=7;Rig.Pitch=36;Rig.Yaw=25;Rig.Snap();
                 UpdateCharacterCamera();
+                Modes=gameObject.AddComponent<GardenModes>(); Modes.Initialize(this);
                 hud=gameObject.AddComponent<ArcadiaHud>();hud.Initialize(this);
             }
             catch(Exception e){Debug.LogException(e);yield break;}
@@ -245,13 +247,24 @@ namespace Arcadia
                 var draft=new MeshDraft();var seen=new HashSet<GridCell>();
                 foreach(var e in result.Trace)if(e.Type=="expandido"&&seen.Add(e.Position))draft.Box(e.Position.ToWorld(.022f),new Vector3(.72f,.012f,.72f));
                 traceObject=new GameObject("Nodos explorados por Python");traceObject.AddComponent<MeshFilter>().sharedMesh=draft.Create();traceObject.AddComponent<MeshRenderer>().sharedMaterial=World.Material("Exploracion",new Color(.18f,.42f,.37f),0,.2f);
+                traceObject.SetActive(Modes == null || Modes.Mode == GardenMode.Navigation);
             }
         }
         void ClearTrace(){if(traceObject){var mesh=traceObject.GetComponent<MeshFilter>().sharedMesh;Destroy(traceObject);Destroy(mesh);}}
 
+        internal void ShowNavigation(bool visible)
+        {
+            Navigator.VisualRoot.gameObject.SetActive(visible);
+            marker.gameObject.SetActive(visible);
+            explorer.gameObject.SetActive(visible && ExploreMode);
+            path.gameObject.SetActive(visible);
+            if(traceObject)traceObject.SetActive(visible && ShowExploration);
+            World.SyncObstacles(visible ? Navigator.Blocked : Array.Empty<GridCell>());
+        }
+
         void Update()
         {
-            if(Navigator==null)return;
+            if(Navigator==null || Modes == null || Modes.Mode != GardenMode.Navigation)return;
             if(Input.GetKeyDown(KeyCode.Space))TogglePause();if(Input.GetKeyDown(KeyCode.E))ToggleGate();if(Input.GetKeyDown(KeyCode.R))ResetDemo();
             if(Input.GetKeyDown(KeyCode.Tab))ToggleExplore();if(Input.GetKeyDown(KeyCode.F))ToggleCamera();if(Input.GetKeyDown(KeyCode.G))ToggleFollow();
             if(ExploreMode)MoveExplorer();

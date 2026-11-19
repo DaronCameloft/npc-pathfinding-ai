@@ -59,6 +59,12 @@ La elección se guarda localmente para la siguiente sesión. Cambiar el modelo d
 | Mostrar ruta o nodos expandidos | Botones **Ver ruta** y **Ver búsqueda** |
 | Cambiar algoritmo | Botones **A\***, **D\* Lite**, **Dijkstra**, **BFS**, **Voraz** |
 | Recuperar la conexión | Botón **Reconectar motor** |
+| Cambiar de demostración | Selector superior **Navegación**, **Pasillo**, **Patrullaje** y **Botín** |
+| Probar el corte mínimo | **Cerrar el corte** y **Abrir el corte** en Pasillo |
+| Recorrer el árbol o cambiar la muestra | **Patrullar** y **Otros puntos** en Patrullaje |
+| Examinar la mochila | **Abrir cofre**, deslizador **Capacidad** (1–60 kg) y **Repetir selección** |
+
+Al salir de Navegación, Auri pausa su recorrido. Al regresar, recupera la misma posición, sesión, cámara y barreras, y continúa si estaba en movimiento.
 
 En el Editor, haz clic dentro de la pestaña **Game** para que reciba las teclas. En exploración, el explorador ámbar se controla directamente; Auri continúa calculando sus rutas mediante Python. El seguimiento actualiza el destino cada 1,2 segundos cuando hay suficiente separación.
 
@@ -73,7 +79,22 @@ En el Editor, haz clic dentro de la pestaña **Game** para que reciba las teclas
 
 El panel presenta costo, tiempo de cálculo del algoritmo, nodos expandidos y recálculos. El tiempo del motor excluye red, animación y dibujo; el costo suma los pesos de las aristas y no equivale a la cantidad de pasos. Las métricas mostradas corresponden a la última consulta completada.
 
+### Pasillo
+
+Elige **Pasillo**. Sigue los tres aumentos de Edmonds-Karp y observa a los tres guardianes cruzar por caminos disjuntos. Las runas rojas indican el corte mínimo. Pulsa **Cerrar el corte** para levantar las tres barreras y observar un flujo de cero. **Abrir el corte** recupera el flujo de tres. [Vista del pasillo](docs/pasillo.png)
+
+### Patrullaje
+
+Elige **Patrullaje**. Con la semilla 2026, Kruskal evalúa nueve conexiones, conserva seis y descarta tres ciclos. Compara el costo del árbol (624,7595) con el de unir todos los pares (3253,447). Pulsa **Patrullar** para seguir a Auri hasta que vuelva a P1, u **Otros puntos** para probar otra semilla. [Red de patrullaje](docs/patrullaje.png)
+
+### Botín
+
+Elige **Botín** y pulsa **Abrir cofre**. A 20 kg la tabla da 113 de oro y la selección voraz obtiene 99. Sigue la reconstrucción dorada y observa qué objetos llegan a la mochila. Mueve el deslizador hasta 25 kg para ver que ambas selecciones alcanzan 139 de oro. [Tabla de la mochila](docs/botin.png)
+
 ## Integración y alcance
+
+- Los nombres y técnicas proceden de `GET /complementarios`. Python calcula caminos, aumentos y corte en `POST /pasillo`, el árbol y las decisiones en `POST /patrullaje`, y las selecciones y la tabla de programación dinámica en `POST /botin`. Unity reproduce los resultados. Para el recorrido de patrulla, encadena los tramos del árbol y los invierte al regresar.
+- Las pruebas de los tres modos y del retorno a Navegación se ejecutan en Play Mode con `unity command script run --file ../tools/GraphChecks.cs --entry GraphChecks.Run --timeout 120 --json` desde `unity/Arcadia`. [Resultados de los modos](docs/graph-checks.json)
 
 - Unity consume la API HTTP existente: `GET /mapas/den011d` y `POST /buscar`. Todas las búsquedas se ejecutan en Python.
 - El terreno de respaldo en `StreamingAssets/Arcadia/den011d.json` permite ver el escenario sin conexión. Antes de aceptar órdenes de navegación, se comprueba que el mapa recibido del motor coincide con ese terreno.
