@@ -69,3 +69,22 @@ def reconstruir_ruta(padres: dict[Posicion, Posicion], inicio: Posicion,
     while ruta[-1] != inicio:
         ruta.append(padres[ruta[-1]])
     return tuple(reversed(ruta))
+
+
+# ── Algoritmos complementarios (Kruskal, Edmonds-Karp, mochila) ──────────────
+# No buscan una ruta origen→destino, así que no comparten la firma anterior.
+# Avisan sus decisiones con `observador.paso(linea, **datos)`, donde `linea` es
+# la línea del pseudocódigo de su docstring; la aplicación decide qué guardar.
+
+
+class ObservadorPasos(Protocol):
+    def paso(self, linea: int, **datos) -> None:
+        """El algoritmo tomó una decisión en la línea `linea` de su pseudocódigo."""
+
+
+class _PasosNulos:
+    def paso(self, linea, **datos):
+        pass
+
+
+PASOS_NULOS = _PasosNulos()

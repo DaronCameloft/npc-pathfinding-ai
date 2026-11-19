@@ -122,3 +122,88 @@ export interface Evidencia {
   /** Series paralelas: un punto por escenario. */
   puntos: { mapas: string[]; mapa: number[]; costo: number[]; expandidos: number[]; tiempo_ms: number[] }
 }
+
+/* ── Algoritmos complementarios ─────────────────────────────────────────── */
+
+export interface ComplementarioInfo {
+  clave: 'kruskal' | 'edmonds_karp' | 'mochila'
+  nombre: string
+  tecnica: string
+  complejidad: string
+  referencia: string
+  caso_de_uso: string
+  pseudocodigo: LineaPseudocodigo[]
+}
+
+export interface Tramo {
+  desde: number
+  hasta: number
+  costo: number
+  ruta: Posicion[]
+}
+
+export interface DecisionKruskal {
+  desde: number
+  hasta: number
+  costo: number
+  aceptada: boolean
+  linea: number
+}
+
+export interface RedPatrullaje {
+  mapa: string
+  puntos: Posicion[]
+  candidatas: Tramo[]
+  sin_ruta: [number, number][]
+  decisiones: DecisionKruskal[]
+  arbol: Tramo[]
+  costo_arbol: number
+  costo_candidatas: number
+  componentes: number
+  tiempo_rutas_ms: number
+  tiempo_kruskal_ms: number
+}
+
+export type Direccion = 'horizontal' | 'vertical'
+
+export interface Aumento {
+  celdas: Posicion[]
+  flujo: number
+}
+
+export interface AnalisisPasillo {
+  mapa: string
+  zona: [number, number, number, number]
+  direccion: Direccion
+  entradas: Posicion[]
+  salidas: Posicion[]
+  celdas: number
+  flujo_maximo: number
+  caminos: Posicion[][]
+  corte: Posicion[]
+  aumentos: Aumento[]
+  bloqueadas: Posicion[]
+  tiempo_ms: number
+}
+
+export interface ObjetoBotin {
+  nombre: string
+  peso: number
+  valor: number
+}
+
+export interface Carga {
+  elegidos: number[]
+  peso: number
+  valor: number
+}
+
+export interface SeleccionBotin {
+  objetos: ObjetoBotin[]
+  capacidad: number
+  optima: Carga
+  voraz: Carga
+  tabla: number[][]
+  reconstruccion: [number, number][]
+  tiempo_ms: number
+}

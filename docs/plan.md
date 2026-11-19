@@ -17,7 +17,8 @@ Un motor de navegación en Python que compare A* con recálculo completo y D* Li
 - Las pruebas automatizadas cubren dominio, lectores, contrato común de todos los algoritmos, optimalidad frente a un oráculo, suboptimalidad esperada de BFS y voraz, casos de uso y CLI.
 - API y dashboard construidos. Arcadia en Unity ya consume el motor, dibuja `den011d`, mueve a Auri y recalcula después de cambiar obstáculos. Validación: 56 aserciones del cliente y 13 pruebas reales en Play Mode; [evidencia](../unity/docs/play-checks.json).
 - D* Lite (versión optimizada, costos exactos `a + b·√2`) verificado con 4 200/4 200 escenarios ([evidencia](../engine/results/dstar_lite/resumen.json)). Navegación dinámica en `application/navegacion.py`, `POST /simular` y `/sesiones` con estado; experimento reproducible en [results/dinamico](../engine/results/dinamico/resumen.json). 88 pruebas.
-- Pendiente: vista A*/D* Lite en el dashboard, Arcadia con sesiones (Astra), Kruskal, Edmonds-Karp y mochila 0/1, e informe de resultados.
+- Kruskal (`POST /patrullaje`, red de patrullaje entre puntos de interés con costos A*), Edmonds-Karp (`POST /pasillo`, flujo máximo y corte mínimo de una zona con capacidad 1 por celda) y mochila 0/1 (`POST /botin`, PD frente al voraz por densidad), con comandos `npc-nav patrullaje|pasillo|botin`, vistas Patrullaje, Pasillo y Botín en el dashboard y 116 pruebas.
+- Pendiente: vista A*/D* Lite en el dashboard, Arcadia con sesiones (Astra) e informe de resultados.
 
 ## Decisiones de alcance
 
@@ -108,7 +109,7 @@ Hacer una integración corta al final de cada etapa. Cada integrante debe poder 
 
 ## Siguiente incremento
 
-1. `feature/graph-algorithms`: Kruskal (red de patrullaje de costo mínimo entre puntos de interés, reutiliza UFDS), Edmonds-Karp (flujo máximo y corte mínimo en un pasillo, que indica qué celdas bloquear) y mochila 0/1 (programación dinámica para el botín del NPC). Cada uno tiene su caso de uso, endpoint, pruebas y vista; no entran en `/comparar` porque no buscan una ruta origen→destino.
+1. ✔ `feature/graph-algorithms`: Kruskal (red de patrullaje de costo mínimo entre puntos de interés, reutiliza UFDS), Edmonds-Karp (flujo máximo y corte mínimo en un pasillo, que indica qué celdas bloquear) y mochila 0/1 (programación dinámica para el botín del NPC). Cada uno tiene su caso de uso, endpoint, pruebas y vista; no entran en `/comparar` porque no buscan una ruta origen→destino.
 2. Dashboard: D* Lite en Explorar y Comparar, y una vista dinámica A* vs D* Lite con `POST /simular`.
 3. Arcadia con `/sesiones`, D* Lite y HUD comparativo (Astra).
 4. Gráficos del experimento e informe del hito 2.

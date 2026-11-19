@@ -7,6 +7,9 @@
     npc-nav validar  [--output results/validacion_dataset.json]
     npc-nav verificar --algoritmo astar [--output-dir results/astar]
     npc-nav experimentar [--mapa den011d] [--casos 30] [--eventos 5] [--semilla 2026]
+    npc-nav patrullaje --mapa den011d [--puntos 7] [--semilla 2026]
+    npc-nav pasillo  --mapa den011d --zona 24,156,71,203 [--direccion vertical]
+    npc-nav botin    [--capacidad 20]
 
 También se puede invocar como `python -m npc_nav ...`.
 """
@@ -18,9 +21,10 @@ from dataclasses import asdict
 from pathlib import Path
 
 from .. import algorithms
-from ..algorithms.catalogo import ALGORITMOS, obtener
-from ..application import (comparar_algoritmos, ejecutar_busqueda, estadisticas_grafo,
-                           experimento_dinamico, validar_dataset, verificar_benchmark)
+from ..algorithms.catalogo import ALGORITMOS, COMPLEMENTARIOS, obtener
+from ..application import (analizar_pasillo, comparar_algoritmos, ejecutar_busqueda, elegir_botin,
+                           estadisticas_grafo, experimento_dinamico, red_de_patrullaje,
+                           validar_dataset, verificar_benchmark)
 from ..domain.sesion import SesionNavegacion
 from ..infrastructure.exportadores import guardar_csv, guardar_json, sha256
 from ..infrastructure.repositorio import RepositorioDataset
@@ -32,6 +36,10 @@ def _cmd_algoritmos(args, repo):
     for info in ALGORITMOS.values():
         optimo = 'óptimo' if info.garantiza_optimo else 'no óptimo'
         print(f'{info.clave:10} {info.nombre:26} {info.complejidad:11} {optimo:10} {info.tecnica}')
+    print()
+    print('Complementarios (cada uno con su comando):')
+    for info in COMPLEMENTARIOS.values():
+        print(f'{info.clave:12} {info.nombre:14} {info.complejidad:11} {info.caso_de_uso}')
 
 
 def _cmd_analizar(args, repo):
@@ -129,6 +137,37 @@ def _cmd_experimentar(args, repo):
     return 0 if all(r['costos_coinciden'] for r in resumenes) else 1
 
 
+def _cmd_patrullaje(args, repo):
+    red = red_de_patrullaje(repo.mapa(args.mapa), cantidad=args.puntos, semilla=args.semilla)
+    print(f'{args.mapa}: {len(red.puntos)} puntos de interés, {len(red.candidatas)} pares con ruta '
+          f'(A*: {red.tiempo_rutas_ms:.0f} ms)')
+    for d in red.decisiones:
+        print(f"  {'entra ' if d.aceptada else 'ciclo '} {red.puntos[d.desde]} - {red.puntos[d.hasta]}"
+              f'  costo {d.costo:.2f}')
+    print(f'Red de patrullaje: {red.costo_arbol:.2f} (unir cada par: {red.costo_candidatas:.2f}); '
+          f'{red.componentes} componente(s)')
+
+
+def _cmd_pasillo(args, repo):
+    zona = tuple(int(v) for v in args.zona.split(','))
+    if len(zona) != 4:
+        raise ValueError('--zona necesita cuatro enteros: fila0,columna0,fila1,columna1')
+    analisis = analizar_pasillo(repo.mapa(args.mapa), zona, args.direccion)
+    print(f'{args.mapa} zona {analisis.zona} ({args.direccion}): {analisis.celdas} celdas, '
+          f'{len(analisis.entradas)} de entrada y {len(analisis.salidas)} de salida')
+    print(f'Flujo máximo: {analisis.flujo_maximo} NPC a la vez '
+          f'({len(analisis.aumentos)} caminos aumentantes, {analisis.tiempo_ms:.1f} ms)')
+    print(f'Corte mínimo: {list(analisis.corte)}')
+
+
+def _cmd_botin(args, repo):
+    seleccion = elegir_botin(capacidad=args.capacidad)
+    for nombre, carga in (('Programación dinámica', seleccion.optima),
+                          ('Voraz por densidad', seleccion.voraz)):
+        objetos = ', '.join(seleccion.objetos[i].nombre for i in carga.elegidos)
+        print(f'{nombre}: valor {carga.valor}, peso {carga.peso}/{seleccion.capacidad} — {objetos}')
+
+
 def construir_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog='npc-nav', description='Motor de navegación de NPCs')
     parser.add_argument('--data-dir', type=Path,
@@ -174,6 +213,22 @@ def construir_parser() -> argparse.ArgumentParser:
     p.add_argument('--semilla', type=int, default=2026)
     p.add_argument('--output-dir', type=Path)
     p.set_defaults(funcion=_cmd_experimentar)
+
+    p = sub.add_parser('patrullaje', help='Kruskal: red de patrullaje entre puntos de interés')
+    p.add_argument('--mapa', required=True)
+    p.add_argument('--puntos', type=int, default=7)
+    p.add_argument('--semilla', type=int, default=2026)
+    p.set_defaults(funcion=_cmd_patrullaje)
+
+    p = sub.add_parser('pasillo', help='Edmonds-Karp: flujo máximo y corte mínimo de una zona')
+    p.add_argument('--mapa', required=True)
+    p.add_argument('--zona', required=True, help='fila0,columna0,fila1,columna1')
+    p.add_argument('--direccion', default='horizontal', choices=['horizontal', 'vertical'])
+    p.set_defaults(funcion=_cmd_pasillo)
+
+    p = sub.add_parser('botin', help='Mochila 0/1: qué botín carga el NPC')
+    p.add_argument('--capacidad', type=int, default=20)
+    p.set_defaults(funcion=_cmd_botin)
     return parser
 
 
