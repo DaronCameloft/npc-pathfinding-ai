@@ -10,7 +10,7 @@ namespace Arcadia
         public ArcadiaWorld World;
         public bool CloseView;
         public float FollowHeight=.65f;
-        public float Distance=48, Yaw=-10, Pitch=62;
+        public float Distance=48, Yaw=-10, Pitch=62, MaxTacticalDistance=100;
         Camera cameraComponent;
         Vector3 velocity;
         void Awake(){cameraComponent=GetComponent<Camera>();cameraComponent.fieldOfView=43;cameraComponent.nearClipPlane=.1f;cameraComponent.farClipPlane=400;Snap();}
@@ -20,7 +20,7 @@ namespace Arcadia
         {
             bool overUI=EventSystem.current!=null&&EventSystem.current.IsPointerOverGameObject();
             if(Input.GetMouseButton(1)){Yaw+=Input.GetAxis("Mouse X")*3.5f;Pitch=Mathf.Clamp(Pitch-Input.GetAxis("Mouse Y")*2,25,80);}
-            if(!overUI)Distance=Mathf.Clamp(Distance-Input.mouseScrollDelta.y*(CloseView?.8f:2),CloseView?3:10,CloseView?20:100);
+            if(!overUI)Distance=Mathf.Clamp(Distance-Input.mouseScrollDelta.y*(CloseView?.8f:2),CloseView?3:10,CloseView?20:MaxTacticalDistance);
             if(Follow!=null)Focus=Follow.position+Vector3.up*FollowHeight;
             else
             {
