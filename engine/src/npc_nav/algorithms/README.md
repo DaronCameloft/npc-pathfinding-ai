@@ -14,12 +14,15 @@ Esta carpeta contiene **todo lo que el equipo expone en la sustentación**. Cada
 | [`astar.py`](astar.py) | A* | Voraces (heurístico) + búsqueda en grafos | Sí | O(E log V) | Algoritmo principal |
 | [`ufds.py`](ufds.py) | Union-Find | UFDS | — | O(E · α(V)) | Regiones conectadas / descarte de consultas imposibles |
 | [`dstar_lite.py`](dstar_lite.py) | D* Lite | Búsqueda incremental en grafos (programación dinámica) | Sí | O(E log V) la primera vez; luego solo lo afectado | Replanificación ante obstáculos dinámicos |
+| [`kruskal.py`](kruskal.py) | Kruskal | Árbol de expansión mínima (voraz + UFDS) | Sí (árbol mínimo) | O(E log E) | Red de patrullaje entre puntos de interés |
+| [`edmonds_karp.py`](edmonds_karp.py) | Edmonds-Karp | Flujo en redes | Sí (flujo máximo) | O(V · E²) | NPC simultáneos en un pasillo y celdas críticas (corte mínimo) |
+| [`mochila.py`](mochila.py) | Mochila 0/1 | Programación dinámica | Sí | O(n · W) | Botín que carga el NPC |
 
 Archivos de soporte:
 
 - [`contrato.py`](contrato.py): firma común `algoritmo(grafo, inicio, destino, observador) -> ResultadoBusqueda`, el `Observador` y `reconstruir_ruta`.
 - [`pseudocodigo.py`](pseudocodigo.py): lee del docstring las líneas numeradas del pseudocódigo (número, texto y nivel de sangría).
-- [`catalogo.py`](catalogo.py): registro de algoritmos que usan el CLI, la API y el dashboard.
+- [`catalogo.py`](catalogo.py): registro de algoritmos que usan el CLI, la API y el dashboard (`ALGORITMOS` para rutas, `COMPLEMENTARIOS` para los otros tres).
 
 ## Cómo leer una búsqueda
 
@@ -43,6 +46,18 @@ Diferencias con los demás algoritmos al leer la traza:
 - `g` es el costo **hasta la meta**, y `h` la distancia octil desde el NPC. `g` puede ser `None` (infinito) cuando una celda pierde su camino.
 - `frontera` = la celda queda inconsistente y entra a la cola (línea 5, o 9 si se reinserta). `expandido` = se extrae de la cola y se corrige (línea 8).
 - Usa aritmética exacta `a + b·√2`, así los empates de clave son exactos (ver el docstring).
+
+## Algoritmos complementarios: Kruskal, Edmonds-Karp y mochila
+
+No buscan una ruta origen→destino, así que no usan la firma común ni entran en `/comparar`. Cada uno tiene su caso de uso en `application/` y su endpoint:
+
+| Algoritmo | Caso de uso | Endpoint | CLI |
+|---|---|---|---|
+| Kruskal | `application/patrullaje.py`: A* da el costo de cada par de puntos de interés y Kruskal elige la red más corta que los une | `POST /patrullaje` | `npc-nav patrullaje` |
+| Edmonds-Karp | `application/pasillo.py`: cada celda de una zona tiene capacidad 1; el flujo máximo es cuántos NPC cruzan a la vez y el corte mínimo, qué celdas cerrar | `POST /pasillo` | `npc-nav pasillo` |
+| Mochila 0/1 | `application/botin.py`: la programación dinámica elige el botín; el voraz por densidad se muestra como contraste | `POST /botin` | `npc-nav botin` |
+
+Avisan sus decisiones con `observador.paso(linea, **datos)` (`contrato.ObservadorPasos`): Kruskal en la línea 5 (entra al árbol) o 7 (ciclo), Edmonds-Karp en la 8 (cada camino aumentante) y la 9 (corte), la mochila en la 6 (fila completa) y la 9 (objeto elegido). `GET /complementarios` entrega su pseudocódigo.
 
 ## Agregar un algoritmo
 
