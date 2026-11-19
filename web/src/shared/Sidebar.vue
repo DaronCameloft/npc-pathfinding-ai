@@ -19,6 +19,11 @@ const laboratorio: Enlace[] = [
   { ruta: '/comparar', etiqueta: 'Comparar', icono: 'comparar' },
   { ruta: '/resultados', etiqueta: 'Resultados', icono: 'resultados' },
 ]
+const grafos: Enlace[] = [
+  { ruta: '/patrullaje', etiqueta: 'Patrullaje', icono: 'red' },
+  { ruta: '/pasillo', etiqueta: 'Pasillo', icono: 'flujo' },
+  { ruta: '/botin', etiqueta: 'Botín', icono: 'mochila' },
+]
 const mas: Enlace[] = [
   { ruta: '/acerca', etiqueta: 'Acerca', icono: 'acerca' },
   { ruta: '/simulacion', etiqueta: 'Simulación', icono: 'simulacion', pronto: true },
@@ -89,6 +94,10 @@ const texto = computed(() => {
       <span class="pildora" :class="{ visible: pildora.visible }" :style="{ transform: `translateY(${pildora.y}px)`, height: `${pildora.alto}px` }" />
       <p class="grupo eyebrow"><span>Laboratorio</span></p>
       <RouterLink v-for="e in laboratorio" :key="e.ruta" :to="e.ruta" class="enlace" :title="ui.compacta ? e.etiqueta : undefined">
+        <Icon :name="e.icono" /> <span class="etiqueta">{{ e.etiqueta }}</span>
+      </RouterLink>
+      <p class="grupo eyebrow"><span>Más algoritmos</span></p>
+      <RouterLink v-for="e in grafos" :key="e.ruta" :to="e.ruta" class="enlace" :title="ui.compacta ? e.etiqueta : undefined">
         <Icon :name="e.icono" /> <span class="etiqueta">{{ e.etiqueta }}</span>
       </RouterLink>
       <p class="grupo eyebrow"><span>Más</span></p>
