@@ -14,6 +14,30 @@ export interface Vista {
   x: number
   y: number
 }
+/** Capas de dibujo para vistas que no son una búsqueda (patrullaje, pasillo). */
+export interface Trazo {
+  puntos: Posicion[]
+  color: string
+  /** Grosor en píxeles de pantalla. */
+  ancho?: number
+  alfa?: number
+  punteado?: boolean
+}
+export interface GrupoCeldas {
+  posiciones: Posicion[]
+  color: string
+  /** Dibuja una cruz blanca encima (celdas cerradas). */
+  cruz?: boolean
+}
+export interface Marcador {
+  pos: Posicion
+  color: string
+  etiqueta?: string
+  /** Aro de resalte alrededor del marcador. */
+  resaltado?: boolean
+}
+export type Zona = [number, number, number, number]
+
 export interface InfoCelda {
   fila: number
   col: number
@@ -36,8 +60,16 @@ const props = withDefaults(
     interactivo?: boolean
     vista?: Vista | null
     compacto?: boolean
+    trazos?: Trazo[]
+    grupos?: GrupoCeldas[]
+    marcadores?: Marcador[]
+    /** Rectángulo [fila0, col0, fila1, col1] que se resalta; lo de afuera se atenúa. */
+    zona?: Zona | null
   }>(),
-  { traza: () => [], indice: 0, ruta: () => [], mostrarRuta: false, bloqueadas: () => [] },
+  {
+    traza: () => [], indice: 0, ruta: () => [], mostrarRuta: false, bloqueadas: () => [],
+    trazos: () => [], grupos: () => [], marcadores: () => [], zona: null,
+  },
 )
 const emit = defineEmits<{
   celda: [fila: number, col: number]
@@ -91,7 +123,17 @@ function ajustar() {
   manual = false
   fijarVista(ajustada())
 }
-defineExpose({ ajustar })
+/** Encuadra un rectángulo de celdas (por ejemplo, la zona de un pasillo). */
+function enfocar(f0: number, c0: number, f1: number, c1: number, margen = 6) {
+  if (!ancho.value || !alto.value) return
+  const w = Math.abs(c1 - c0) + 1 + margen * 2
+  const h = Math.abs(f1 - f0) + 1 + margen * 2
+  const k = Math.min(48, ancho.value / w, alto.value / h)
+  const cx = (Math.min(c0, c1) + Math.max(c0, c1) + 1) / 2
+  const cy = (Math.min(f0, f1) + Math.max(f0, f1) + 1) / 2
+  fijarVista({ k, x: ancho.value / 2 - cx * k, y: alto.value / 2 - cy * k }, true)
+}
+defineExpose({ ajustar, enfocar })
 
 /* ── Capas fuera de pantalla ─────────────────────────────────────────────── */
 
@@ -206,6 +248,40 @@ function dibujar() {
     ctx.stroke()
   }
 
+  // zona resaltada: se atenúa lo que queda afuera
+  if (props.zona) {
+    const [za, zb, zc, zd] = props.zona
+    const f0 = Math.min(za, zc), f1 = Math.max(za, zc) + 1
+    const c0 = Math.min(zb, zd), c1 = Math.max(zb, zd) + 1
+    const W = props.mapa.ancho, H = props.mapa.alto
+    ctx.fillStyle = 'rgba(246, 246, 243, 0.72)'
+    ctx.fillRect(0, 0, W, f0)
+    ctx.fillRect(0, f1, W, H - f1)
+    ctx.fillRect(0, f0, c0, f1 - f0)
+    ctx.fillRect(c1, f0, W - c1, f1 - f0)
+    ctx.lineWidth = Math.max(0.2, 2 / v.k)
+    ctx.strokeStyle = '#6a3fd8'
+    ctx.setLineDash([6 / v.k, 4 / v.k])
+    ctx.strokeRect(c0, f0, c1 - c0, f1 - f0)
+    ctx.setLineDash([])
+  }
+
+  // grupos de celdas (entradas, salidas, corte…)
+  for (const grupo of props.grupos) {
+    ctx.fillStyle = grupo.color
+    for (const [f, c] of grupo.posiciones) ctx.fillRect(c, f, 1, 1)
+    if (grupo.cruz && v.k >= 5) {
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'
+      ctx.lineWidth = 1.4 / v.k
+      ctx.beginPath()
+      for (const [f, c] of grupo.posiciones) {
+        ctx.moveTo(c + 0.25, f + 0.25); ctx.lineTo(c + 0.75, f + 0.75)
+        ctx.moveTo(c + 0.75, f + 0.25); ctx.lineTo(c + 0.25, f + 0.75)
+      }
+      ctx.stroke()
+    }
+  }
+
   // celdas bloqueadas por el usuario
   if (props.bloqueadas.length) {
     ctx.fillStyle = 'rgba(58, 36, 120, 0.9)'
@@ -221,6 +297,23 @@ function dibujar() {
       ctx.stroke()
     }
   }
+
+  // trazos (tramos de patrullaje, caminos de flujo…)
+  ctx.lineCap = 'round'
+  ctx.lineJoin = 'round'
+  for (const t of props.trazos) {
+    if (t.puntos.length < 2) continue
+    ctx.beginPath()
+    ctx.moveTo(t.puntos[0][1] + 0.5, t.puntos[0][0] + 0.5)
+    for (let i = 1; i < t.puntos.length; i++) ctx.lineTo(t.puntos[i][1] + 0.5, t.puntos[i][0] + 0.5)
+    ctx.globalAlpha = t.alfa ?? 1
+    ctx.lineWidth = Math.max(0.35, (t.ancho ?? 2.4) / v.k)
+    ctx.strokeStyle = t.color
+    ctx.setLineDash(t.punteado ? [5 / v.k, 4 / v.k] : [])
+    ctx.stroke()
+  }
+  ctx.setLineDash([])
+  ctx.globalAlpha = 1
 
   // ruta final, dibujada progresivamente
   if (props.ruta.length > 1 && progresoRuta.value > 0) {
@@ -252,6 +345,25 @@ function dibujar() {
   const r = Math.max(1.1, 6.5 / v.k)
   if (props.inicio) marca(ctx, props.inicio, COLOR_INICIO, r, v.k)
   if (props.destino) marca(ctx, props.destino, '#1d1a16', r, v.k, true)
+
+  // marcadores numerados
+  const rm = Math.max(1.6, 10 / v.k)
+  for (const m of props.marcadores) {
+    if (m.resaltado) {
+      ctx.beginPath()
+      ctx.arc(m.pos[1] + 0.5, m.pos[0] + 0.5, rm * 1.55, 0, Math.PI * 2)
+      ctx.fillStyle = 'rgba(106, 63, 216, 0.18)'
+      ctx.fill()
+    }
+    marca(ctx, m.pos, m.color, rm, v.k)
+    if (m.etiqueta) {
+      ctx.fillStyle = '#fff'
+      ctx.font = `600 ${rm * 1.15}px Poppins, system-ui, sans-serif`
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(m.etiqueta, m.pos[1] + 0.5, m.pos[0] + 0.55)
+    }
+  }
 }
 
 function animarRuta(hacia: number) {
@@ -390,6 +502,7 @@ watch(() => props.ruta, () => {
   else pedirDibujo()
 })
 watch(() => [props.inicio, props.destino, props.bloqueadas], pedirDibujo, { deep: true })
+watch(() => [props.trazos, props.grupos, props.marcadores, props.zona], pedirDibujo)
 
 function zoom(factor: number) {
   const v = local.value

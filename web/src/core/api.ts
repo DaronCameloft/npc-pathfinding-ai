@@ -1,5 +1,6 @@
 import type {
-  AlgoritmoInfo, Consulta, Ejecucion, Evidencia, MapaDetalle, MapaResumen, PaginaEscenarios,
+  AlgoritmoInfo, AnalisisPasillo, ComplementarioInfo, Consulta, Direccion, Ejecucion, Evidencia,
+  MapaDetalle, MapaResumen, ObjetoBotin, PaginaEscenarios, Posicion, RedPatrullaje, SeleccionBotin,
 } from './types'
 
 export const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:8000').replace(/\/$/, '')
@@ -52,4 +53,10 @@ export const api = {
   comparar: (consulta: Consulta & { algoritmos?: string[] }) =>
     pedir<Ejecucion[]>('/comparar', enviar(consulta)),
   evidencia: (clave: string) => pedir<Evidencia>(`/evidencia/${encodeURIComponent(clave)}`),
+  complementarios: () => pedir<ComplementarioInfo[]>('/complementarios'),
+  patrullaje: (cuerpo: { mapa: string; puntos?: Posicion[]; cantidad?: number; semilla?: number }) =>
+    pedir<RedPatrullaje>('/patrullaje', enviar(cuerpo)),
+  pasillo: (cuerpo: { mapa: string; zona: [number, number, number, number]; direccion: Direccion; bloqueadas?: Posicion[] }) =>
+    pedir<AnalisisPasillo>('/pasillo', enviar(cuerpo)),
+  botin: (cuerpo: { objetos?: ObjetoBotin[]; capacidad: number }) => pedir<SeleccionBotin>('/botin', enviar(cuerpo)),
 }
