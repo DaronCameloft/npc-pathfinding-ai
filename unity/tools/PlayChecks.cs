@@ -143,6 +143,23 @@ public static class PlayChecks
                 });
             }
 
+            await Case(report, "expired_session_reopens_at_current_cell", async check =>
+            {
+                Reset(game, "dstar_lite");
+                RouteResult initial = await Fresh(game, () => { game.BeginRoute(); npc.SetPaused(true); }, mainThread);
+                await MoveToWaypoint(npc, initial.Route[5], mainThread);
+                string expired = npc.Session.Id;
+                using (var deletion = UnityEngine.Networking.UnityWebRequest.Delete(game.Client.BaseUrl + "/sesiones/" + expired))
+                {
+                    var request = deletion.SendWebRequest();
+                    await Until(() => request.isDone, "Expire session", mainThread);
+                    Require(deletion.responseCode == 204, "Server must confirm deletion.");
+                }
+                var result = await Fresh(game, () => game.ToggleGate(), mainThread);
+                Require(npc.Renewed && npc.Session.Id != expired, "Client must renew a missing session.");
+                Require(result.Route[0] == initial.Route[5] && npc.Session.Blocked.Length == npc.Blocked.Count, "Renewal must preserve position and barriers.");
+            });
+
             await Case(report, "real_movement_pause_resume", async check =>
             {
                 Reset(game, "astar"); npc.Speed = 4;
@@ -177,6 +194,9 @@ public static class PlayChecks
                 Require(game.GateClosed, "Gate must close for current-cell replan.");
                 ValidateFound(game, replanned, origin, check, MovingGateCost);
                 Require(replanned.Route[0] != game.StartCell && npc.ReplanCount > 0, "A moving replan must not restart from the original spawn.");
+                var repair = npc.Session.Current["dstar_lite"].Result;
+                Require(npc.Session.Position == origin && Math.Abs(repair.Cost.Value - replanned.Cost.Value) < Tolerance, "Both planners must replan from the reached cell at equal cost.");
+                Require(repair.Metrics.Expanded < replanned.Metrics.Expanded, "Incremental repair should expand fewer cells at the gate.");
                 RouteResult oracle = await Fresh(game, () => game.SetAlgorithm("dijkstra"), mainThread);
                 ValidateFound(game, oracle, origin, new Check(), MovingGateCost);
                 Require(Math.Abs(oracle.Cost.Value - replanned.Cost.Value) < Tolerance, "A* replan must match Dijkstra for the same origin and obstacles.");

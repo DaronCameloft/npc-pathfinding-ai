@@ -11,6 +11,8 @@ namespace Arcadia
         ArcadiaGame game;
         Font font;
         RectTransform canvas;
+        RectTransform comparison;
+        Text astarMetrics, incrementalMetrics;
         Text connection,message,state,cost,time,nodes,replans,position,mode;
         Text gateLabel,sealLabel,pauseLabel,followLabel,missionTitle;
         Text npcAuri,npcSeal,playerAuri,playerSeal;
@@ -64,6 +66,9 @@ namespace Arcadia
             nodes=Metric(observatory,"NODOS",18,369,105);
             replans=Metric(observatory,"RECALCULOS",142,369,105);
 
+            comparison=Panel("Comparación",canvas,346,143,370,142,ink);
+            astarMetrics=Label(comparison,"",14,12,172,124,14,cream);
+            incrementalMetrics=Label(comparison,"",190,12,172,124,14,mint);
             var actions=Panel("Acciones",canvas,-298,483,266,264,ink,true);
             Label(actions,"INTERACTUAR",18,15,230,20,11,muted,FontStyle.Bold);
             gateLabel=Button(actions,"Cerrar compuerta  [E]",18,45,230,36,()=>game.ToggleGate(),true);
@@ -83,13 +88,14 @@ namespace Arcadia
             Button(lower,"Reiniciar",855,42,135,39,()=>game.ResetDemo());
             Label(lower,"CLIC  destino     SHIFT + CLIC  barrera     RUEDA  zoom     BOTON DERECHO  orbitar",190,13,790,18,11,muted);
 
-            var algorithm=Panel("Algoritmos",canvas,32,-200,600,50,new Color(.035f,.075f,.065f,.90f),false,true);
+            var algorithm=Panel("Algoritmos",canvas,32,-200,650,50,new Color(.035f,.075f,.065f,.90f),false,true);
             Label(algorithm,"BUSQUEDA",16,17,90,16,10,muted,FontStyle.Bold);
             algorithmButtons["astar"]=Button(algorithm,"A*",112,9,90,32,()=>game.SetAlgorithm("astar"),true);
             algorithmButtons["dijkstra"]=Button(algorithm,"Dijkstra",210,9,110,32,()=>game.SetAlgorithm("dijkstra"));
             algorithmButtons["bfs"]=Button(algorithm,"BFS",328,9,90,32,()=>game.SetAlgorithm("bfs"));
             algorithmButtons["voraz"]=Button(algorithm,"Voraz",426,9,90,32,()=>game.SetAlgorithm("voraz"));
 
+            algorithmButtons["dstar_lite"]=Button(algorithm,"D* Lite",524,9,110,32,()=>game.SetAlgorithm("dstar_lite"));
             var status=Panel("Mensaje",canvas,32,-247,1012,35,new Color(.03f,.06f,.045f,.78f),false,true);
             message=Label(status,game.Message,14,7,985,22,12,cream);
             position=Label(canvas,"",34,-24,900,18,10,new Color(.82f,.85f,.75f),FontStyle.Normal,false,true);
@@ -150,12 +156,32 @@ namespace Arcadia
             state.text=s+"  /  "+n.Algorithm.ToUpperInvariant();var result=n.LastResult;
             foreach(var pair in algorithmButtons)pair.Value.transform.parent.GetComponent<Image>().color=pair.Key==n.Algorithm?new Color(.26f,.47f,.35f):new Color(.12f,.19f,.15f);
             cost.text=result?.Cost.HasValue==true?result.Cost.Value.ToString("0.00"):"—";time.text=result!=null?result.Metrics.Milliseconds.ToString("0.0")+" ms":"—";nodes.text=result!=null?result.Metrics.Expanded.ToString():"—";replans.text=n.ReplanCount.ToString();
+            comparison.gameObject.SetActive(n.Session != null);
+            if (n.Session != null)
+            {
+                var a = n.Session.Current["astar"].Result;
+                var d = n.Session.Current["dstar_lite"].Result;
+                astarMetrics.text = Describe("A* · completo", a, n);
+                incrementalMetrics.text = Describe("D* Lite · incremental", d, n);
+                if (n.Renewed) message.text = "Sesión renovada. " + message.text;
+                if (a.Cost.HasValue != d.Cost.HasValue || Math.Abs(a.Cost.GetValueOrDefault()-d.Cost.GetValueOrDefault()) > 0.000001)
+                    message.text = "Los costos del motor difieren. " + message.text;
+            }
             gateLabel.text=game.GateClosed?"Abrir compuerta  [E]":"Cerrar compuerta  [E]";sealLabel.text=game.Sealed?"Liberar pasadizo":"Sellar pasadizo";pauseLabel.text=n.IsPaused?"Continuar  [Espacio]":"Pausar  [Espacio]";
             mode.text=game.ExploreMode?"EXPLORACION / WASD":game.Rig.Follow!=null?"CAMARA DEL NPC":"VISTA TACTICA";
             followLabel.text=game.Following?"Dejar de seguir  [G]":game.NpcCharacterName+", sígueme  [G]";
             followLabel.fontSize=game.NpcCharacter==CharacterKind.FocaWatona&&!game.Following?10:12;
             position.text="ARCADIALABS    /    NPC: "+game.NpcCharacterName.ToUpperInvariant()+" "+n.CurrentCell+"    /    TU PERSONAJE: "+game.PlayerCharacterName.ToUpperInvariant()+"    /    "+n.DistanceTravelled.ToString("0.0")+" u recorridas    /    "+n.Blocked.Count+" celdas bloqueadas";
         }
+        static string Describe(string title, RouteResult result, NpcNavigator npc)
+        {
+            npc.ExpandedTotals.TryGetValue(result.Algorithm, out int total);
+            return title + "\nCosto  " + (result.Cost?.ToString("0.0000") ?? "sin ruta")
+                + "\n" + result.Metrics.Milliseconds.ToString("0.00") + " ms"
+                + "\n" + result.Metrics.Expanded + " nodos"
+                + "\n" + total + " acumulados";
+        }
+
         void DrawMap()
         {
             if(minimap==null||game.Map==null)return;

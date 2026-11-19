@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 namespace Arcadia.Navigation
@@ -49,6 +51,18 @@ namespace Arcadia.Navigation
         private RequestCancellation pending;
         private GridCell? returningEdgeEnd;
         private bool hasPlanned;
+        public SessionState Session { get; private set; }
+        public bool Renewed { get; private set; }
+        public readonly Dictionary<string, int> ExpandedTotals = new Dictionary<string, int>();
+        private int completedSteps;
+
+        void ReleaseSession()
+        {
+            if (Session != null && Client != null && Client.isActiveAndEnabled)
+                Client.StartCoroutine(Client.CloseSession(Session.Id));
+            Session = null;
+            completedSteps = 0;
+        }
 
         public void Initialize(EngineClient client, MapData map, GridCell start, Transform visualRoot = null)
         {
@@ -67,6 +81,7 @@ namespace Arcadia.Navigation
         {
             if (Map == null || !Map.IsWalkable(cell) || blocked.Contains(cell)) return false;
             CancelPending();
+            ReleaseSession(); ExpandedTotals.Clear(); Renewed = false;
             CurrentCell = Destination = cell;
             HasDestination = false;
             IsPaused = false;
@@ -84,6 +99,7 @@ namespace Arcadia.Navigation
         {
             if (Map == null || Client == null || !Map.IsWalkable(goal) || blocked.Contains(goal)) return false;
             if (HasDestination && Destination == goal && state != NavigationState.Error && state != NavigationState.NoRoute && state != NavigationState.Idle) return true;
+            ReleaseSession();
             Destination = goal; HasDestination = true;
             PrepareSearch();
             return true;
@@ -91,12 +107,13 @@ namespace Arcadia.Navigation
 
         public void Replan()
         {
-            if (HasDestination && Map != null && Client != null) PrepareSearch();
+            if (HasDestination && Map != null && Client != null) { ReleaseSession(); PrepareSearch(); }
         }
 
         public void SetAlgorithm(string algorithm)
         {
             if (string.IsNullOrWhiteSpace(algorithm) || Algorithm == algorithm) return;
+            ReleaseSession();
             Algorithm = algorithm;
             if (HasDestination) PrepareSearch();
         }
@@ -168,8 +185,7 @@ namespace Arcadia.Navigation
             hasPlanned = true;
             SetState(NavigationState.Planning);
             if (generation != requestGeneration || token.IsCancelled) return;
-            StartCoroutine(Client.Search(Map.Name, selectedAlgorithm, start, goal, obstacleSnapshot,
-                result =>
+            Action<RouteResult> accept = result =>
                 {
                     if (generation != requestGeneration || token.IsCancelled || this == null) return;
                     pending = null;
@@ -189,9 +205,57 @@ namespace Arcadia.Navigation
                     if (generation != requestGeneration) return;
                     RouteChanged?.Invoke(result);
                     if (generation == requestGeneration && route.Length == 1) Arrived?.Invoke();
-                },
-                message => { if (generation == requestGeneration && !token.IsCancelled && this != null) { pending = null; Fail(message); } },
-                RequestTrace, token));
+                };
+            Action<string> reject = message => {
+                if (generation == requestGeneration && !token.IsCancelled) { pending = null; ReleaseSession(); Fail(message); }
+            };
+            if (selectedAlgorithm == "astar" || selectedAlgorithm == "dstar_lite")
+                Client.StartCoroutine(PlanSession(start, goal, selectedAlgorithm, obstacleSnapshot, token, accept, reject));
+            else StartCoroutine(Client.Search(Map.Name, selectedAlgorithm, start, goal, obstacleSnapshot, accept, reject, RequestTrace, token));
+        }
+
+        private IEnumerator PlanSession(GridCell start, GridCell goal, string guide, HashSet<GridCell> obstacles,
+            RequestCancellation token, Action<RouteResult> accept, Action<string> reject)
+        {
+            SessionState response = Session;
+            string error = null;
+            Renewed = false;
+            if (response != null)
+            {
+                if (completedSteps > 0)
+                    yield return Client.Advance(response.Id, completedSteps, s => response = s, e => error = e, token);
+                if (token.IsCancelled) yield break;
+                if (error == null && response.Position != start) error = "El motor avanzó a otra celda.";
+                if (error == null)
+                    yield return Client.ChangeObstacles(response.Id, obstacles.Except(response.Blocked), response.Blocked.Except(obstacles),
+                        RequestTrace, s => response = s, e => error = e, token);
+                if (token.IsCancelled) yield break;
+                if (error != null && error.StartsWith("Motor HTTP 404:", StringComparison.Ordinal))
+                { Session = response = null; Renewed = true; error = null; }
+            }
+            if (response == null && error == null)
+            {
+                // Let creation finish so even a superseded request can delete its server session.
+                yield return Client.OpenSession(Map.Name, guide, start, goal, obstacles, RequestTrace, s => response = s, e => error = e);
+                if (token.IsCancelled)
+                {
+                    if (response != null) yield return Client.CloseSession(response.Id);
+                    yield break;
+                }
+            }
+            if (error != null) { reject(error); yield break; }
+            Session = response;
+            completedSteps = 0;
+            if (response.Position != start || response.Guide != guide || response.Goal != goal)
+            { reject("La sesión no coincide con el recorrido."); yield break; }
+            foreach (var plan in response.NewPlans)
+            {
+                ExpandedTotals.TryGetValue(plan.Result.Algorithm, out int count);
+                ExpandedTotals[plan.Result.Algorithm] = count + plan.Result.Metrics.Expanded;
+            }
+            var result = response.Current[guide].Result;
+            result.Route = response.Remaining;
+            accept(result);
         }
 
         private void Update() => Advance(Time.deltaTime);
@@ -219,6 +283,7 @@ namespace Arcadia.Navigation
                 budget = Mathf.Max(0f, budget - distance);
                 if (!reached) break;
                 CurrentCell = next; nextIndex++;
+                if (Session != null) completedSteps++;
                 CellReached?.Invoke(CurrentCell);
                 // An event subscriber may request a new route/obstacle set.
                 if (IsPaused || state != NavigationState.Moving || CurrentCell != next) return;
@@ -249,6 +314,7 @@ namespace Arcadia.Navigation
         private void CancelPending()
         {
             requestGeneration++;
+            if (pending != null) ReleaseSession();
             pending?.Cancel(); pending = null;
         }
         private void SetState(NavigationState next)
@@ -270,6 +336,6 @@ namespace Arcadia.Navigation
             // A disabled GameObject stops its coroutines; resume the cancelled query.
             if (HasDestination && state == NavigationState.Idle && Client != null && Map != null) PrepareSearch();
         }
-        private void OnDestroy() => CancelPending();
+        private void OnDestroy() { CancelPending(); ReleaseSession(); }
     }
 }
