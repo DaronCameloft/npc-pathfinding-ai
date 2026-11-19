@@ -11,6 +11,7 @@ Medición:
 """
 
 from dataclasses import dataclass
+from math import inf
 from time import perf_counter_ns
 
 from ..algorithms.catalogo import obtener
@@ -23,7 +24,8 @@ class EventoBusqueda:
     tipo: str
     """'frontera' (entra o mejora en la frontera) o 'expandido' (se procesa)."""
     posicion: Posicion
-    g: float
+    g: float | None
+    """Costo conocido; None si es infinito (D* Lite al invalidar una celda)."""
     h: float
     padre: Posicion | None = None
     linea: int = 0
@@ -76,10 +78,15 @@ class _Grabador:
         self.eventos = []
 
     def frontera(self, posicion, g, h, padre, linea):
-        self.eventos.append(EventoBusqueda('frontera', posicion, g, h, padre, linea))
+        self.eventos.append(EventoBusqueda('frontera', posicion, _finito(g), h, padre, linea))
 
     def expandido(self, posicion, g, h, padre, linea):
-        self.eventos.append(EventoBusqueda('expandido', posicion, g, h, padre, linea))
+        self.eventos.append(EventoBusqueda('expandido', posicion, _finito(g), h, padre, linea))
+
+
+def _finito(valor: float) -> float | None:
+    """JSON no admite infinito: se envía como null."""
+    return None if valor == inf else valor
 
 
 def ejecutar_busqueda(sesion: SesionNavegacion, algoritmo: str, inicio: Posicion,

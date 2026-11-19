@@ -5,7 +5,7 @@
 
 import { reactive } from 'vue'
 import { api } from './api'
-import type { AlgoritmoInfo, MapaResumen } from './types'
+import type { AlgoritmoInfo, ComplementarioInfo, MapaDetalle, MapaResumen } from './types'
 
 export type EstadoMotor = 'conectando' | 'despertando' | 'listo' | 'sin_conexion'
 
@@ -51,4 +51,28 @@ export function reintentarConexion(): Promise<void> {
   conectando = null
   motor.estado = 'conectando'
   return conectarMotor()
+}
+
+let complementarios: Promise<ComplementarioInfo[]> | null = null
+
+/** Catálogo de Kruskal, Edmonds-Karp y mochila (con su pseudocódigo); se pide una sola vez. */
+export function cargarComplementarios(): Promise<ComplementarioInfo[]> {
+  complementarios ??= api.complementarios().catch((e) => {
+    complementarios = null
+    throw e
+  })
+  return complementarios
+}
+
+const mapas = new Map<string, Promise<MapaDetalle>>()
+
+/** Terreno de un mapa, pedido una sola vez por sesión del navegador. */
+export function cargarMapa(nombre: string): Promise<MapaDetalle> {
+  if (!mapas.has(nombre)) {
+    mapas.set(nombre, api.mapa(nombre).catch((e) => {
+      mapas.delete(nombre)
+      throw e
+    }))
+  }
+  return mapas.get(nombre)!
 }

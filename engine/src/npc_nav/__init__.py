@@ -9,4 +9,4 @@ Capas (las dependencias solo apuntan hacia adentro):
     domain/            mapa, reglas de movimiento y sesión con obstáculos
 """
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'

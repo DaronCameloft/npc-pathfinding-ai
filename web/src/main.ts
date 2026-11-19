@@ -3,6 +3,7 @@ import App from './App.vue'
 import { conectarMotor } from './core/motor'
 import { router } from './router'
 import './styles/base.css'
+import './styles/laboratorio.css'
 
 createApp(App).use(router).mount('#app')
 void conectarMotor()

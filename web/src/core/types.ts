@@ -12,6 +12,8 @@ export interface AlgoritmoInfo {
   clave: string
   nombre: string
   garantiza_optimo: boolean
+  /** Conserva su estado entre cambios del mapa y busca desde la meta hacia el NPC (D* Lite). */
+  incremental: boolean
   tecnica: string
   complejidad: string
   referencia: string
@@ -52,7 +54,8 @@ export interface PaginaEscenarios {
 export interface EventoBusqueda {
   tipo: 'frontera' | 'expandido'
   posicion: Posicion
-  g: number
+  /** null = infinito (D* Lite al invalidar una celda). */
+  g: number | null
   h: number
   padre: Posicion | null
   linea: number
@@ -121,4 +124,137 @@ export interface Evidencia {
   mapas: EvidenciaMapa[]
   /** Series paralelas: un punto por escenario. */
   puntos: { mapas: string[]; mapa: number[]; costo: number[]; expandidos: number[]; tiempo_ms: number[] }
+}
+
+/* ── Algoritmos complementarios ─────────────────────────────────────────── */
+
+export interface ComplementarioInfo {
+  clave: 'kruskal' | 'edmonds_karp' | 'mochila'
+  nombre: string
+  tecnica: string
+  complejidad: string
+  referencia: string
+  caso_de_uso: string
+  pseudocodigo: LineaPseudocodigo[]
+}
+
+export interface Tramo {
+  desde: number
+  hasta: number
+  costo: number
+  ruta: Posicion[]
+}
+
+export interface DecisionKruskal {
+  desde: number
+  hasta: number
+  costo: number
+  aceptada: boolean
+  linea: number
+}
+
+export interface RedPatrullaje {
+  mapa: string
+  puntos: Posicion[]
+  candidatas: Tramo[]
+  sin_ruta: [number, number][]
+  decisiones: DecisionKruskal[]
+  arbol: Tramo[]
+  costo_arbol: number
+  costo_candidatas: number
+  componentes: number
+  tiempo_rutas_ms: number
+  tiempo_kruskal_ms: number
+}
+
+export type Direccion = 'horizontal' | 'vertical'
+
+export interface Aumento {
+  celdas: Posicion[]
+  flujo: number
+}
+
+export interface AnalisisPasillo {
+  mapa: string
+  zona: [number, number, number, number]
+  direccion: Direccion
+  entradas: Posicion[]
+  salidas: Posicion[]
+  celdas: number
+  flujo_maximo: number
+  caminos: Posicion[][]
+  corte: Posicion[]
+  aumentos: Aumento[]
+  bloqueadas: Posicion[]
+  tiempo_ms: number
+}
+
+export interface ObjetoBotin {
+  nombre: string
+  peso: number
+  valor: number
+}
+
+export interface Carga {
+  elegidos: number[]
+  peso: number
+  valor: number
+}
+
+export interface SeleccionBotin {
+  objetos: ObjetoBotin[]
+  capacidad: number
+  optima: Carga
+  voraz: Carga
+  tabla: number[][]
+  reconstruccion: [number, number][]
+  tiempo_ms: number
+}
+
+/* ── Navegación dinámica (POST /simular) ────────────────────────────────── */
+
+export interface Planificacion {
+  algoritmo: string
+  motivo: 'inicial' | 'obstaculos'
+  estado: 'encontrada' | 'sin_ruta'
+  posicion: Posicion
+  /** Movimientos que llevaba el NPC al planificar (índice en `recorrido`). */
+  paso: number
+  ruta: Posicion[]
+  costo: number | null
+  version_mapa: number
+  celdas_cambiadas: Posicion[]
+  ruta_afectada: boolean
+  metricas: MetricasBusqueda
+  traza: EventoBusqueda[]
+}
+
+export interface ResumenAlgoritmo {
+  algoritmo: string
+  replanificaciones: number
+  expandidos_inicial: number
+  expandidos_replanificacion: number
+  tiempo_inicial_ms: number
+  tiempo_replanificacion_ms: number
+  costo_final: number | null
+}
+
+export interface ResultadoSimulacion {
+  mapa: string
+  algoritmos: string[]
+  inicio: Posicion
+  destino: Posicion
+  llegado: boolean
+  recorrido: Posicion[]
+  distancia_recorrida: number
+  bloqueadas: Posicion[]
+  costos_coinciden: boolean
+  resumen: ResumenAlgoritmo[]
+  historial: Planificacion[]
+}
+
+export interface CambioEnPaso {
+  paso: number
+  bloquear: Posicion[]
+  liberar: Posicion[]
 }

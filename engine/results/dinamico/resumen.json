@@ -1,0 +1,445 @@
+{
+  "entorno": {
+    "python": "3.13.7",
+    "plataforma": "Windows-11-10.0.26200-SP0",
+    "procesador": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel"
+  },
+  "sha256_codigo": {
+    "astar.py": "85a2eb0172c7f02624d14857efbc6105f99d313c32def704c4aac8e67585508b",
+    "dstar_lite.py": "da92a4e620dd07adaec3aa78e88c990cf903375e78e01ce652bbaf488061eb66"
+  },
+  "mapas": [
+    {
+      "mapa": "brc100d",
+      "semilla": 2026,
+      "escenarios": [
+        689,
+        709,
+        710,
+        735,
+        737,
+        741,
+        743,
+        744,
+        752,
+        815,
+        861,
+        873,
+        941,
+        942,
+        965,
+        1033,
+        1037,
+        1049,
+        1052,
+        1060,
+        1126,
+        1130,
+        1147,
+        1154,
+        1191,
+        1197,
+        1199,
+        1297,
+        1308,
+        1311
+      ],
+      "eventos_por_escenario": 5,
+      "algoritmos": [
+        "astar",
+        "dstar_lite"
+      ],
+      "planificaciones_comparadas": 180,
+      "costos_coinciden": true,
+      "discrepancias": [],
+      "inicial": {
+        "astar": {
+          "planificaciones": 30,
+          "mediana_expandidos": 13708.5,
+          "total_expandidos": 444174,
+          "mediana_tiempo_ms": 143.3281,
+          "total_tiempo_ms": 4938.284
+        },
+        "dstar_lite": {
+          "planificaciones": 30,
+          "mediana_expandidos": 13982.5,
+          "total_expandidos": 461745,
+          "mediana_tiempo_ms": 204.9173,
+          "total_tiempo_ms": 7144.935
+        }
+      },
+      "replanificacion": {
+        "astar": {
+          "planificaciones": 150,
+          "mediana_expandidos": 11184.5,
+          "total_expandidos": 1714573,
+          "mediana_tiempo_ms": 118.7518,
+          "total_tiempo_ms": 20301.705
+        },
+        "dstar_lite": {
+          "planificaciones": 150,
+          "mediana_expandidos": 3.0,
+          "total_expandidos": 3895,
+          "mediana_tiempo_ms": 2.7544,
+          "total_tiempo_ms": 494.453
+        }
+      },
+      "por_tipo": {
+        "bloqueo_ruta": {
+          "astar": {
+            "planificaciones": 61,
+            "mediana_expandidos": 11220,
+            "total_expandidos": 710616,
+            "mediana_tiempo_ms": 118.2947,
+            "total_tiempo_ms": 8616.547
+          },
+          "dstar_lite": {
+            "planificaciones": 61,
+            "mediana_expandidos": 3,
+            "total_expandidos": 1989,
+            "mediana_tiempo_ms": 2.7571,
+            "total_tiempo_ms": 206.399
+          }
+        },
+        "pasillo": {
+          "astar": {
+            "planificaciones": 35,
+            "mediana_expandidos": 12870,
+            "total_expandidos": 448305,
+            "mediana_tiempo_ms": 145.6619,
+            "total_tiempo_ms": 5466.403
+          },
+          "dstar_lite": {
+            "planificaciones": 35,
+            "mediana_expandidos": 29,
+            "total_expandidos": 1831,
+            "mediana_tiempo_ms": 3.669,
+            "total_tiempo_ms": 159.164
+          }
+        },
+        "lejano": {
+          "astar": {
+            "planificaciones": 41,
+            "mediana_expandidos": 10481,
+            "total_expandidos": 443238,
+            "mediana_tiempo_ms": 110.9719,
+            "total_tiempo_ms": 4863.006
+          },
+          "dstar_lite": {
+            "planificaciones": 41,
+            "mediana_expandidos": 0,
+            "total_expandidos": 71,
+            "mediana_tiempo_ms": 2.3446,
+            "total_tiempo_ms": 99.687
+          }
+        },
+        "desbloqueo": {
+          "astar": {
+            "planificaciones": 13,
+            "mediana_expandidos": 6621,
+            "total_expandidos": 112414,
+            "mediana_tiempo_ms": 67.1136,
+            "total_tiempo_ms": 1355.749
+          },
+          "dstar_lite": {
+            "planificaciones": 13,
+            "mediana_expandidos": 0,
+            "total_expandidos": 4,
+            "mediana_tiempo_ms": 1.9966,
+            "total_tiempo_ms": 29.202
+          }
+        }
+      },
+      "proporcion_expandidos_replanificacion": 0.0023,
+      "nota": "proporcion = celdas procesadas por el último algoritmo / el primero, sumadas en todas las replanificaciones. Tiempos en ms del motor, sin red ni animación."
+    },
+    {
+      "mapa": "brc201d",
+      "semilla": 2026,
+      "escenarios": [
+        1096,
+        1133,
+        1156,
+        1190,
+        1221,
+        1278,
+        1300,
+        1305,
+        1319,
+        1325,
+        1459,
+        1533,
+        1566,
+        1597,
+        1668,
+        1675,
+        1756,
+        1773,
+        1791,
+        1801,
+        1813,
+        1830,
+        1840,
+        1864,
+        1890,
+        1922,
+        1960,
+        1993,
+        2025,
+        2071
+      ],
+      "eventos_por_escenario": 5,
+      "algoritmos": [
+        "astar",
+        "dstar_lite"
+      ],
+      "planificaciones_comparadas": 180,
+      "costos_coinciden": true,
+      "discrepancias": [],
+      "inicial": {
+        "astar": {
+          "planificaciones": 30,
+          "mediana_expandidos": 14963.5,
+          "total_expandidos": 413537,
+          "mediana_tiempo_ms": 153.3594,
+          "total_tiempo_ms": 4307.377
+        },
+        "dstar_lite": {
+          "planificaciones": 30,
+          "mediana_expandidos": 14223.5,
+          "total_expandidos": 420526,
+          "mediana_tiempo_ms": 212.7841,
+          "total_tiempo_ms": 6197.304
+        }
+      },
+      "replanificacion": {
+        "astar": {
+          "planificaciones": 150,
+          "mediana_expandidos": 11653.5,
+          "total_expandidos": 1748194,
+          "mediana_tiempo_ms": 124.86,
+          "total_tiempo_ms": 18489.7
+        },
+        "dstar_lite": {
+          "planificaciones": 150,
+          "mediana_expandidos": 3.0,
+          "total_expandidos": 3369,
+          "mediana_tiempo_ms": 4.5364,
+          "total_tiempo_ms": 715.834
+        }
+      },
+      "por_tipo": {
+        "bloqueo_ruta": {
+          "astar": {
+            "planificaciones": 52,
+            "mediana_expandidos": 13552.5,
+            "total_expandidos": 638306,
+            "mediana_tiempo_ms": 142.7618,
+            "total_tiempo_ms": 6661.521
+          },
+          "dstar_lite": {
+            "planificaciones": 52,
+            "mediana_expandidos": 5.0,
+            "total_expandidos": 1323,
+            "mediana_tiempo_ms": 4.8829,
+            "total_tiempo_ms": 259.265
+          }
+        },
+        "pasillo": {
+          "astar": {
+            "planificaciones": 37,
+            "mediana_expandidos": 10858,
+            "total_expandidos": 417278,
+            "mediana_tiempo_ms": 116.5124,
+            "total_tiempo_ms": 4476.077
+          },
+          "dstar_lite": {
+            "planificaciones": 37,
+            "mediana_expandidos": 28,
+            "total_expandidos": 1768,
+            "mediana_tiempo_ms": 5.143,
+            "total_tiempo_ms": 206.626
+          }
+        },
+        "lejano": {
+          "astar": {
+            "planificaciones": 43,
+            "mediana_expandidos": 11565,
+            "total_expandidos": 485123,
+            "mediana_tiempo_ms": 120.5225,
+            "total_tiempo_ms": 5160.488
+          },
+          "dstar_lite": {
+            "planificaciones": 43,
+            "mediana_expandidos": 1,
+            "total_expandidos": 276,
+            "mediana_tiempo_ms": 3.8913,
+            "total_tiempo_ms": 179.941
+          }
+        },
+        "desbloqueo": {
+          "astar": {
+            "planificaciones": 18,
+            "mediana_expandidos": 10876.0,
+            "total_expandidos": 207487,
+            "mediana_tiempo_ms": 114.1705,
+            "total_tiempo_ms": 2191.614
+          },
+          "dstar_lite": {
+            "planificaciones": 18,
+            "mediana_expandidos": 0.0,
+            "total_expandidos": 2,
+            "mediana_tiempo_ms": 3.6906,
+            "total_tiempo_ms": 70.002
+          }
+        }
+      },
+      "proporcion_expandidos_replanificacion": 0.0019,
+      "nota": "proporcion = celdas procesadas por el último algoritmo / el primero, sumadas en todas las replanificaciones. Tiempos en ms del motor, sin red ni animación."
+    },
+    {
+      "mapa": "den011d",
+      "semilla": 2026,
+      "escenarios": [
+        372,
+        400,
+        402,
+        411,
+        413,
+        417,
+        429,
+        443,
+        444,
+        473,
+        484,
+        488,
+        491,
+        499,
+        502,
+        504,
+        508,
+        515,
+        533,
+        535,
+        539,
+        585,
+        593,
+        623,
+        641,
+        647,
+        678,
+        691,
+        705,
+        713
+      ],
+      "eventos_por_escenario": 5,
+      "algoritmos": [
+        "astar",
+        "dstar_lite"
+      ],
+      "planificaciones_comparadas": 180,
+      "costos_coinciden": true,
+      "discrepancias": [],
+      "inicial": {
+        "astar": {
+          "planificaciones": 30,
+          "mediana_expandidos": 4095.0,
+          "total_expandidos": 128768,
+          "mediana_tiempo_ms": 40.5722,
+          "total_tiempo_ms": 1285.394
+        },
+        "dstar_lite": {
+          "planificaciones": 30,
+          "mediana_expandidos": 3597.0,
+          "total_expandidos": 120102,
+          "mediana_tiempo_ms": 48.5175,
+          "total_tiempo_ms": 1655.486
+        }
+      },
+      "replanificacion": {
+        "astar": {
+          "planificaciones": 150,
+          "mediana_expandidos": 2546.5,
+          "total_expandidos": 445828,
+          "mediana_tiempo_ms": 24.867,
+          "total_tiempo_ms": 4409.857
+        },
+        "dstar_lite": {
+          "planificaciones": 150,
+          "mediana_expandidos": 2.5,
+          "total_expandidos": 4229,
+          "mediana_tiempo_ms": 1.5826,
+          "total_tiempo_ms": 321.833
+        }
+      },
+      "por_tipo": {
+        "bloqueo_ruta": {
+          "astar": {
+            "planificaciones": 66,
+            "mediana_expandidos": 2877.5,
+            "total_expandidos": 218284,
+            "mediana_tiempo_ms": 27.9401,
+            "total_tiempo_ms": 2164.421
+          },
+          "dstar_lite": {
+            "planificaciones": 66,
+            "mediana_expandidos": 2.0,
+            "total_expandidos": 1404,
+            "mediana_tiempo_ms": 1.6147,
+            "total_tiempo_ms": 134.607
+          }
+        },
+        "pasillo": {
+          "astar": {
+            "planificaciones": 42,
+            "mediana_expandidos": 2475.5,
+            "total_expandidos": 124781,
+            "mediana_tiempo_ms": 23.5071,
+            "total_tiempo_ms": 1227.033
+          },
+          "dstar_lite": {
+            "planificaciones": 42,
+            "mediana_expandidos": 24.0,
+            "total_expandidos": 2818,
+            "mediana_tiempo_ms": 2.0107,
+            "total_tiempo_ms": 132.025
+          }
+        },
+        "lejano": {
+          "astar": {
+            "planificaciones": 28,
+            "mediana_expandidos": 2386.5,
+            "total_expandidos": 68564,
+            "mediana_tiempo_ms": 24.43,
+            "total_tiempo_ms": 682.562
+          },
+          "dstar_lite": {
+            "planificaciones": 28,
+            "mediana_expandidos": 0.0,
+            "total_expandidos": 4,
+            "mediana_tiempo_ms": 1.2922,
+            "total_tiempo_ms": 37.043
+          }
+        },
+        "desbloqueo": {
+          "astar": {
+            "planificaciones": 14,
+            "mediana_expandidos": 2428.5,
+            "total_expandidos": 34199,
+            "mediana_tiempo_ms": 24.0318,
+            "total_tiempo_ms": 335.842
+          },
+          "dstar_lite": {
+            "planificaciones": 14,
+            "mediana_expandidos": 0.0,
+            "total_expandidos": 3,
+            "mediana_tiempo_ms": 1.197,
+            "total_tiempo_ms": 18.158
+          }
+        }
+      },
+      "proporcion_expandidos_replanificacion": 0.0095,
+      "nota": "proporcion = celdas procesadas por el último algoritmo / el primero, sumadas en todas las replanificaciones. Tiempos en ms del motor, sin red ni animación."
+    }
+  ]
+}

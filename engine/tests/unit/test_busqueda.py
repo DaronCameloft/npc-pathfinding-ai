@@ -12,17 +12,18 @@ class EjecutarBusquedaTests(unittest.TestCase):
         self.sesion = SesionNavegacion(Mapa('abierto.map', ('....', '....', '....')))
 
     def test_traza_opcional_y_resultados_deterministas(self):
-        for clave in ALGORITMOS:
+        for clave, info in ALGORITMOS.items():
+            # Las búsquedas incrementales parten de la meta y terminan en el NPC.
+            primero, ultimo = ((2, 3), (0, 0)) if info.incremental else ((0, 0), (2, 3))
             with self.subTest(algoritmo=clave):
                 sin_traza = ejecutar_busqueda(self.sesion, clave, (0, 0), (2, 3))
                 con_traza = ejecutar_busqueda(self.sesion, clave, (0, 0), (2, 3), con_traza=True)
                 self.assertEqual(sin_traza.traza, ())
                 self.assertEqual((sin_traza.ruta, sin_traza.costo),
                                  (con_traza.ruta, con_traza.costo))
-                self.assertEqual(con_traza.traza[0].posicion, (0, 0))
-                self.assertEqual(con_traza.traza[-1].tipo, 'expandido')
-                self.assertEqual(con_traza.traza[-1].posicion, (2, 3))
+                self.assertEqual(con_traza.traza[0].posicion, primero)
                 expandidos = [e for e in con_traza.traza if e.tipo == 'expandido']
+                self.assertEqual(expandidos[-1].posicion, ultimo)
                 descubiertos = {e.posicion for e in con_traza.traza if e.tipo == 'frontera'}
                 self.assertEqual(len(expandidos), con_traza.metricas.nodos_expandidos)
                 self.assertEqual(len(descubiertos), con_traza.metricas.nodos_descubiertos)

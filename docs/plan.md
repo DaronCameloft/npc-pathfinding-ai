@@ -1,6 +1,6 @@
 # Plan de acción — navegación de NPCs
 
-Actualizado: 22 de octubre de 2026. La integración Unity se adelantó para probar el motor actual antes de implementar D* Lite. Las fechas de la tabla conservan los objetivos originales; la columna de evidencia indica los avances comprobados.
+Actualizado: 14 de noviembre de 2026. D* Lite, la navegación con obstáculos dinámicos y el experimento comparativo están terminados en el motor. Las fechas de la tabla conservan los objetivos originales; la columna de evidencia indica los avances comprobados.
 
 ## Resultado esperado
 
@@ -16,7 +16,10 @@ Un motor de navegación en Python que compare A* con recálculo completo y D* Li
 - A* verificado con el código nuevo: 4 200/4 200 rutas legales con costo coincidente con los `.scen` (tolerancia `1e-5`). Evidencia en `engine/results/astar/`.
 - Las pruebas automatizadas cubren dominio, lectores, contrato común de todos los algoritmos, optimalidad frente a un oráculo, suboptimalidad esperada de BFS y voraz, casos de uso y CLI.
 - API y dashboard construidos. Arcadia en Unity ya consume el motor, dibuja `den011d`, mueve a Auri y recalcula después de cambiar obstáculos. Validación: 56 aserciones del cliente y 13 pruebas reales en Play Mode; [evidencia](../unity/docs/play-checks.json).
-- Pendiente: D* Lite con sesiones persistentes, experimentos dinámicos comparativos, vista A*/D* Lite e informe de resultados. El recálculo actual ejecuta una búsqueda completa; no es incremental.
+- D* Lite (versión optimizada, costos exactos `a + b·√2`) verificado con 4 200/4 200 escenarios ([evidencia](../engine/results/dstar_lite/resumen.json)). Navegación dinámica en `application/navegacion.py`, `POST /simular` y `/sesiones` con estado; experimento reproducible en [results/dinamico](../engine/results/dinamico/resumen.json). 88 pruebas.
+- Kruskal (`POST /patrullaje`, red de patrullaje entre puntos de interés con costos A*), Edmonds-Karp (`POST /pasillo`, flujo máximo y corte mínimo de una zona con capacidad 1 por celda) y mochila 0/1 (`POST /botin`, PD frente al voraz por densidad), con comandos `npc-nav patrullaje|pasillo|botin`, vistas Patrullaje, Pasillo y Botín en el dashboard y 116 pruebas.
+- Dashboard: D* Lite en Explorar y Comparar (busca desde el destino; `g` puede ser infinito) y vista **Simulación**: un NPC avanza, el usuario bloquea o libera celdas y se comparan las celdas que procesan A* y D* Lite en cada recálculo (`POST /simular`, cada planificación indica su `paso`).
+- Pendiente: Arcadia con sesiones y los tres modos nuevos (Astra) e informe de resultados.
 
 ## Decisiones de alcance
 
@@ -49,13 +52,25 @@ Para la primera versión, un servicio FastAPI puede exponer peticiones de mapa y
 | 1b. Monorepo y algoritmos de comparación, completada el 29 sep | Reestructurar en capas, separar la medición de los algoritmos (observador), agregar BFS, Dijkstra y voraz, CI y convenciones. | **Completada:** pruebas en verde, A* reverificado 4 200/4 200 con el código nuevo, CLI `npc-nav`. |
 | 2a. API, 30 sep–1 oct (`feature/engine-api`) | FastAPI: `/mapas`, `/mapas/{id}`, `/mapas/{id}/escenarios`, `/algoritmos`, `/buscar`, `/comparar`, `/health`. Despliegue en Render. | **Código completado el 30 sep** (66 pruebas; pseudocódigo y línea activa en la traza; endpoints de evidencia). Pendiente: desplegar en Render y comprobar una búsqueda A* con traza en los tres mapas. |
 | 2b. Dashboard web, 2–4 oct (`feature/web-dashboard`) | Vue + Vite + Canvas: mapa, inicio, destino, exploración y ruta; selección de mapa/escenario/algoritmo, reproducción (play, pausa, paso, velocidad), zoom, comparación lado a lado, métricas y bloqueo de celdas con replanificación A*. Despliegue en Vercel. | **Entrega del 4 de octubre:** web pública donde se ejecutan y comparan los cuatro algoritmos en los tres mapas. Código completado el 30 sep (Inicio, Explorar, Comparar, Resultados y Acerca); pendiente el despliegue en Vercel. |
-| 3. Cambios y D* Lite, 5–31 oct | Bloquear/liberar celdas, actualizar movimientos afectados, replanificar desde la posición actual e implementar D* Lite. | Tras cada cambio, ambas rutas son transitables y tienen el mismo costo mínimo para el estado conocido; las sesiones aisladas no contaminan otras pruebas. |
-| 4. Comparación, 1–8 nov | Ejecutar casos repetibles con igual mapa, origen, destino, posición y secuencia de obstáculos; exportar resultados. | CSV/JSON reproducible con costo de ruta, tiempo de planificación, nodos procesados y número de replanificaciones; tablas y gráficos sin tiempo de animación. |
+| 3. Cambios y D* Lite, 5–31 oct | Bloquear/liberar celdas, actualizar movimientos afectados, replanificar desde la posición actual e implementar D* Lite. | **Completada el 14 nov:** D* Lite coincide con Dijkstra en más de 300 secuencias aleatorias y con A* en 4 200/4 200 escenarios; las sesiones de la API son independientes entre sí. |
+| 4. Comparación, 1–8 nov | Ejecutar casos repetibles con igual mapa, origen, destino, posición y secuencia de obstáculos; exportar resultados. | **Completada el 14 nov:** `npc-nav experimentar`, 540 planificaciones con costos coincidentes; resultados en la tabla de abajo. Faltan los gráficos para el informe. |
 | 5. Dashboard comparativo y Unity, 9–18 nov | Vista A*/D* Lite lado a lado; eventos sincronizados, obstáculos interactivos y visualización del agente. Integración Unity con el mismo servicio Python. | **Unity adelantado al 22 oct:** Arcadia sigue rutas HTTP, cambia de ruta al bloquear, representa ausencia de ruta y permite explorar con teclado. Falta la comparación A*/D* Lite. |
 | 6. Informe del segundo hito, hasta 22 nov | Documentar propuesta definitiva y diseño del aplicativo; incluir arquitectura, algoritmos, casos de prueba previstos e interfaz. | Entregable del hito 2 listo según el enunciado. |
 | 7. Trabajo final, hasta 29 nov | Revisar pruebas, interpretar resultados, redactar conclusión, preparar video y ZIP. | Código fuente, dataset, informe `.docx` y archivo con enlace al video dentro del ZIP exigido; ejecución verificada desde instrucciones de instalación. |
 
 Las fechas internas son objetivos de trabajo. El enunciado fija el segundo hito para el **22/11/2026** y el trabajo final para el **29/11/2026**.
+
+## Resultados del experimento dinámico
+
+`npc-nav experimentar` con semilla 2026: 30 escenarios por mapa (de la mitad con rutas más largas) y 5 eventos por escenario (bloqueo en la ruta, cierre de pasillo de 3×3, obstáculo lejano y desbloqueo). En total hay 150 replanificaciones por mapa y algoritmo. Tiempos del motor en Windows 11, sin red ni animación.
+
+| Mapa | Búsqueda inicial, mediana A* / D* Lite | Replanificación, mediana de celdas A* / D* Lite | Replanificación, mediana ms A* / D* Lite | Tiempo total de replanificación A* / D* Lite |
+|---|---|---|---|---|
+| den011d | 4 095 / 3 597 celdas · 40.6 / 48.5 ms | 2 546.5 / 2.5 | 24.9 / 1.6 | 4.41 s / 0.32 s (13.7×) |
+| brc201d | 14 963.5 / 14 223.5 celdas · 153.4 / 212.8 ms | 11 653.5 / 3 | 124.9 / 4.5 | 18.49 s / 0.72 s (25.8×) |
+| brc100d | 13 708.5 / 13 982.5 celdas · 143.3 / 204.9 ms | 11 184.5 / 3 | 118.8 / 2.8 | 20.30 s / 0.49 s (41.1×) |
+
+Lectura: la primera búsqueda de D* Lite cuesta lo mismo o algo más que la de A*, porque guarda g y rhs. Cada replanificación procesa solo las celdas afectadas, entre el 0.2 % y el 1 % de las de A* sumando todos los eventos. Detalle por tipo de evento en `resumen.json`.
 
 ## Protocolo de validación
 
@@ -95,6 +110,9 @@ Hacer una integración corta al final de cada etapa. Cada integrante debe poder 
 
 ## Siguiente incremento
 
-Probar la demostración Arcadia con el equipo y retomar **D* Lite**: definir sesiones aisladas que conserven su estado, aplicar cambios de celdas y diagonales afectadas, y comparar cada resultado con Dijkstra/A* sobre el mismo estado. Luego ejecutar los experimentos reproducibles y trasladar la comparación al dashboard y a Unity. Prim o Kruskal, si se incorporan, necesitan un caso de uso de árbol de expansión distinto de buscar la ruta del NPC; quedan para después de esta integración.
+1. ✔ `feature/graph-algorithms`: Kruskal (red de patrullaje de costo mínimo entre puntos de interés, reutiliza UFDS), Edmonds-Karp (flujo máximo y corte mínimo en un pasillo, que indica qué celdas bloquear) y mochila 0/1 (programación dinámica para el botín del NPC). Cada uno tiene su caso de uso, endpoint, pruebas y vista; no entran en `/comparar` porque no buscan una ruta origen→destino.
+2. ✔ Dashboard: D* Lite en Explorar y Comparar, y una vista dinámica A* vs D* Lite con `POST /simular`.
+3. Arcadia con `/sesiones`, D* Lite y HUD comparativo (Astra).
+4. Gráficos del experimento e informe del hito 2.
 
 Arcadia utiliza el escenario 124 de `den011d`: inicio `(106,123)`, destino `(107,92)`. El mapa completo se conserva; el santuario destaca una zona para facilitar la demostración. A* produce costo `51.355339` al inicio y `57.941125` con la compuerta cerrada. El cliente conserva posición y obstáculos y envía una instantánea completa en cada `POST /buscar`. Estos resultados prueban la integración actual, no sustituyen la futura comparación incremental. Instrucciones en [Unity](../unity/README.md). La entrega TB1 permanece sin modificaciones.
