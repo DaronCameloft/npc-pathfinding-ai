@@ -12,6 +12,8 @@ export interface AlgoritmoInfo {
   clave: string
   nombre: string
   garantiza_optimo: boolean
+  /** Conserva su estado entre cambios del mapa y busca desde la meta hacia el NPC (D* Lite). */
+  incremental: boolean
   tecnica: string
   complejidad: string
   referencia: string
@@ -52,7 +54,8 @@ export interface PaginaEscenarios {
 export interface EventoBusqueda {
   tipo: 'frontera' | 'expandido'
   posicion: Posicion
-  g: number
+  /** null = infinito (D* Lite al invalidar una celda). */
+  g: number | null
   h: number
   padre: Posicion | null
   linea: number

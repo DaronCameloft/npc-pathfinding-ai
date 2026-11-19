@@ -128,8 +128,8 @@ onBeforeUnmount(() => {
   <section class="comparar">
     <header class="cabecera rise" style="--i: 0">
       <div>
-        <h1 class="display pagina-titulo titulo">Comparar <em>cuatro caminos</em></h1>
-        <p class="pagina-sub">La misma consulta, cuatro algoritmos: costo, celdas y tiempo.</p>
+        <h1 class="display pagina-titulo titulo">Comparar <em>cinco caminos</em></h1>
+        <p class="pagina-sub">La misma consulta, cinco algoritmos: costo, celdas y tiempo.</p>
       </div>
       <div class="selectores">
         <CasoSelector v-model="caso" :total="totalCasos" />
@@ -137,7 +137,7 @@ onBeforeUnmount(() => {
         <button type="button" class="btn colorear" :class="{ activo: ui.resaltarResultados }" :aria-pressed="ui.resaltarResultados" title="Colorea el mejor (verde) y el peor (rojo) de expandidos y costo al terminar" @click="alternarResaltado">
           <span class="muestra" /> Resaltar
         </button>
-        <button type="button" class="ic-btn" aria-label="Ver los cuatro algoritmos en pantalla completa" title="Ver los cuatro en pantalla completa (F)" @click="alternarPantallaCompleta">
+        <button type="button" class="ic-btn" aria-label="Ver los cinco algoritmos en pantalla completa" title="Ver los cinco en pantalla completa (F)" @click="alternarPantallaCompleta">
           <Icon name="pantalla" :size="17" />
         </button>
       </div>
@@ -174,6 +174,15 @@ onBeforeUnmount(() => {
             :zoom="i === 0"
             @update:vista="vista = $event"
           />
+          <article v-if="filas.length === 5" class="card guia-dstar rise" style="--i: 6">
+            <span class="eyebrow">Cómo leer D* Lite</span>
+            <p>
+              Busca <strong>desde el destino hacia el inicio</strong>, por eso su exploración crece alrededor del destino.
+              En una búsqueda única trabaja como un A* hacia atrás; su ventaja aparece cuando el mapa cambia, porque
+              repara solo lo afectado.
+            </p>
+            <RouterLink to="/simulacion" class="btn">Ver A* contra D* Lite <Icon name="flecha" :size="15" /></RouterLink>
+          </article>
         </div>
 
         <PlaybackDock
@@ -201,7 +210,7 @@ onBeforeUnmount(() => {
         />
         <article class="card nota rise" style="--i: 6">
           <p>
-            Los cuatro algoritmos reciben el mismo mapa, el mismo inicio y el mismo destino. La animación avanza por
+            Los cinco algoritmos reciben el mismo mapa, el mismo inicio y el mismo destino. La animación avanza por
             <strong>pasos de la traza</strong>: un algoritmo que termina antes en la línea de tiempo explora menos celdas.
           </p>
         </article>
@@ -209,7 +218,7 @@ onBeforeUnmount(() => {
     </div>
 
     <Transition name="fundido">
-      <div v-if="cargando" class="velo"><span class="spinner" />{{ motor.estado === 'listo' ? 'Comparando los cuatro algoritmos…' : 'Despertando el motor…' }}</div>
+      <div v-if="cargando" class="velo"><span class="spinner" />{{ motor.estado === 'listo' ? 'Comparando los cinco algoritmos…' : 'Despertando el motor…' }}</div>
     </Transition>
     <Transition name="fundido">
       <div v-if="error" class="error glass" role="alert">{{ error }}</div>
@@ -248,7 +257,11 @@ onBeforeUnmount(() => {
 .cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 18px; flex: 1; min-height: 0; }
 .izquierda { display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: auto; }
 .izquierda > :last-child { position: sticky; bottom: 0; flex: none; }
-.rejilla { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(2, minmax(236px, 1fr)); gap: 14px; flex: 1; min-height: 0; }
+.rejilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(236px, 1fr)); gap: 14px; flex: 1; min-height: 0; }
+.guia-dstar { display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 18px 20px; background: var(--cream-soft); border-color: transparent; }
+.guia-dstar p { font-size: 12.8px; line-height: 1.55; color: var(--ink-2); }
+.guia-dstar .btn { align-self: flex-start; padding: 7px 14px; font-size: 12.5px; }
+.completa .guia-dstar { display: none; }
 .lateral { display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: auto; padding: 0 2px 2px 0; }
 .lateral > * { flex: none; }
 .nota { font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
@@ -284,6 +297,9 @@ onBeforeUnmount(() => {
   .comparar { height: auto; }
   .rejilla { grid-template-rows: none; grid-auto-rows: 300px; }
   .lateral { overflow: visible; }
+}
+@media (max-width: 1600px) and (min-width: 761px) {
+  .rejilla { grid-template-columns: 1fr 1fr; grid-template-rows: none; grid-auto-rows: minmax(260px, 1fr); }
 }
 @media (max-width: 760px) {
   .rejilla { grid-template-columns: 1fr; }

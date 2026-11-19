@@ -54,6 +54,12 @@ const veredicto = computed(() => {
       `Voraz explora solo ${v.metricas.nodos_expandidos.toLocaleString('es-PE')} celdas, pero su ruta cuesta ${(((v.costo - a.costo) / a.costo) * 100).toFixed(1)} % más.`,
     )
   }
+  const s = por('dstar_lite')
+  if (a && s && a.costo !== null && s.costo !== null && Math.abs(a.costo - s.costo) < 1e-5) {
+    frases.push(
+      `D* Lite llega al mismo costo buscando desde el destino (${s.metricas.nodos_expandidos.toLocaleString('es-PE')} celdas). Su ventaja está en replanificar: compáralo en Simulación.`,
+    )
+  }
   return frases
 })
 </script>

@@ -184,7 +184,7 @@ function aplicarEventos(hasta: number) {
   for (let i = aplicado; i < tope; i++) {
     const e = props.traza[i]
     const idx = e.posicion[0] * w + e.posicion[1]
-    gCelda[idx] = e.g
+    gCelda[idx] = e.g ?? Number.POSITIVE_INFINITY
     hCelda[idx] = e.h
     if (e.tipo === 'expandido') {
       estado[idx] = 2
