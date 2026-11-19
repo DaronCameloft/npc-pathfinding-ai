@@ -6,7 +6,7 @@ using Arcadia.Navigation;
 
 namespace Arcadia
 {
-    public sealed class ArcadiaHud : MonoBehaviour
+    public sealed partial class ArcadiaHud : MonoBehaviour
     {
         ArcadiaGame game;
         Font font;
@@ -99,6 +99,7 @@ namespace Arcadia
             var status=Panel("Mensaje",canvas,32,-247,1012,35,new Color(.03f,.06f,.045f,.78f),false,true);
             message=Label(status,game.Message,14,7,985,22,12,cream);
             position=Label(canvas,"",34,-24,900,18,10,new Color(.82f,.85f,.75f),FontStyle.Normal,false,true);
+            InitializeModes(header);
             game.Changed+=Refresh;Refresh();
         }
 
@@ -146,6 +147,7 @@ namespace Arcadia
         void Refresh()
         {
             if(connection==null||game.Navigator==null)return;
+            if (RefreshModes()) return;
             var n=game.Navigator;connection.text=game.Connection;connection.color=game.Online?mint:new Color(1,.65f,.35f);message.text=game.Message;
             missionTitle.text="Guía a "+game.NpcCharacterName+" al faro";
             CharacterButton(npcAuri,"Auri",game.NpcCharacter==CharacterKind.Auri);
