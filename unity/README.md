@@ -57,18 +57,18 @@ La elección se guarda localmente para la siguiente sesión. Cambiar el modelo d
 | Girar e inclinar la cámara | Mantener botón derecho y mover el ratón |
 | Acercar o alejar | Rueda del ratón |
 | Mostrar ruta o nodos expandidos | Botones **Ver ruta** y **Ver búsqueda** |
-| Cambiar algoritmo | Botones **A\***, **Dijkstra**, **BFS**, **Voraz** |
+| Cambiar algoritmo | Botones **A\***, **D\* Lite**, **Dijkstra**, **BFS**, **Voraz** |
 | Recuperar la conexión | Botón **Reconectar motor** |
 
 En el Editor, haz clic dentro de la pestaña **Game** para que reciba las teclas. En exploración, el explorador ámbar se controla directamente; Auri continúa calculando sus rutas mediante Python. El seguimiento actualiza el destino cada 1,2 segundos cuando hay suficiente separación.
 
 ## Una demostración para la exposición
 
-1. Comprueba el indicador **MOTOR CONECTADO** y pulsa **Iniciar recorrido**.
+1. Comprueba el indicador **MOTOR CONECTADO**, elige **D\* Lite**, activa **Ver búsqueda** y pulsa **Iniciar recorrido**.
 2. Observa la ruta turquesa y el movimiento de Auri hacia el faro dorado.
 3. Cierra la compuerta con **E** durante el recorrido. Si Auri ocupa una celda protegida, espera a que abandone esa zona y vuelve a intentarlo.
-4. El NPC vuelve al centro de su última celda completada y Python calcula una alternativa desde esa posición. Comprueba el contador de recálculos.
-5. Activa **Ver búsqueda** para mostrar las celdas expandidas. Prueba los otros algoritmos o sella el pasadizo para observar el estado **SIN RUTA** cuando el destino queda aislado. Retira los obstáculos para continuar.
+4. El NPC vuelve al centro de su última celda completada y Python calcula una alternativa desde esa posición. Compara el costo, los nodos y el tiempo de ambos planificadores. Abre y cierra el paso para ver cómo crece el total acumulado de nodos de cada uno.
+5. Observa las celdas que D* Lite reparó en el último cambio. Prueba los otros algoritmos o sella el pasadizo para observar el estado **SIN RUTA** cuando el destino queda aislado. Retira los obstáculos para continuar.
 6. Pulsa **Tab**, camina con el explorador y pulsa **G** para que Auri lo acompañe.
 
 El panel presenta costo, tiempo de cálculo del algoritmo, nodos expandidos y recálculos. El tiempo del motor excluye red, animación y dibujo; el costo suma los pesos de las aristas y no equivale a la cantidad de pasos. Las métricas mostradas corresponden a la última consulta completada.
@@ -78,12 +78,15 @@ El panel presenta costo, tiempo de cálculo del algoritmo, nodos expandidos y re
 - Unity consume la API HTTP existente: `GET /mapas/den011d` y `POST /buscar`. Todas las búsquedas se ejecutan en Python.
 - El terreno de respaldo en `StreamingAssets/Arcadia/den011d.json` permite ver el escenario sin conexión. Antes de aceptar órdenes de navegación, se comprueba que el mapa recibido del motor coincide con ese terreno.
 - Las posiciones de la API son `[fila, columna]`; en Unity se representan como `(x = columna, z = fila)`.
-- Los obstáculos se envían completos en cada petición. La API actual no conserva el estado entre consultas; la replanificación utiliza A*, Dijkstra, BFS o voraz según la selección.
+- A* y D* Lite comparten una sesión en `POST /sesiones`. El primer algoritmo guía a Auri. Antes de cambiar barreras, el cliente sincroniza los pasos completados en `POST /sesiones/{id}/avanzar` y envía las diferencias a `POST /sesiones/{id}/obstaculos`. Un cambio de destino cierra la sesión con `DELETE /sesiones/{id}`. Si expira, Auri abre otra desde su celda actual. `GET /sesiones/{id}` permite consultar el estado.
 - Los movimientos diagonales respetan las dos celdas laterales libres. No se permite bloquear el destino, la celda ocupada ni el segmento que Auri está recorriendo.
 - El escenario conserva la transitabilidad del dataset. La decoración no añade rutas, escaleras ni cambios de altura al grafo. El encuadre inicial y el minimapa destacan la zona del santuario.
-- **D* Lite permanece pendiente**: este incremento prueba la integración y la replanificación con el motor actual. La coordinación y las colisiones entre múltiples agentes no forman parte de esta demostración.
 
 ## Validación
+
+En la validación del hito 2 pasaron 58 aserciones del cliente, 14 pruebas de navegación en Play Mode, 5 de interacción y 8 de personajes. Las pruebas de navegación incluyen el cierre de la compuerta en movimiento y la renovación de una sesión eliminada. En el caso 124, tras avanzar cinco pasos y bloquear la quinta celda de la ruta restante, los dos algoritmos obtuvieron costo 46,284271. D* Lite expandió 60 celdas y A* expandió 431.
+
+![Comparación al cerrar la compuerta desde el inicio del recorrido](docs/dstar-comparison.png)
 
 En el Editor, **Arcadia → Validate → Navigation safety** ejecuta comprobaciones de contrato JSON, reglas de movimiento, protección de obstáculos, pausa, cancelación y reinicio. También se puede invocar el método estático `Arcadia.Navigation.Editor.NavigationChecks.Run` en modo batch. Estas comprobaciones no sustituyen la prueba de conexión y del recorrido en Play.
 
@@ -92,7 +95,7 @@ Validación realizada el 22 de octubre de 2026: **56 aserciones del cliente** y 
 Para repetir las pruebas con Unity CLI y Pipeline, inicia el motor y entra en Play Mode:
 
 ```powershell
-unity command 'script run' --file ../tools/PlayChecks.cs --entry PlayChecks.Run --timeout 55 --json
+unity command script run --file ../tools/PlayChecks.cs --entry PlayChecks.Run --timeout 55 --json
 ```
 
 El comando restaura la demostración al terminar. Ejecútalo sin interactuar con el juego durante esos segundos. Las comprobaciones directas y HTTP del dataset se encuentran en `tools/smoke_demo.py` y `docs/demo-smoke-*.json`.
