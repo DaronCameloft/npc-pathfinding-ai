@@ -1,0 +1,33 @@
+{
+  "utc": "2026-11-19T05:06:37.7675485Z",
+  "unity": "6000.6.7f1",
+  "passed": 4,
+  "results": [
+    {
+      "mode": "pasillo",
+      "openFlow": 3,
+      "closedFlow": 0,
+      "agents": 3,
+      "disjoint": true,
+      "cells": 1816
+    },
+    {
+      "mode": "patrullaje",
+      "drawn": 6,
+      "costo_arbol": 624.75945135393351,
+      "costo_candidatas": 3253.4469683442253,
+      "returnedToStart": true
+    },
+    {
+      "mode": "botin",
+      "optimalAt20": 113,
+      "greedyAt20": 99,
+      "optimalAt25": 139
+    },
+    {
+      "mode": "navegacion",
+      "sessionPreserved": true,
+      "obstaclesRestored": true
+    }
+  ]
+}
