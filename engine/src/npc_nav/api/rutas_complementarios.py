@@ -31,18 +31,20 @@ def complementarios():
 @router.post('/patrullaje')
 def patrullaje(peticion: PeticionPatrullaje, repo: RepositorioDataset = Repositorio):
     """Kruskal sobre los costos A* entre puntos de interés."""
-    mapa = repo.mapa(_mapa_existente(repo, peticion.mapa))
+    nombre = _mapa_existente(repo, peticion.mapa)
     puntos = [tuple(p) for p in peticion.puntos] if peticion.puntos is not None else None
-    return asdict(red_de_patrullaje(mapa, puntos, cantidad=peticion.cantidad,
-                                    semilla=peticion.semilla))
+    red = red_de_patrullaje(repo.mapa(nombre), puntos, cantidad=peticion.cantidad,
+                            semilla=peticion.semilla)
+    return {**asdict(red), 'mapa': nombre}
 
 
 @router.post('/pasillo')
 def pasillo(peticion: PeticionPasillo, repo: RepositorioDataset = Repositorio):
     """Edmonds-Karp: flujo máximo (NPC simultáneos) y corte mínimo (celdas críticas)."""
-    mapa = repo.mapa(_mapa_existente(repo, peticion.mapa))
-    return asdict(analizar_pasillo(mapa, peticion.zona, peticion.direccion,
-                                   [tuple(p) for p in peticion.bloqueadas]))
+    nombre = _mapa_existente(repo, peticion.mapa)
+    analisis = analizar_pasillo(repo.mapa(nombre), peticion.zona, peticion.direccion,
+                                [tuple(p) for p in peticion.bloqueadas])
+    return {**asdict(analisis), 'mapa': nombre}
 
 
 @router.post('/botin')

@@ -24,6 +24,7 @@ class ApiComplementariosTests(unittest.TestCase):
 
     def test_patrullaje_con_puntos_sorteados(self):
         datos = self.cliente.post('/patrullaje', json={'mapa': 'den011d', 'cantidad': 5}).json()
+        self.assertEqual(datos['mapa'], 'den011d')
         self.assertEqual(len(datos['puntos']), 5)
         self.assertEqual(len(datos['arbol']), 4)
         self.assertEqual(datos['componentes'], 1)
@@ -37,7 +38,9 @@ class ApiComplementariosTests(unittest.TestCase):
     def test_pasillo_de_den011d(self):
         cuerpo = {'mapa': 'den011d', 'zona': [24, 156, 71, 203], 'direccion': 'vertical'}
         datos = self.cliente.post('/pasillo', json=cuerpo).json()
+        self.assertEqual(datos['mapa'], 'den011d')
         self.assertEqual(datos['flujo_maximo'], 3)
+        self.assertEqual(datos['corte'], [[30, 173], [30, 174], [30, 175]])
         self.assertEqual(len(datos['corte']), 3)
         self.assertEqual(len(datos['caminos']), 3)
         cerrado = self.cliente.post('/pasillo', json={**cuerpo, 'bloqueadas': datos['corte']}).json()
