@@ -17,6 +17,7 @@ const laboratorio: Enlace[] = [
   { ruta: '/', etiqueta: 'Inicio', icono: 'inicio' },
   { ruta: '/explorar', etiqueta: 'Explorar', icono: 'explorar' },
   { ruta: '/comparar', etiqueta: 'Comparar', icono: 'comparar' },
+  { ruta: '/simulacion', etiqueta: 'Simulación', icono: 'simulacion' },
   { ruta: '/resultados', etiqueta: 'Resultados', icono: 'resultados' },
 ]
 const grafos: Enlace[] = [
@@ -26,7 +27,6 @@ const grafos: Enlace[] = [
 ]
 const mas: Enlace[] = [
   { ruta: '/acerca', etiqueta: 'Acerca', icono: 'acerca' },
-  { ruta: '/simulacion', etiqueta: 'Simulación', icono: 'simulacion', pronto: true },
 ]
 
 const route = useRoute()

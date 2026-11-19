@@ -6,6 +6,7 @@ export const router = createRouter({
     { path: '/', name: 'inicio', component: () => import('./views/InicioView.vue') },
     { path: '/explorar', name: 'explorar', component: () => import('./views/ExplorarView.vue') },
     { path: '/comparar', name: 'comparar', component: () => import('./views/CompararView.vue') },
+    { path: '/simulacion', name: 'simulacion', component: () => import('./views/SimulacionView.vue') },
     { path: '/patrullaje', name: 'patrullaje', component: () => import('./views/PatrullajeView.vue') },
     { path: '/pasillo', name: 'pasillo', component: () => import('./views/PasilloView.vue') },
     { path: '/botin', name: 'botin', component: () => import('./views/BotinView.vue') },

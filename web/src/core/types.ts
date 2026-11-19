@@ -210,3 +210,51 @@ export interface SeleccionBotin {
   reconstruccion: [number, number][]
   tiempo_ms: number
 }
+
+/* ── Navegación dinámica (POST /simular) ────────────────────────────────── */
+
+export interface Planificacion {
+  algoritmo: string
+  motivo: 'inicial' | 'obstaculos'
+  estado: 'encontrada' | 'sin_ruta'
+  posicion: Posicion
+  /** Movimientos que llevaba el NPC al planificar (índice en `recorrido`). */
+  paso: number
+  ruta: Posicion[]
+  costo: number | null
+  version_mapa: number
+  celdas_cambiadas: Posicion[]
+  ruta_afectada: boolean
+  metricas: MetricasBusqueda
+  traza: EventoBusqueda[]
+}
+
+export interface ResumenAlgoritmo {
+  algoritmo: string
+  replanificaciones: number
+  expandidos_inicial: number
+  expandidos_replanificacion: number
+  tiempo_inicial_ms: number
+  tiempo_replanificacion_ms: number
+  costo_final: number | null
+}
+
+export interface ResultadoSimulacion {
+  mapa: string
+  algoritmos: string[]
+  inicio: Posicion
+  destino: Posicion
+  llegado: boolean
+  recorrido: Posicion[]
+  distancia_recorrida: number
+  bloqueadas: Posicion[]
+  costos_coinciden: boolean
+  resumen: ResumenAlgoritmo[]
+  historial: Planificacion[]
+}
+
+export interface CambioEnPaso {
+  paso: number
+  bloquear: Posicion[]
+  liberar: Posicion[]
+}
