@@ -39,6 +39,8 @@ class Planificacion:
     """'encontrada' o 'sin_ruta'."""
     posicion: Posicion
     """Celda del NPC desde la que se planificó."""
+    paso: int
+    """Movimientos que llevaba el NPC al planificar (índice en `recorrido`)."""
     ruta: tuple[Posicion, ...]
     costo: float | None
     version_mapa: int
@@ -184,7 +186,8 @@ class NavegacionDinamica:
             plan = Planificacion(
                 algoritmo=clave, motivo=motivo,
                 estado='encontrada' if resultado.encontrada else 'sin_ruta',
-                posicion=self.posicion, ruta=resultado.ruta, costo=resultado.costo,
+                posicion=self.posicion, paso=len(self.recorrido) - 1,
+                ruta=resultado.ruta, costo=resultado.costo,
                 version_mapa=self.sesion.version, celdas_cambiadas=tuple(cambiadas),
                 ruta_afectada=afectada,
                 metricas=MetricasBusqueda(contador.expandidos, len(contador.descubiertos),

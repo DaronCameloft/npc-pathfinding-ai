@@ -12,6 +12,8 @@ export interface AlgoritmoInfo {
   clave: string
   nombre: string
   garantiza_optimo: boolean
+  /** Conserva su estado entre cambios del mapa y busca desde la meta hacia el NPC (D* Lite). */
+  incremental: boolean
   tecnica: string
   complejidad: string
   referencia: string
@@ -52,7 +54,8 @@ export interface PaginaEscenarios {
 export interface EventoBusqueda {
   tipo: 'frontera' | 'expandido'
   posicion: Posicion
-  g: number
+  /** null = infinito (D* Lite al invalidar una celda). */
+  g: number | null
   h: number
   padre: Posicion | null
   linea: number
@@ -206,4 +209,52 @@ export interface SeleccionBotin {
   tabla: number[][]
   reconstruccion: [number, number][]
   tiempo_ms: number
+}
+
+/* ── Navegación dinámica (POST /simular) ────────────────────────────────── */
+
+export interface Planificacion {
+  algoritmo: string
+  motivo: 'inicial' | 'obstaculos'
+  estado: 'encontrada' | 'sin_ruta'
+  posicion: Posicion
+  /** Movimientos que llevaba el NPC al planificar (índice en `recorrido`). */
+  paso: number
+  ruta: Posicion[]
+  costo: number | null
+  version_mapa: number
+  celdas_cambiadas: Posicion[]
+  ruta_afectada: boolean
+  metricas: MetricasBusqueda
+  traza: EventoBusqueda[]
+}
+
+export interface ResumenAlgoritmo {
+  algoritmo: string
+  replanificaciones: number
+  expandidos_inicial: number
+  expandidos_replanificacion: number
+  tiempo_inicial_ms: number
+  tiempo_replanificacion_ms: number
+  costo_final: number | null
+}
+
+export interface ResultadoSimulacion {
+  mapa: string
+  algoritmos: string[]
+  inicio: Posicion
+  destino: Posicion
+  llegado: boolean
+  recorrido: Posicion[]
+  distancia_recorrida: number
+  bloqueadas: Posicion[]
+  costos_coinciden: boolean
+  resumen: ResumenAlgoritmo[]
+  historial: Planificacion[]
+}
+
+export interface CambioEnPaso {
+  paso: number
+  bloquear: Posicion[]
+  liberar: Posicion[]
 }

@@ -91,6 +91,10 @@ class SimulacionTests(unittest.TestCase):
         self.assertEqual((resultado.recorrido[0], resultado.recorrido[-1]), ((2, 0), (2, 6)))
         self.assertEqual([r.replanificaciones for r in resultado.resumen], [3, 3])
         self.assertEqual(resultado.bloqueadas, ((0, 0), (1, 3), (3, 3)))
+        # Cada planificación sabe en qué paso del recorrido ocurrió.
+        self.assertEqual([p.paso for p in resultado.historial], [0, 0, 2, 2, 3, 3, 4, 4])
+        for plan in resultado.historial:
+            self.assertEqual(resultado.recorrido[plan.paso], plan.posicion)
         asdict(resultado)   # serializable para la API
 
     def test_omite_bloqueos_sobre_el_npc(self):

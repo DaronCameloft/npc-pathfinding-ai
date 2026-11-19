@@ -50,7 +50,8 @@ const terminada = computed(() => !!ejecucion.value && pb.indice.value >= total.v
 const lineaActiva = computed(() => {
   const lineas = infoAlgoritmo.value?.pseudocodigo ?? []
   if (terminada.value) {
-    const patron = ejecucion.value?.estado === 'encontrada' ? /es el destino/ : /SIN_RUTA/
+    const incremental = infoAlgoritmo.value?.incremental
+    const patron = incremental ? /^ruta:/ : ejecucion.value?.estado === 'encontrada' ? /es el destino/ : /SIN_RUTA/
     return lineas.find((l) => patron.test(l.texto))?.numero ?? 0
   }
   return eventoActual.value?.linea ?? 0
@@ -60,7 +61,11 @@ const narracion = computed(() => {
   const e = ejecucion.value
   if (e && terminada.value) {
     return e.estado === 'encontrada'
-      ? `Ruta encontrada: ${e.ruta.length - 1} pasos y costo ${e.costo?.toLocaleString('es-PE', { maximumFractionDigits: 4 })}. Se reconstruye siguiendo los padres desde el destino.`
+      ? `Ruta encontrada: ${e.ruta.length - 1} pasos y costo ${e.costo?.toLocaleString('es-PE', { maximumFractionDigits: 4 })}. ${
+        infoAlgoritmo.value?.incremental
+          ? 'Desde el NPC se avanza siempre al vecino de menor w + g hasta la meta (línea 16).'
+          : 'Se reconstruye siguiendo los padres desde el destino.'
+      }`
       : 'No existe ruta entre el inicio y el destino con los obstáculos actuales.'
   }
   return narrar(algoritmo.value, eventoActual.value)
@@ -73,6 +78,13 @@ const comparacionOptimo = computed(() => {
   if (Math.abs(dif) < 1e-5) return { texto: 'Igual al óptimo publicado', clase: 'pill-lime' }
   return { texto: `+${((dif / escenario.value.optimo) * 100).toFixed(1)} % sobre el óptimo`, clase: 'pill-gold' }
 })
+
+const fijo = (n: number) => (Number.isFinite(n) ? n.toFixed(2) : '∞')
+/** En D* Lite g es el costo hasta la meta y f no se usa. */
+function valoresCelda(info: InfoCelda) {
+  if (infoAlgoritmo.value?.incremental) return `g a la meta ${fijo(info.g)} · h ${fijo(info.h)}`
+  return `g ${fijo(info.g)} · h ${fijo(info.h)} · f ${fijo(info.g + info.h)}`
+}
 
 const TERRENO: Record<string, string> = { '.': 'Transitable', G: 'Transitable', '@': 'Muro', O: 'Muro', T: 'Árbol', S: 'Pantano', W: 'Agua' }
 
@@ -262,7 +274,7 @@ const mensajeCarga = computed(() => (motor.estado === 'listo' ? 'Calculando en e
           <div v-if="hover" class="tip glass" :style="{ transform: `translate(${hover.x + 16}px, ${hover.y + 16}px)` }">
             <strong class="num">({{ hover.info.fila }}, {{ hover.info.col }})</strong>
             <span>{{ TERRENO[hover.info.terreno] }}<template v-if="hover.info.estado"> · {{ hover.info.estado === 2 ? 'Expandida' : 'En la frontera' }}</template></span>
-            <span v-if="hover.info.estado" class="num mono">g {{ hover.info.g.toFixed(2) }} · h {{ hover.info.h.toFixed(2) }} · f {{ (hover.info.g + hover.info.h).toFixed(2) }}</span>
+            <span v-if="hover.info.estado" class="num mono">{{ valoresCelda(hover.info) }}</span>
           </div>
         </div>
 
