@@ -87,6 +87,21 @@ namespace Arcadia.Navigation
         public bool Found => Status == "encontrada";
     }
 
+    public sealed class Planning
+    {
+        public string Reason;
+        public RouteResult Result;
+    }
+
+    public sealed class SessionState
+    {
+        public string Id, Guide;
+        public GridCell Position, Goal;
+        public GridCell[] Remaining, Blocked;
+        public Dictionary<string, Planning> Current = new Dictionary<string, Planning>();
+        public Planning[] NewPlans;
+    }
+
     public enum NavigationState { Idle, Planning, Moving, ReturningToCell, Paused, Arrived, NoRoute, Error }
 
     /// <summary>Checks the server's result against the displayed grid; this does not search for routes.</summary>

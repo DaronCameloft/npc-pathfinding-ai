@@ -36,6 +36,11 @@ namespace Arcadia.Navigation.Editor
                 Assert(Math.Abs(route.Cost.Value - Math.Sqrt(2)) < 1e-12, "Decimal cost must not depend on system culture.");
                 Assert(route.Metrics.Expanded == 2 && route.Metrics.Milliseconds == 0.025, "Metrics must retain values.");
                 Assert(route.Trace.Length == 1 && route.Trace[0].Position == new GridCell(1, 1), "Trace with nullable parent must decode.");
+                string plan = FoundJson.Replace("\"algoritmo\":\"astar\"", "\"motivo\":\"obstaculos\",\"algoritmo\":\"dstar_lite\"").Replace("\"g\":0", "\"g\":null");
+                string sessionJson = "{\"id\":\"demo\",\"guia\":\"dstar_lite\",\"posicion\":[1,1],\"destino\":[2,2],\"bloqueadas\":[],\"ruta_restante\":[[1,1],[2,2]],\"vigentes\":{\"dstar_lite\":" + plan + "},\"nuevas\":[" + plan + "]}";
+                SessionState session = EngineClient.ParseSession(sessionJson);
+                Assert(double.IsPositiveInfinity(session.NewPlans[0].Result.Trace[0].G), "Null g represents an invalidated cell.");
+                Assert(session.Remaining[0] == session.Position && session.Current[session.Guide].Reason == "obstaculos", "Guide and repaired route must decode.");
                 string absent = FoundJson.Replace("\"encontrada\"", "\"sin_ruta\"").Replace("[[1,1],[2,2]]", "[]").Replace("\"costo\":1.4142135623730951", "\"costo\":null");
                 RouteResult noRoute = EngineClient.ParseRoute(absent);
                 Assert(!noRoute.Found && noRoute.Route.Length == 0 && !noRoute.Cost.HasValue, "No-route is a normal outcome.");

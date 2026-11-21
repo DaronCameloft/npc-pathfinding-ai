@@ -112,7 +112,7 @@ Variable de entorno `CORS_ORIGINS`: orígenes adicionales separados por coma (po
 
 | Método | Ruta | Respuesta |
 |---|---|---|
-| GET | `/health` | `{"estado": "ok", "version": "1.2.0"}` |
+| GET | `/health` | `{"estado": "ok", "version": "1.3.0"}` |
 | GET | `/algoritmos` | Catálogo: `clave`, `nombre`, `garantiza_optimo`, `incremental`, `tecnica`, `complejidad`, `referencia` y `pseudocodigo` (`[{numero, texto, nivel}]`, el mismo del docstring). |
 | GET | `/mapas` | Lista con `nombre`, `alto`, `ancho`, `vertices`, `escenarios`. |
 | GET | `/mapas/{nombre}` | `alto`, `ancho` y `filas` de terreno (para dibujar en Canvas). |

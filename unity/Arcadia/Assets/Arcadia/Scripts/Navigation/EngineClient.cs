@@ -22,7 +22,7 @@ namespace Arcadia.Navigation
         internal void Detach(UnityWebRequest value) { if (ReferenceEquals(request, value)) request = null; }
     }
 
-    public sealed class EngineClient : MonoBehaviour
+    public sealed partial class EngineClient : MonoBehaviour
     {
         public string BaseUrl = "http://127.0.0.1:8000";
         [Range(1, 120)] public int RequestTimeoutSeconds = 30;
@@ -65,6 +65,58 @@ namespace Arcadia.Navigation
             };
             return Send("POST", "/buscar", JsonCodec.Stringify(payload),
                 raw => Decode(raw, ReadRoute, success, failure), failure, cancellation);
+        }
+
+        static int[] Pair(GridCell cell) => new[] { cell.Row, cell.Column };
+        static int[][] Pairs(IEnumerable<GridCell> cells) => new List<GridCell>(cells).ConvertAll(Pair).ToArray();
+        static string SessionPath(string id) => "/sesiones/" + Uri.EscapeDataString(id);
+
+        private IEnumerator SessionRequest(string method, string path, object body, Action<SessionState> success,
+            Action<string> failure, RequestCancellation token)
+            => Send(method, path, body == null ? null : JsonCodec.Stringify(body),
+                raw => Decode(raw, ReadSession, success, failure), failure, token);
+
+        public IEnumerator OpenSession(string map, string guide, GridCell start, GridCell goal, IEnumerable<GridCell> blocked,
+            bool trace, Action<SessionState> success, Action<string> failure, RequestCancellation token = null)
+        {
+            var body = new Dictionary<string, object> {
+                { "mapa", map }, { "inicio", Pair(start) }, { "destino", Pair(goal) }, { "bloqueadas", Pairs(blocked) },
+                { "algoritmos", new[] { guide, guide == "astar" ? "dstar_lite" : "astar" } }, { "traza", trace }
+            };
+            return SessionRequest("POST", "/sesiones", body, success, failure, token);
+        }
+
+        public IEnumerator Advance(string id, int steps, Action<SessionState> success, Action<string> failure, RequestCancellation token = null)
+            => SessionRequest("POST", SessionPath(id) + "/avanzar", new Dictionary<string, object> { { "pasos", steps } }, success, failure, token);
+
+        public IEnumerator ChangeObstacles(string id, IEnumerable<GridCell> block, IEnumerable<GridCell> free, bool trace,
+            Action<SessionState> success, Action<string> failure, RequestCancellation token = null)
+            => SessionRequest("POST", SessionPath(id) + "/obstaculos", new Dictionary<string, object> {
+                { "bloquear", Pairs(block) }, { "liberar", Pairs(free) }, { "traza", trace }
+            }, success, failure, token);
+
+        public IEnumerator GetSession(string id, Action<SessionState> success, Action<string> failure, RequestCancellation token = null)
+            => SessionRequest("GET", SessionPath(id), null, success, failure, token);
+
+        public IEnumerator CloseSession(string id, Action<string> failure = null, RequestCancellation token = null)
+            => Send("DELETE", SessionPath(id), null, null, failure, token);
+
+        public static SessionState ParseSession(string json) => ReadSession(JsonCodec.Parse(json));
+
+        static Planning ReadPlanning(object value) => new Planning { Reason = Text(Object(value), "motivo"), Result = ReadRoute(value) };
+
+        static SessionState ReadSession(object value)
+        {
+            var entry = Object(value);
+            var state = new SessionState {
+                Id = Text(entry, "id"), Guide = Text(entry, "guia"), Position = Cell(entry["posicion"]), Goal = Cell(entry["destino"]),
+                Remaining = Array(entry["ruta_restante"]).ConvertAll(Cell).ToArray(),
+                Blocked = Array(entry["bloqueadas"]).ConvertAll(Cell).ToArray(),
+                NewPlans = Array(entry["nuevas"]).ConvertAll(ReadPlanning).ToArray()
+            };
+            foreach (var pair in Object(entry["vigentes"])) state.Current.Add(pair.Key, ReadPlanning(pair.Value));
+            if (!state.Current.ContainsKey(state.Guide)) throw new FormatException("Missing guide plan.");
+            return state;
         }
 
         private IEnumerator Send(string method, string path, string json, Action<string> success, Action<string> failure, RequestCancellation cancellation)
@@ -191,13 +243,13 @@ namespace Arcadia.Navigation
             if (result.Found ? (!result.Cost.HasValue || result.Cost.Value < 0 || cells.Count == 0) : (result.Cost.HasValue || cells.Count != 0))
                 throw new FormatException("Route status, cost and cells disagree.");
             for (int i = 0; i < cells.Count; i++) result.Route[i] = Cell(cells[i]);
-            if (entry.TryGetValue("traza", out object rawTrace))
+            if (entry.TryGetValue("traza", out object rawTrace) && rawTrace != null)
             {
                 List<object> trace = Array(rawTrace); result.Trace = new SearchEvent[trace.Count];
                 for (int i = 0; i < trace.Count; i++)
                 {
                     var item = Object(trace[i]);
-                    result.Trace[i] = new SearchEvent { Type = Text(item, "tipo"), Position = Cell(item["posicion"]), G = Number(item, "g"), H = Number(item, "h"), Line = Integer(item, "linea") };
+                    result.Trace[i] = new SearchEvent { Type = Text(item, "tipo"), Position = Cell(item["posicion"]), G = item["g"] == null ? double.PositiveInfinity : Number(item, "g"), H = Number(item, "h"), Line = Integer(item, "linea") };
                 }
             }
             return result;
