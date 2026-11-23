@@ -257,7 +257,8 @@ onBeforeUnmount(() => {
 .cuerpo { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 18px; flex: 1; min-height: 0; }
 .izquierda { display: flex; flex-direction: column; gap: 14px; min-height: 0; overflow: auto; }
 .izquierda > :last-child { position: sticky; bottom: 0; flex: none; }
-.rejilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(236px, 1fr)); gap: 14px; flex: 1; min-height: 0; }
+.rejilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(236px, 1fr)); gap: 14px; flex: 1 0 auto; }
+.izquierda.completa .rejilla { flex: 1 1 0; min-height: 0; }
 .guia-dstar { display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 18px 20px; background: var(--cream-soft); border-color: transparent; }
 .guia-dstar p { font-size: 12.8px; line-height: 1.55; color: var(--ink-2); }
 .guia-dstar .btn { align-self: flex-start; padding: 7px 14px; font-size: 12.5px; }
